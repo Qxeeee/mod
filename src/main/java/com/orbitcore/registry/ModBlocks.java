@@ -1,12 +1,16 @@
 package com.orbitcore.registry;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.block.AirSeparatorBlock;
 import com.orbitcore.block.CoalGeneratorBlock;
 import com.orbitcore.block.ElectrolyzerBlock;
 import com.orbitcore.block.EngineeringTableBlock;
+import com.orbitcore.block.FuelRefineryBlock;
+import com.orbitcore.block.LaunchPadBlock;
 import com.orbitcore.block.MachineBlock;
 import com.orbitcore.block.MetallurgicalFurnaceBlock;
 import com.orbitcore.block.MissionControlBlock;
+import com.orbitcore.block.RocketAssemblerBlock;
 import com.orbitcore.block.SampleAnalyzerBlock;
 import com.orbitcore.block.TelescopeBlock;
 import net.minecraft.block.AbstractBlock;
@@ -60,6 +64,14 @@ public final class ModBlocks {
                     .luminance(state -> 6)));
     public static final Block SAMPLE_ANALYZER = register("sample_analyzer",
             new SampleAnalyzerBlock(machineSettings(9)));
+
+    // Ракеты и топливо
+    public static final Block FUEL_REFINERY = register("fuel_refinery", new FuelRefineryBlock(machineSettings(8)));
+    public static final Block AIR_SEPARATOR = register("air_separator", new AirSeparatorBlock(machineSettings(6)));
+    public static final Block ROCKET_ASSEMBLER = register("rocket_assembler", new RocketAssemblerBlock(machineSettings(0)));
+    public static final Block LAUNCH_PAD = register("launch_pad",
+            new LaunchPadBlock(AbstractBlock.Settings.create().mapColor(MapColor.GRAY)
+                    .requiresTool().strength(5.0f, 12.0f).sounds(BlockSoundGroup.METAL)));
 
     private ModBlocks() {
     }

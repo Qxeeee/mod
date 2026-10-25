@@ -2,8 +2,8 @@ package com.orbitcore.science;
 
 import com.orbitcore.OrbitCore;
 import com.orbitcore.registry.ModBlocks;
+import com.orbitcore.registry.ModItems;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,11 +24,13 @@ public record Research(Identifier id, Supplier<ItemConvertible> icon, Map<Scienc
     public static final Research ASTRONOMY = new Research(OrbitCore.id("astronomy"), () -> ModBlocks.TELESCOPE,
             cost(0, 0, 0), List.of(), null, 0, 1);
     public static final Research SPECTROSCOPY = new Research(OrbitCore.id("spectroscopy"), () -> ModBlocks.SAMPLE_ANALYZER,
-            cost(8, 0, 0), List.of(ASTRONOMY.id), null, 2, 0);
-    public static final Research ROCKETRY = new Research(OrbitCore.id("rocketry"), () -> Items.FIREWORK_ROCKET,
-            cost(20, 12, 0), List.of(SPECTROSCOPY.id), CelestialBody.MOON, 4, 1);
+            cost(8, 0, 0), List.of(ASTRONOMY.id), null, 1, 0);
+    public static final Research ROCKETRY = new Research(OrbitCore.id("rocketry"), () -> ModItems.ENGINE_ISKRA,
+            cost(20, 12, 0), List.of(SPECTROSCOPY.id), CelestialBody.MOON, 2, 1);
+    public static final Research HEAVY_ROCKETRY = new Research(OrbitCore.id("heavy_rocketry"), () -> ModItems.ENGINE_FAKEL,
+            cost(15, 15, 0), List.of(ROCKETRY.id), null, 3, 0);
 
-    public static final List<Research> ALL = List.of(ASTRONOMY, SPECTROSCOPY, ROCKETRY);
+    public static final List<Research> ALL = List.of(ASTRONOMY, SPECTROSCOPY, ROCKETRY, HEAVY_ROCKETRY);
 
     /** Исследования, открытые с самого начала. */
     public boolean isRoot() {

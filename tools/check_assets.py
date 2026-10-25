@@ -66,6 +66,13 @@ def check_model(path, seen=None):
 
 blocks = registered("ModBlocks.java")
 items = registered("ModItems.java")
+# Модули ракеты, собранная ракета и вёдра регистрируются не через register("...")
+items += re.findall(r'^\s+[A-Z_]+\("([a-z0-9_]+)", Kind\.',
+                    (ROOT / "src/main/java/com/orbitcore/rocket/RocketPart.java").read_text(encoding="utf-8"), re.M)
+for java in ("ModItems.java", "ModFluids.java"):
+    for name in re.findall(r'Registries\.ITEM, OrbitCore\.id\("([a-z0-9_]+)"\)', (JAVA / java).read_text(encoding="utf-8")):
+        if name not in items:
+            items.append(name)
 langs = {name: load(ASSETS / "lang" / f"{name}.json") or {} for name in ("ru_ru", "en_us")}
 
 for block in blocks:

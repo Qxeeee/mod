@@ -1,6 +1,7 @@
 package com.orbitcore.network;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.science.CelestialBody;
 import com.orbitcore.science.MissionControl;
 import com.orbitcore.science.Observatory;
@@ -27,6 +28,7 @@ public final class OrbitNetworking {
     public static final Identifier OPEN_MISSION_CONTROL = OrbitCore.id("open_mission_control");
     public static final Identifier DISCOVERY = OrbitCore.id("discovery");
     public static final Identifier RESEARCH_DONE = OrbitCore.id("research_done");
+    public static final Identifier OPEN_ROCKET = OrbitCore.id("open_rocket");
     // Клиент → сервер
     public static final Identifier OBSERVE = OrbitCore.id("observe");
     public static final Identifier UNLOCK_RESEARCH = OrbitCore.id("unlock_research");
@@ -65,6 +67,12 @@ public final class OrbitNetworking {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBlockPos(pos);
         ServerPlayNetworking.send(player, channel, buf);
+    }
+
+    public static void openRocket(ServerPlayerEntity player, RocketEntity rocket) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeVarInt(rocket.getId());
+        ServerPlayNetworking.send(player, OPEN_ROCKET, buf);
     }
 
     public static void announceDiscovery(MinecraftServer server, CelestialBody body) {

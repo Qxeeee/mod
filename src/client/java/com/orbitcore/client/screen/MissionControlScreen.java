@@ -33,7 +33,7 @@ public class MissionControlScreen extends Screen {
     private static final Identifier MOON = OrbitCore.id("textures/gui/telescope/moon.png");
     private static final int W = 276;
     private static final int H = 206;
-    private static final int CELL = 46;
+    private static final int CELL = 62;
     private static final int NODE = 24;
     private static final double MAX_DISTANCE_SQ = 8 * 8;
 

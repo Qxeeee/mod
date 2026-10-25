@@ -1,6 +1,7 @@
 package com.orbitcore.client.network;
 
 import com.orbitcore.client.screen.MissionControlScreen;
+import com.orbitcore.client.screen.RocketScreen;
 import com.orbitcore.client.screen.TelescopeScreen;
 import com.orbitcore.client.science.ClientSpaceProgram;
 import com.orbitcore.client.toast.OrbitToast;
@@ -55,6 +56,10 @@ public final class OrbitClientNetworking {
                     client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_PLAYER_LEVELUP, 1.4f));
                 }
             });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.OPEN_ROCKET, (client, handler, buf, sender) -> {
+            int entityId = buf.readVarInt();
+            client.execute(() -> client.setScreen(new RocketScreen(entityId)));
         });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientSpaceProgram.reset());
     }

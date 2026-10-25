@@ -43,6 +43,21 @@ public final class ModItemGroups {
                         entries.add(ModBlocks.TELESCOPE);
                         entries.add(ModBlocks.MISSION_CONTROL);
                         entries.add(ModBlocks.SAMPLE_ANALYZER);
+
+                        entries.add(ModBlocks.FUEL_REFINERY);
+                        entries.add(ModBlocks.AIR_SEPARATOR);
+                        entries.add(ModFluids.KEROSENE_BUCKET);
+                        entries.add(ModFluids.LIQUID_OXYGEN_BUCKET);
+                        entries.add(ModBlocks.ROCKET_ASSEMBLER);
+                        entries.add(ModBlocks.LAUNCH_PAD);
+                        entries.add(ModItems.ENGINE_ISKRA);
+                        entries.add(ModItems.ENGINE_FAKEL);
+                        entries.add(ModItems.FUEL_TANK_SMALL);
+                        entries.add(ModItems.FUEL_TANK_LARGE);
+                        entries.add(ModItems.STAGE_DECOUPLER);
+                        entries.add(ModItems.CAPSULE_KAPLYA);
+                        entries.add(ModItems.ROCKET_FINS);
+                        entries.add(ModItems.LANDING_LEGS);
                     })
                     .build());
 

@@ -3,6 +3,8 @@ package com.orbitcore;
 import com.orbitcore.network.OrbitNetworking;
 import com.orbitcore.registry.ModBlockEntities;
 import com.orbitcore.registry.ModBlocks;
+import com.orbitcore.registry.ModEntities;
+import com.orbitcore.registry.ModFluids;
 import com.orbitcore.registry.ModItemGroups;
 import com.orbitcore.registry.ModItems;
 import com.orbitcore.registry.ModRecipes;
@@ -28,9 +30,11 @@ public class OrbitCore implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModFluids.register();
         ModBlocks.register();
         ModItems.register();
         ModBlockEntities.register();
+        ModEntities.register();
         ModRecipes.register();
         ModScreenHandlers.register();
         ModItemGroups.register();

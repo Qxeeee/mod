@@ -14,6 +14,10 @@
     "orbitcore:engineering_table",
     "orbitcore:telescope",
     "orbitcore:mission_control",
-    "orbitcore:sample_analyzer"
+    "orbitcore:sample_analyzer",
+    "orbitcore:fuel_refinery",
+    "orbitcore:air_separator",
+    "orbitcore:rocket_assembler",
+    "orbitcore:launch_pad"
   ]
 }

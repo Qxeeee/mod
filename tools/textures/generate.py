@@ -726,6 +726,293 @@ def eyepiece():
     return img
 
 
+HULL = [(150, 156, 166), (190, 196, 204), (220, 224, 230), (238, 241, 245), (250, 251, 253)]
+ORANGE = [(150, 60, 20), (210, 96, 30), (240, 132, 48)]
+KEROSENE = [(120, 70, 20), (170, 110, 40), (210, 150, 70), (240, 190, 110)]
+LOX = [(110, 170, 210), (150, 205, 235), (190, 230, 250), (230, 248, 255)]
+
+
+def rocket_hull(stripe=False):
+    """Обшивка бака: белые панели со швами, как у настоящих ракет."""
+    rng = random.Random(91 if stripe else 90)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, HULL[3 + (rng.random() < 0.25)])
+    for x in (0, 8):
+        line(img, x, 0, x, 15, HULL[1])
+    for y in (0, 15):
+        line(img, 0, y, 15, y, HULL[0])
+    for x, y in ((2, 2), (13, 2), (2, 13), (13, 13), (6, 2), (10, 13)):
+        put(img, x, y, HULL[1])
+    if stripe:
+        rect(img, 0, 6, 15, 9, ORANGE[1])
+        line(img, 0, 6, 15, 6, ORANGE[2])
+        line(img, 0, 9, 15, 9, ORANGE[0])
+    else:
+        # Чёрные «шашки» для наблюдения за вращением, как на первых ракетах
+        rect(img, 1, 4, 7, 11, (34, 36, 42))
+    return img
+
+
+def engine_bell(gold=False):
+    """Сопло: горячая бронза у горловины темнеет к срезу."""
+    img = new()
+    top = [(196, 150, 70), (170, 120, 50), (130, 90, 40)] if gold else [(150, 110, 60), (120, 86, 48), (90, 66, 40)]
+    for y in range(S):
+        t = y / 15
+        for x in range(S):
+            if t < 0.5:
+                c = top[min(2, int(t * 6))]
+            else:
+                k = (t - 0.5) * 2
+                c = (int(top[2][0] * (1 - k) + 34 * k), int(top[2][1] * (1 - k) + 36 * k), int(top[2][2] * (1 - k) + 48 * k))
+            if x % 4 == 0:
+                c = tuple(max(0, v - 18) for v in c)
+            put(img, x, y, c)
+    return img
+
+
+def engine_mount():
+    img = machine_side(92, vents=False)
+    for x in (3, 7, 11):
+        line(img, x, 2, x, 13, COPPER[2])
+        line(img, x + 1, 2, x + 1, 13, COPPER[0])
+    return img
+
+
+def nozzle_exit():
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            d = math.hypot(x - 7.5, y - 7.5)
+            put(img, x, y, (20, 22, 30) if d < 5.5 else (60, 50, 44) if d < 7 else (34, 36, 48))
+    return img
+
+
+def decoupler():
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, (230, 180, 40) if ((x + y) // 3) % 2 else (30, 30, 34))
+    line(img, 0, 0, 15, 0, STEEL[4])
+    line(img, 0, 15, 15, 15, STEEL[1])
+    for x in (3, 8, 13):
+        put(img, x, 7, STEEL[5])
+    return img
+
+
+def capsule_skin():
+    rng = random.Random(93)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, HULL[2 + (rng.random() < 0.3)])
+    for y in (4, 11):
+        line(img, 0, y, 15, y, HULL[0])
+    put(img, 3, 7, (200, 40, 40))
+    put(img, 12, 7, (60, 200, 90))
+    return img
+
+
+def capsule_window():
+    img = new()
+    rect(img, 0, 0, 15, 15, (40, 70, 110))
+    for y in range(S):
+        for x in range(S):
+            if x + y < 9:
+                put(img, x, y, (110, 160, 210))
+    frame(img, 0, 0, 15, 15, STEEL[4], STEEL[1])
+    return img
+
+
+def heat_shield():
+    rng = random.Random(94)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, [(46, 34, 28), (64, 46, 36), (82, 60, 44)][rng.randint(0, 2)])
+    for i in range(0, 16, 4):
+        line(img, i, 0, i, 15, (34, 26, 22))
+        line(img, 0, i, 15, i, (34, 26, 22))
+    return img
+
+
+def fins():
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, (200, 40, 40) if (y // 4) % 2 == 0 else HULL[3])
+    line(img, 0, 0, 0, 15, (120, 20, 20))
+    return img
+
+
+def legs():
+    img = machine_side(95, vents=False)
+    for y in (3, 8, 12):
+        line(img, 2, y, 13, y, (230, 180, 40))
+    return img
+
+
+def refinery_front(lit, phase=0):
+    img = machine_side(101, vents=False)
+    # Колонна синтеза со смотровыми окнами
+    rect(img, 3, 2, 7, 13, STEEL[1])
+    frame(img, 3, 2, 7, 13, STEEL[4], STEEL[0])
+    for i, y in enumerate((4, 7, 10)):
+        level = KEROSENE[(i + phase) % 4] if lit else (40, 30, 20)
+        rect(img, 4, y, 6, y + 1, level)
+    # Трубы и вентиль
+    line(img, 9, 4, 13, 4, COPPER[2])
+    line(img, 9, 5, 13, 5, COPPER[0])
+    line(img, 12, 4, 12, 12, COPPER[2])
+    rect(img, 9, 10, 13, 13, (230, 180, 40) if lit else STEEL[2])
+    put(img, 11, 11, (200, 40, 40))
+    return img
+
+
+def separator_front(lit, phase=0):
+    img = machine_side(102, vents=False)
+    # Сосуд Дьюара с жидким кислородом
+    for y in range(2, 14):
+        for x in range(4, 12):
+            if abs(x - 7.5) < 3.6:
+                put(img, x, y, LOX[1] if lit and y > 6 else (40, 60, 80))
+    frame(img, 3, 1, 12, 14, STEEL[4], STEEL[0])
+    if lit:
+        rng = random.Random(600 + phase)
+        for _ in range(5):
+            put(img, rng.randint(4, 11), rng.randint(2, 6), (255, 255, 255))
+    # Иней по краям
+    for x, y in ((1, 2), (14, 5), (2, 11), (13, 13), (1, 8)):
+        put(img, x, y, (230, 245, 255))
+    return img
+
+
+def separator_top():
+    def detail(img):
+        for cx, cy in ((5, 5), (10, 5), (5, 10), (10, 10)):
+            for y in range(cy - 2, cy + 3):
+                for x in range(cx - 2, cx + 3):
+                    if math.hypot(x - cx, y - cy) < 2.2:
+                        put(img, x, y, (30, 34, 40) if math.hypot(x - cx, y - cy) < 1.2 else STEEL[4])
+    return machine_top(103, detail)
+
+
+def assembler_front():
+    img = machine_side(104, vents=False)
+    rect(img, 2, 2, 13, 10, (20, 50, 100))
+    for i in range(3, 13, 3):
+        line(img, i, 3, i, 9, (30, 70, 138))
+    # Силуэт ракеты на чертеже
+    line(img, 7, 3, 7, 8, (220, 235, 255))
+    line(img, 8, 3, 8, 8, (220, 235, 255))
+    put(img, 6, 8, (220, 235, 255))
+    put(img, 9, 8, (220, 235, 255))
+    frame(img, 1, 1, 14, 11, STEEL[4], STEEL[0])
+    rect(img, 3, 12, 12, 13, (230, 180, 40))
+    return img
+
+
+def assembler_top():
+    def detail(img):
+        line(img, 3, 12, 12, 3, (230, 180, 40))
+        line(img, 3, 3, 12, 12, (230, 180, 40))
+        rect(img, 6, 6, 9, 9, STEEL[1])
+    return machine_top(105, detail)
+
+
+def launch_pad_top():
+    rng = random.Random(106)
+    img = new()
+    concrete = [(96, 98, 102), (110, 112, 116), (124, 126, 130)]
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, concrete[rng.randint(0, 2)])
+    frame(img, 0, 0, 15, 15, (140, 142, 146), (70, 72, 76))
+    for x, y in ((2, 2), (13, 2), (2, 13), (13, 13)):
+        put(img, x, y, STEEL[5])
+        put(img, x + 1, y + 1, STEEL[0])
+    # Жёлтые метки разметки
+    for i in range(5, 11):
+        put(img, i, 1, (230, 180, 40))
+        put(img, i, 14, (230, 180, 40))
+    return img
+
+
+def launch_pad_side():
+    img = new()
+    rect(img, 0, 0, 15, 15, (92, 94, 98))
+    rect(img, 0, 0, 15, 3, (124, 126, 130))
+    for x in range(0, 16):
+        put(img, x, 4, (230, 180, 40) if (x // 2) % 2 else (30, 30, 34))
+    for x in (3, 12):
+        line(img, x, 6, x, 15, (70, 72, 76))
+    return img
+
+
+def fluid_frames(palette, size, frames, seed):
+    """Медленно колышущаяся жидкость: кадры для анимированной текстуры."""
+    rng = random.Random(seed)
+    waves = [(rng.uniform(0.2, 0.6), rng.uniform(0.2, 0.6), rng.uniform(0, 6.28)) for _ in range(3)]
+    result = []
+    for f in range(frames):
+        img = Image.new("RGBA", (size, size))
+        t = f / frames * 2 * math.pi
+        for y in range(size):
+            for x in range(size):
+                v = sum(math.sin(x * a + y * b + p + t) for a, b, p in waves) / 3
+                idx = max(0, min(len(palette) - 1, int((v + 1) / 2 * len(palette))))
+                img.putpixel((x, y), rgba(palette[idx], 210))
+        result.append(img)
+    return result
+
+
+def save_fluid(palette, name, seed):
+    for kind, size in (("still", 16), ("flow", 32)):
+        frames = fluid_frames(palette, size, 16, seed + size)
+        sheet = Image.new("RGBA", (size, size * len(frames)))
+        for i, f in enumerate(frames):
+            sheet.paste(f, (0, size * i))
+        sheet.save(BLOCK / f"{name}_{kind}.png")
+        (BLOCK / f"{name}_{kind}.png.mcmeta").write_text('{\n  "animation": {\n    "frametime": 3,\n    "interpolate": true\n  }\n}\n', encoding="utf-8")
+
+
+def bucket(fluid):
+    img = new()
+    metal = [(70, 74, 84), (120, 126, 138), (170, 176, 188), (210, 216, 226)]
+    body = [(3, 5), (12, 5), (11, 14), (4, 14)]
+    fill_poly(img, body, lambda x, y: metal[2] if x < 7 else metal[1])
+    for y in range(5, 8):
+        for x in range(3, 13):
+            if inside(body, x, y) or y == 5:
+                put(img, x, y, fluid[2] if y == 5 else fluid[1])
+    line(img, 3, 5, 12, 5, fluid[3])
+    # Ручка
+    for x in range(3, 13):
+        y = 4 - round(2.6 * math.sin((x - 3) / 9 * math.pi))
+        put(img, x, y, metal[1])
+    outline(img, metal[0])
+    return img
+
+
+def rocket_icon():
+    img = new()
+    body = [(7, 1), (9, 1), (11, 5), (11, 11), (5, 11), (5, 5)]
+    fill_poly(img, body, lambda x, y: HULL[3] if x < 9 else HULL[1])
+    rect(img, 6, 6, 9, 7, ORANGE[1])
+    for x, y in ((7, 3), (8, 3)):
+        put(img, x, y, (60, 110, 170))
+    fill_poly(img, [(5, 9), (5, 13), (3, 14), (3, 11)], lambda x, y: (200, 40, 40))
+    fill_poly(img, [(11, 9), (11, 13), (13, 14), (13, 11)], lambda x, y: (160, 30, 30))
+    rect(img, 6, 12, 9, 13, STEEL[1])
+    put(img, 7, 14, GLOW[3])
+    put(img, 8, 14, GLOW[2])
+    put(img, 7, 15, GLOW[1])
+    outline(img, (30, 32, 40))
+    return img
+
+
 def main():
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")
@@ -780,6 +1067,33 @@ def main():
     save(analyzer_front(False), BLOCK, "sample_analyzer_front")
     save_animation([analyzer_front(True, p) for p in range(4)], BLOCK, "sample_analyzer_front_on", 4)
     save(analyzer_top(), BLOCK, "sample_analyzer_top")
+
+    save(rocket_hull(), BLOCK, "rocket_hull")
+    save(rocket_hull(stripe=True), BLOCK, "rocket_hull_stripe")
+    save(engine_bell(), BLOCK, "engine_bell")
+    save(engine_bell(gold=True), BLOCK, "engine_bell_heavy")
+    save(engine_mount(), BLOCK, "engine_mount")
+    save(nozzle_exit(), BLOCK, "nozzle_exit")
+    save(decoupler(), BLOCK, "stage_decoupler")
+    save(capsule_skin(), BLOCK, "capsule_skin")
+    save(capsule_window(), BLOCK, "capsule_window")
+    save(heat_shield(), BLOCK, "heat_shield")
+    save(fins(), BLOCK, "rocket_fins")
+    save(legs(), BLOCK, "landing_legs")
+    save(refinery_front(False), BLOCK, "fuel_refinery_front")
+    save_animation([refinery_front(True, p) for p in range(4)], BLOCK, "fuel_refinery_front_on", 5)
+    save(separator_front(False), BLOCK, "air_separator_front")
+    save_animation([separator_front(True, p) for p in range(4)], BLOCK, "air_separator_front_on", 4)
+    save(separator_top(), BLOCK, "air_separator_top")
+    save(assembler_front(), BLOCK, "rocket_assembler_front")
+    save(assembler_top(), BLOCK, "rocket_assembler_top")
+    save(launch_pad_top(), BLOCK, "launch_pad_top")
+    save(launch_pad_side(), BLOCK, "launch_pad_side")
+    save_fluid(KEROSENE, "kerosene", 110)
+    save_fluid(LOX, "liquid_oxygen", 120)
+    save(bucket(KEROSENE), ITEM, "kerosene_bucket")
+    save(bucket(LOX), ITEM, "liquid_oxygen_bucket")
+    save(rocket_icon(), ITEM, "assembled_rocket")
 
     telescope_gui = GUI / "telescope"
     telescope_gui.mkdir(parents=True, exist_ok=True)

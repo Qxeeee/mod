@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/machine_casing",
+    "side": "orbitcore:block/machine_side",
+    "front": "orbitcore:block/fuel_refinery_front_on"
+  }
+}

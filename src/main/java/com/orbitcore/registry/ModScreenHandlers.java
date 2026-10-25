@@ -1,10 +1,13 @@
 package com.orbitcore.registry;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.screen.AirSeparatorScreenHandler;
 import com.orbitcore.screen.CoalGeneratorScreenHandler;
 import com.orbitcore.screen.ElectrolyzerScreenHandler;
 import com.orbitcore.screen.EngineeringTableScreenHandler;
+import com.orbitcore.screen.FuelRefineryScreenHandler;
 import com.orbitcore.screen.MetallurgicalFurnaceScreenHandler;
+import com.orbitcore.screen.RocketAssemblerScreenHandler;
 import com.orbitcore.screen.SampleAnalyzerScreenHandler;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -23,6 +26,12 @@ public final class ModScreenHandlers {
             register("engineering_table", EngineeringTableScreenHandler::new);
     public static final ScreenHandlerType<SampleAnalyzerScreenHandler> SAMPLE_ANALYZER =
             register("sample_analyzer", SampleAnalyzerScreenHandler::new);
+    public static final ScreenHandlerType<FuelRefineryScreenHandler> FUEL_REFINERY =
+            register("fuel_refinery", FuelRefineryScreenHandler::new);
+    public static final ScreenHandlerType<AirSeparatorScreenHandler> AIR_SEPARATOR =
+            register("air_separator", AirSeparatorScreenHandler::new);
+    public static final ScreenHandlerType<RocketAssemblerScreenHandler> ROCKET_ASSEMBLER =
+            register("rocket_assembler", RocketAssemblerScreenHandler::new);
 
     private ModScreenHandlers() {
     }
