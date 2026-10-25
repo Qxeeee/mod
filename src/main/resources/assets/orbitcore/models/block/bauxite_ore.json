@@ -1,0 +1,7 @@
+{
+  "parent": "orbitcore:block/ore_overlay",
+  "textures": {
+    "base": "minecraft:block/stone",
+    "overlay": "orbitcore:block/bauxite_ore_overlay"
+  }
+}

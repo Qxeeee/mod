@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "size": 14,
+    "discard_chance_on_air_exposure": 0.0,
+    "targets": [
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "orbitcore:anorthosite"
+        },
+        "state": {
+          "Name": "orbitcore:ice_regolith"
+        }
+      },
+      {
+        "target": {
+          "predicate_type": "minecraft:block_match",
+          "block": "orbitcore:regolith"
+        },
+        "state": {
+          "Name": "orbitcore:ice_regolith"
+        }
+      }
+    ]
+  }
+}

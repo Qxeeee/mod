@@ -1,0 +1,15 @@
+{
+  "type": "orbitcore:metallurgy",
+  "ingredient": {
+    "item": "minecraft:quartz"
+  },
+  "reductant": {
+    "tag": "minecraft:coals"
+  },
+  "result": {
+    "item": "orbitcore:silicon",
+    "count": 2
+  },
+  "heat": 1400,
+  "time": 160
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "orbitcore-gametest",
+  "version": "1.0.0",
+  "name": "OrbitCore Game Tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.orbitcore.gametest.OrbitCoreGameTest",
+      "com.orbitcore.gametest.EarthMaterialsGameTest",
+      "com.orbitcore.gametest.ScienceGameTest",
+      "com.orbitcore.gametest.RocketGameTest",
+      "com.orbitcore.gametest.FlightGameTest",
+      "com.orbitcore.gametest.MoonGameTest",
+      "com.orbitcore.gametest.SurvivalGameTest",
+      "com.orbitcore.gametest.LunarContentGameTest"
+    ]
+  },
+  "mixins": [
+    "orbitcore-gametest.mixins.json"
+  ],
+  "depends": {
+    "orbitcore": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

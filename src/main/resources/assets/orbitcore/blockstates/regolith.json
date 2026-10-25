@@ -1,0 +1,38 @@
+{
+  "variants": {
+    "trodden=false": [
+      {
+        "model": "orbitcore:block/regolith"
+      },
+      {
+        "model": "orbitcore:block/regolith",
+        "y": 90
+      },
+      {
+        "model": "orbitcore:block/regolith",
+        "y": 180
+      },
+      {
+        "model": "orbitcore:block/regolith",
+        "y": 270
+      }
+    ],
+    "trodden=true": [
+      {
+        "model": "orbitcore:block/regolith_trodden"
+      },
+      {
+        "model": "orbitcore:block/regolith_trodden",
+        "y": 90
+      },
+      {
+        "model": "orbitcore:block/regolith_trodden",
+        "y": 180
+      },
+      {
+        "model": "orbitcore:block/regolith_trodden",
+        "y": 270
+      }
+    ]
+  }
+}

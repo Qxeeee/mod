@@ -1,0 +1,8 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:maria_regolith"
+  },
+  "samples": 6,
+  "entry": "regolith"
+}

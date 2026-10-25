@@ -1,0 +1,25 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:heavy_rocketry",
+  "pattern": [
+    "PGP",
+    "SRS"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "G": {
+      "item": "minecraft:gunpowder"
+    },
+    "S": {
+      "tag": "c:steel_ingots"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "orbitcore:stage_decoupler"
+  }
+}

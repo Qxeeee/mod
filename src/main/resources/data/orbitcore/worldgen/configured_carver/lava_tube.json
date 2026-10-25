@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:cave",
+  "config": {
+    "probability": 0.06,
+    "replaceable": "#orbitcore:moon_carver_replaceables",
+    "lava_level": {
+      "above_bottom": 0
+    },
+    "y": {
+      "type": "minecraft:uniform",
+      "min_inclusive": {
+        "absolute": 15
+      },
+      "max_inclusive": {
+        "absolute": 55
+      }
+    },
+    "yScale": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": 0.4,
+        "max_exclusive": 0.7
+      }
+    },
+    "horizontal_radius_multiplier": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": 2.2,
+        "max_exclusive": 3.2
+      }
+    },
+    "vertical_radius_multiplier": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": 1.4,
+        "max_exclusive": 2.0
+      }
+    },
+    "floor_level": {
+      "type": "minecraft:uniform",
+      "value": {
+        "min_inclusive": -0.95,
+        "max_exclusive": -0.6
+      }
+    }
+  }
+}

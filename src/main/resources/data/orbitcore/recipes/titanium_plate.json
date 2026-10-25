@@ -1,0 +1,15 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "tag": "c:titanium_ingots"
+    }
+  },
+  "result": {
+    "item": "orbitcore:titanium_plate"
+  }
+}

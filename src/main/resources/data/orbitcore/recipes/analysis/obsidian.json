@@ -1,0 +1,7 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "minecraft:obsidian"
+  },
+  "samples": 1
+}

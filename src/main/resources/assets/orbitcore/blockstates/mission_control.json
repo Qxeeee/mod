@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "orbitcore:block/mission_control"
+    },
+    "facing=east": {
+      "model": "orbitcore:block/mission_control",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "orbitcore:block/mission_control",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "orbitcore:block/mission_control",
+      "y": 270
+    }
+  }
+}
