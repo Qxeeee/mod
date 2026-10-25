@@ -28,7 +28,7 @@ import java.util.Random;
  * ослепительный диск, а Земля висит на одном месте и меняет фазы.
  */
 public final class MoonSky {
-    private static final Identifier SUN = new Identifier("textures/environment/sun.png");
+    private static final Identifier SUN = OrbitCore.id("textures/environment/vacuum_sun.png");
     private static final Identifier EARTH = OrbitCore.id("textures/environment/earth_phases.png");
     private static final float[][] STARS = stars();
 
@@ -88,11 +88,11 @@ public final class MoonSky {
         BufferRenderer.drawWithGlobalProgram(buffer.end());
         RenderSystem.enableCull();
 
-        // Солнце: без атмосферы оно меньше рассеивает и кажется белее и резче
+        // Солнце: без атмосферы его ничто не рассеивает — резкий белый диск и тонкая корона
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, SUN);
         RenderSystem.blendFuncSeparate(770, 1, 1, 0);
-        float s = 24.0f;
+        float s = 34.0f;
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
         buffer.vertex(sky, -s, 100.0f, -s).texture(0, 0).next();
         buffer.vertex(sky, s, 100.0f, -s).texture(1, 0).next();

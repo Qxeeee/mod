@@ -13,8 +13,9 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Кинорежиссёр полёта. Пока игрок летит, прячет интерфейс, держит открытым экран полёта
- * и для каждого кадра выбирает план камеры: общий у стола, низкий у двигателей,
+ * Кинорежиссёр полёта. Пока игрок летит, прячет интерфейс, держит открытым экран полёта.
+ * По умолчанию игрок смотрит из кабины ({@link CockpitView}), а в режиме «кино» режиссёр
+ * для каждого кадра выбирает план камеры: общий у стола, низкий у двигателей,
  * взгляд снизу на уходящую ракету, погоня, отделение ступени, вход в атмосферу, парашют.
  */
 public final class FlightCinematics {
@@ -40,6 +41,7 @@ public final class FlightCinematics {
 
     private static void tick(MinecraftClient client) {
         RocketEntity rocket = rocket();
+        CockpitView.tick(client, rocket);
         if (rocket != null) {
             if (!active) {
                 active = true;
@@ -70,6 +72,9 @@ public final class FlightCinematics {
         RocketEntity rocket = rocket();
         if (rocket == null) {
             return null;
+        }
+        if (CockpitView.enabled()) {
+            return CockpitView.shot(rocket, tickDelta);
         }
         FlightPhase phase = rocket.phase();
         if (phase == FlightPhase.SPACE || phase == FlightPhase.TRANSFER) {

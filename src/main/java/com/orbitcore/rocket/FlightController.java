@@ -7,6 +7,7 @@ import com.orbitcore.item.SpacesuitItem;
 import com.orbitcore.registry.ModEntities;
 import com.orbitcore.registry.ModGameRules;
 import com.orbitcore.registry.ModItems;
+import com.orbitcore.registry.ModSounds;
 import com.orbitcore.rocket.RocketDesign.Destination;
 import com.orbitcore.science.ScienceType;
 import com.orbitcore.science.SpaceProgram;
@@ -346,6 +347,10 @@ public final class FlightController {
                 rocket.getWorld().spawnEntity(stage);
             }
             sound((ServerWorld) rocket.getWorld(), SoundEvents.ENTITY_FIREWORK_ROCKET_BLAST, 3.0f, 0.5f);
+            // Экипаж слышит отделение у себя в кабине, остальные — снаружи
+            ServerWorld world = (ServerWorld) rocket.getWorld();
+            world.playSound(world.getServer().getPlayerManager().getPlayer(crew), rocket.getX(), rocket.getY(), rocket.getZ(),
+                    ModSounds.FLIGHT_SEPARATION, SoundCategory.NEUTRAL, 4.0f, 1.0f);
         }
         rocket.setDesign(upper);
         rocket.setPosition(rocket.getX(), rocket.getY() + drop, rocket.getZ());

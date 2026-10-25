@@ -23,8 +23,10 @@ public final class VacuumAudio {
                 || category == SoundCategory.VOICE) {
             return 1.0f;
         }
-        // Сигналы скафандра звучат внутри шлема
-        if (OrbitCore.MOD_ID.equals(sound.getId().getNamespace()) && sound.getId().getPath().startsWith("item.")) {
+        // Сигналы скафандра, эфир и то, что звучит «в голове», слышны внутри шлема
+        String path = sound.getId().getPath();
+        if (OrbitCore.MOD_ID.equals(sound.getId().getNamespace())
+                && (path.startsWith("item.") || path.startsWith("ambient.void.") || path.startsWith("echo.") || path.startsWith("flight."))) {
             return 1.0f;
         }
         ClientPlayerEntity player = MinecraftClient.getInstance().player;

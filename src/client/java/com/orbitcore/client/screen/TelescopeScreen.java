@@ -244,7 +244,7 @@ public class TelescopeScreen extends Screen {
         int x = (int) p[0] - size / 2;
         int y = (int) p[1] - size / 2;
         int phase = client.world.getMoonPhase();
-        context.drawTexture(MOON, x, y, size, size, phase * 64, 0, 64, 64, 512, 64);
+        context.drawTexture(MOON, x, y, size, size, phase * 128, 0, 128, 128, 1024, 128);
     }
 
     /** Тёмная полоса леса у горизонта. */

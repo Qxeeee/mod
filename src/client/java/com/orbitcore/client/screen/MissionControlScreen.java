@@ -256,7 +256,7 @@ public class MissionControlScreen extends Screen {
                 context.fill(x, y, x + 24, y + 24, PANEL_DARK);
                 context.drawText(textRenderer, "?", x + 10, y + 8, TEXT_FAINT, false);
             } else if (body == CelestialBody.MOON) {
-                context.drawTexture(MOON, x, y, 24, 24, 0, 0, 64, 64, 512, 64);
+                context.drawTexture(MOON, x, y, 24, 24, 0, 0, 128, 128, 1024, 128);
             } else {
                 context.drawItem(new ItemStack(Items.GRASS_BLOCK), x + 4, y + 4);
             }

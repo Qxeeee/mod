@@ -143,5 +143,193 @@
         "volume": 0.8
       }
     ]
+  },
+  "ambient.void.drone": {
+    "subtitle": "subtitles.orbitcore.void.drone",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/void_drone",
+        "stream": true
+      }
+    ]
+  },
+  "ambient.void.swell": {
+    "subtitle": "subtitles.orbitcore.void.swell",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/void_swell"
+      }
+    ]
+  },
+  "ambient.void.whisper": {
+    "subtitle": "subtitles.orbitcore.void.whisper",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/whisper1"
+      },
+      {
+        "name": "orbitcore:ambient/whisper2"
+      },
+      {
+        "name": "orbitcore:ambient/whisper3"
+      }
+    ]
+  },
+  "ambient.void.creak": {
+    "subtitle": "subtitles.orbitcore.void.creak",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/creak1"
+      },
+      {
+        "name": "orbitcore:ambient/creak2"
+      },
+      {
+        "name": "orbitcore:ambient/creak3"
+      }
+    ]
+  },
+  "ambient.void.heartbeat": {
+    "subtitle": "subtitles.orbitcore.void.heartbeat",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/heartbeat"
+      }
+    ]
+  },
+  "ambient.void.breath": {
+    "subtitle": "subtitles.orbitcore.void.breath",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/breath"
+      }
+    ]
+  },
+  "ambient.void.knock": {
+    "subtitle": "subtitles.orbitcore.void.knock",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/knock"
+      }
+    ]
+  },
+  "ambient.void.radio_ghost": {
+    "subtitle": "subtitles.orbitcore.void.radio_ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:ambient/radio_ghost"
+      }
+    ]
+  },
+  "echo.signal": {
+    "subtitle": "subtitles.orbitcore.echo.signal",
+    "sounds": [
+      {
+        "name": "orbitcore:echo/signal"
+      }
+    ]
+  },
+  "echo.hum": {
+    "subtitle": "subtitles.orbitcore.echo.hum",
+    "sounds": [
+      {
+        "name": "orbitcore:echo/hum",
+        "stream": true
+      }
+    ]
+  },
+  "echo.stinger": {
+    "subtitle": "subtitles.orbitcore.echo.stinger",
+    "sounds": [
+      {
+        "name": "orbitcore:echo/stinger"
+      }
+    ]
+  },
+  "echo.static": {
+    "subtitle": "subtitles.orbitcore.echo.static",
+    "sounds": [
+      {
+        "name": "orbitcore:echo/static"
+      }
+    ]
+  },
+  "echo.contact": {
+    "subtitle": "subtitles.orbitcore.echo.contact",
+    "sounds": [
+      {
+        "name": "orbitcore:echo/contact"
+      }
+    ]
+  },
+  "echo.crystal": {
+    "subtitle": "subtitles.orbitcore.echo.crystal",
+    "sounds": [
+      {
+        "name": "orbitcore:echo/crystal1"
+      },
+      {
+        "name": "orbitcore:echo/crystal2"
+      },
+      {
+        "name": "orbitcore:echo/crystal3"
+      }
+    ]
+  },
+  "flight.quindar_in": {
+    "subtitle": "subtitles.orbitcore.flight.quindar",
+    "sounds": [
+      {
+        "name": "orbitcore:flight/quindar_in"
+      }
+    ]
+  },
+  "flight.quindar_out": {
+    "subtitle": "subtitles.orbitcore.flight.quindar",
+    "sounds": [
+      {
+        "name": "orbitcore:flight/quindar_out"
+      }
+    ]
+  },
+  "flight.cabin_rumble": {
+    "subtitle": "subtitles.orbitcore.flight.cabin_rumble",
+    "sounds": [
+      {
+        "name": "orbitcore:flight/cabin_rumble"
+      }
+    ]
+  },
+  "flight.separation": {
+    "subtitle": "subtitles.orbitcore.flight.separation",
+    "sounds": [
+      {
+        "name": "orbitcore:flight/separation"
+      }
+    ]
+  },
+  "flight.plasma": {
+    "subtitle": "subtitles.orbitcore.flight.plasma",
+    "sounds": [
+      {
+        "name": "orbitcore:flight/plasma"
+      }
+    ]
+  },
+  "flight.hull_groan": {
+    "subtitle": "subtitles.orbitcore.flight.hull_groan",
+    "sounds": [
+      {
+        "name": "orbitcore:flight/hull_groan"
+      }
+    ]
+  },
+  "vehicle.rover.motor": {
+    "subtitle": "subtitles.orbitcore.rover.motor",
+    "sounds": [
+      {
+        "name": "orbitcore:vehicle/rover_motor"
+      }
+    ]
   }
 }

@@ -5,7 +5,8 @@
 
     python tools/textures/generate.py
 
-Нужен Python 3 и Pillow (pip install pillow).
+Нужен Python 3 и Pillow (pip install pillow). Земля, Луна и Солнце рисуются
+отдельно, реалистично — в planets.py (там ещё нужен numpy).
 """
 import math
 import random
@@ -646,72 +647,6 @@ def analyzer_top():
     return machine_top(72, detail)
 
 
-def moon_phases():
-    """Луна для окуляра телескопа: 8 фаз по 64×64 в одну полосу (0 — полнолуние, 4 — новолуние)."""
-    size = 64
-    rng = random.Random(81)
-    craters = [(rng.uniform(-0.8, 0.8), rng.uniform(-0.8, 0.8), rng.uniform(0.03, 0.09)) for _ in range(26)]
-    grid = [[rng.random() for _ in range(33)] for _ in range(33)]
-
-    def smooth_noise(x, y, cells):
-        """Плавный шум: сетка cells×cells на квадрат [-1, 1]², сглаженная интерполяция."""
-        gx, gy = (x + 1) / 2 * cells, (y + 1) / 2 * cells
-        ix, iy = max(0, min(cells - 1, int(gx))), max(0, min(cells - 1, int(gy)))
-        fx, fy = gx - ix, gy - iy
-        fx, fy = fx * fx * (3 - 2 * fx), fy * fy * (3 - 2 * fy)
-        top = grid[iy][ix] * (1 - fx) + grid[iy][ix + 1] * fx
-        bottom = grid[iy + 1][ix] * (1 - fx) + grid[iy + 1][ix + 1] * fx
-        return top * (1 - fy) + bottom * fy
-
-    def maria(x, y):
-        # Несколько слоёв шума; моря тяготеют к северо-западу видимой стороны, как у настоящей Луны
-        n = smooth_noise(x, y, 5) * 0.55 + smooth_noise(-y, x, 11) * 0.3 + smooth_noise(x, -y, 23) * 0.15
-        bias = 0.16 * (-x * 0.6 - y * 0.4)
-        return max(0.0, min(1.0, (n + bias - 0.47) * 7))
-    sheet = Image.new("RGBA", (size * 8, size), CLEAR)
-    base = Image.new("RGBA", (size, size), CLEAR)
-    normals = {}
-    for py in range(size):
-        for px in range(size):
-            x, y = (px + 0.5) / size * 2 - 1, (py + 0.5) / size * 2 - 1
-            r2 = x * x + y * y
-            if r2 > 1:
-                continue
-            z = math.sqrt(1 - r2)
-            v = 0.82 + rng.uniform(-0.035, 0.035) - 0.3 * maria(x, y)
-            for cx, cy, cr in craters:
-                d = math.hypot(x - cx, y - cy)
-                if d < cr:
-                    v -= 0.1
-                elif d < cr * 1.35 and (x - cx) + (y - cy) < 0:
-                    v += 0.08
-            # Кратер Тихо с лучами
-            d = math.hypot(x + 0.15, y - 0.62)
-            if d < 0.06:
-                v += 0.2
-            elif abs(math.sin(math.atan2(y - 0.62, x + 0.15) * 7)) > 0.97 and d < 0.6:
-                v += 0.06
-            v *= 0.75 + 0.25 * z
-            c = max(0, min(255, int(v * 255)))
-            base.putpixel((px, py), (c, c, min(255, c + 6), 255))
-            normals[(px, py)] = (x, y, z)
-    for phase in range(8):
-        frame_img = base.copy()
-        if phase == 4:
-            angle = math.pi
-        else:
-            angle = (phase if phase < 4 else phase - 8) * math.pi / 4
-        sun = (-math.sin(angle), 0.0, math.cos(angle))
-        for (px, py), (x, y, z) in normals.items():
-            light = x * sun[0] + y * sun[1] + z * sun[2]
-            if light < 0.04:
-                r, g, b, a = frame_img.getpixel((px, py))
-                k = 0.1 if light < -0.04 else 0.1 + (light + 0.04) / 0.08 * 0.6
-                frame_img.putpixel((px, py), (int(r * k), int(g * k), int(b * k + 6), a))
-        sheet.paste(frame_img, (phase * size, 0))
-    return sheet
-
-
 def eyepiece():
     """Круг окуляра: прозрачный центр и мягкое затемнение к краю."""
     size = 256
@@ -1013,97 +948,6 @@ def rocket_icon():
     return img
 
 
-def value_noise_3d(seed):
-    """Плавный 3D-шум на целочисленной решётке со сглаживанием — для карт планет."""
-    rng = random.Random(seed)
-    perm = list(range(256))
-    rng.shuffle(perm)
-    perm += perm
-    values = [rng.random() for _ in range(256)]
-
-    def lattice(ix, iy, iz):
-        return values[perm[(perm[(perm[ix & 255] + iy) & 255] + iz) & 255]]
-
-    def smooth(t):
-        return t * t * (3 - 2 * t)
-
-    def noise(x, y, z):
-        ix, iy, iz = math.floor(x), math.floor(y), math.floor(z)
-        fx, fy, fz = smooth(x - ix), smooth(y - iy), smooth(z - iz)
-        result = 0.0
-        for dx in (0, 1):
-            for dy in (0, 1):
-                for dz in (0, 1):
-                    w = (fx if dx else 1 - fx) * (fy if dy else 1 - fy) * (fz if dz else 1 - fz)
-                    result += w * lattice(ix + dx, iy + dy, iz + dz)
-        return result
-
-    def fbm(x, y, z, octaves=5):
-        total, amp, freq, norm = 0.0, 1.0, 1.0, 0.0
-        for _ in range(octaves):
-            total += noise(x * freq, y * freq, z * freq) * amp
-            norm += amp
-            amp *= 0.5
-            freq *= 2.0
-        return total / norm
-
-    return fbm
-
-
-def earth_from_orbit():
-    """Земля для вида с орбиты: океан, материки, льды, облака, ночная сторона с огнями, атмосфера."""
-    size, radius = 512, 236
-    land = value_noise_3d(201)
-    clouds = value_noise_3d(202)
-    img = Image.new("RGBA", (size, size), CLEAR)
-    sun = (-0.55, -0.35, 0.76)
-    for py in range(size):
-        for px in range(size):
-            x, y = (px + 0.5 - size / 2) / radius, (py + 0.5 - size / 2) / radius
-            r2 = x * x + y * y
-            if r2 > 1:
-                # Свечение атмосферы за краем диска
-                d = math.sqrt(r2)
-                if d < 1.08:
-                    a = int(200 * (1 - (d - 1) / 0.08) ** 2)
-                    img.putpixel((px, py), (110, 170, 255, a))
-                continue
-            z = math.sqrt(1 - r2)
-            # С орбиты видна только верхняя кромка диска, поэтому шар повёрнут
-            # полюсом к зрителю: у края оказываются экватор, океаны и материки
-            gx, gy, gz = x, -z, y
-            sx, sy, sz = gx * 1.6 + 3.1, gy * 1.6 + 1.3, gz * 1.6 + 7.0
-            h = land(sx, sy, sz)
-            lat = abs(gy)
-            ice_edge = 0.9 + (land(sx * 3, sy * 3, sz * 3) - 0.5) * 0.12
-            if lat > ice_edge:
-                c = (232, 240, 248)
-            elif h > 0.57:
-                dry = land(sx * 2 + 9, sy * 2, sz * 2)
-                c = (196, 168, 112) if dry > 0.62 and lat < 0.5 else (70, 118, 58) if h < 0.66 else (98, 104, 72)
-            else:
-                depth = max(0.0, 0.57 - h) * 4
-                c = (int(28 - 10 * depth), int(78 - 30 * depth), int(150 - 30 * depth))
-            cl = clouds(sx * 2.2 + 40, sy * 3.5, sz * 2.2)
-            if cl > 0.56:
-                k = min(1.0, (cl - 0.56) * 6)
-                c = tuple(int(v * (1 - k) + 245 * k) for v in c)
-            light = x * sun[0] + y * sun[1] + z * sun[2]
-            if light > 0:
-                k = 0.35 + 0.65 * min(1.0, light * 1.4)
-                c = tuple(int(v * k) for v in c)
-            else:
-                c = tuple(int(v * 0.08) for v in c)
-                # Огни городов на ночной стороне
-                if 0.57 < h < 0.64 and land(sx * 9, sy * 9, sz * 9) > 0.7:
-                    c = (255, 196, 110)
-            # Голубая дымка к краю диска
-            edge = (1 - z) ** 2
-            c = tuple(int(v * (1 - edge * 0.6) + b * edge * 0.6) for v, b in zip(c, (120, 180, 255)))
-            img.putpixel((px, py), c + (255,))
-    return img
-
-
 REGOLITH = [(118, 118, 120), (138, 138, 140), (156, 156, 158), (172, 172, 174), (188, 188, 190)]
 MARIA = [(58, 58, 62), (72, 72, 76), (86, 86, 90), (100, 100, 104), (116, 116, 120)]
 
@@ -1182,61 +1026,6 @@ def raw_ilmenite():
     for x, y in ((6, 6), (9, 9), (7, 11)):
         put(img, x, y, (220, 226, 240))
     return img
-
-
-def earth_disk(size=128):
-    """Земля целиком (полюс сверху) — для перелёта и неба Луны."""
-    land = value_noise_3d(201)
-    clouds = value_noise_3d(202)
-    img = Image.new("RGBA", (size, size), CLEAR)
-    radius = size / 2 - 3
-    for py in range(size):
-        for px in range(size):
-            x, y = (px + 0.5 - size / 2) / radius, (py + 0.5 - size / 2) / radius
-            r2 = x * x + y * y
-            if r2 > 1:
-                d = math.sqrt(r2)
-                if d < 1.07:
-                    img.putpixel((px, py), (110, 170, 255, int(170 * (1 - (d - 1) / 0.07))))
-                continue
-            z = math.sqrt(1 - r2)
-            sx, sy, sz = x * 1.6 + 3.1, y * 1.6 + 1.3, z * 1.6 + 7.0
-            h = land(sx, sy, sz)
-            if abs(y) > 0.88:
-                c = (232, 240, 248)
-            elif h > 0.57:
-                c = (70, 118, 58) if h < 0.66 else (150, 136, 96)
-            else:
-                c = (24, 64, 140)
-            if clouds(sx * 2.2 + 40, sy * 3.5, sz * 2.2) > 0.58:
-                c = (240, 244, 248)
-            k = 0.55 + 0.45 * z
-            img.putpixel((px, py), tuple(int(v * k) for v in c) + (255,))
-    return img
-
-
-def earth_phases(disk):
-    """Восемь фаз Земли для неба Луны (полоса 8×64), 0 — «полноземлие»."""
-    size = 64
-    small = disk.resize((size, size), Image.LANCZOS)
-    sheet = Image.new("RGBA", (size * 8, size), CLEAR)
-    for phase in range(8):
-        frame_img = small.copy()
-        angle = math.pi if phase == 4 else (phase if phase < 4 else phase - 8) * math.pi / 4
-        sun = (-math.sin(angle), 0.0, math.cos(angle))
-        for py in range(size):
-            for px in range(size):
-                r, g, b, a = frame_img.getpixel((px, py))
-                if a < 200:
-                    continue
-                x, y = (px + 0.5 - size / 2) / (size / 2 - 1.5), (py + 0.5 - size / 2) / (size / 2 - 1.5)
-                z = math.sqrt(max(0.0, 1 - x * x - y * y))
-                light = x * sun[0] + y * sun[1] + z * sun[2]
-                if light < 0.04:
-                    k = 0.12 if light < -0.04 else 0.12 + (light + 0.04) / 0.08 * 0.6
-                    frame_img.putpixel((px, py), (int(r * k), int(g * k), int(b * k + 4), a))
-        sheet.paste(frame_img, (phase * size, 0))
-    return sheet
 
 
 def parachute_canopy():
@@ -1688,21 +1477,12 @@ def main():
     save(ilmenite_ore(), BLOCK, "ilmenite_ore")
     save(ice_regolith(), BLOCK, "ice_regolith")
     save(raw_ilmenite(), ITEM, "raw_ilmenite")
-    disk = earth_disk()
-    environment = ASSETS / "environment"
-    environment.mkdir(parents=True, exist_ok=True)
-    earth_phases(disk).save(environment / "earth_phases.png")
 
     save(parachute_canopy(), BLOCK, "parachute_canopy")
     save(parachute_line(), BLOCK, "parachute_line")
-    flight_gui = GUI / "flight"
-    flight_gui.mkdir(parents=True, exist_ok=True)
-    earth_from_orbit().save(flight_gui / "earth.png")
-    disk.save(flight_gui / "earth_disk.png")
 
     telescope_gui = GUI / "telescope"
     telescope_gui.mkdir(parents=True, exist_ok=True)
-    moon_phases().save(telescope_gui / "moon.png")
     eyepiece().save(telescope_gui / "eyepiece.png")
 
     save(suit_helmet_icon(), ITEM, "spacesuit_helmet")

@@ -19,6 +19,27 @@ public final class ModSounds {
     public static final SoundEvent METEOR_INCOMING = register("event.meteor.incoming");
     public static final SoundEvent METEOR_IMPACT = register("event.meteor.impact");
     public static final SoundEvent MOONQUAKE = register("event.moonquake");
+    public static final SoundEvent VOID_DRONE = register("ambient.void.drone");
+    public static final SoundEvent VOID_SWELL = register("ambient.void.swell");
+    public static final SoundEvent VOID_WHISPER = register("ambient.void.whisper");
+    public static final SoundEvent VOID_CREAK = register("ambient.void.creak");
+    public static final SoundEvent VOID_HEARTBEAT = register("ambient.void.heartbeat");
+    public static final SoundEvent VOID_BREATH = register("ambient.void.breath");
+    public static final SoundEvent VOID_KNOCK = register("ambient.void.knock");
+    public static final SoundEvent VOID_RADIO_GHOST = register("ambient.void.radio_ghost");
+    public static final SoundEvent ECHO_SIGNAL = register("echo.signal");
+    public static final SoundEvent ECHO_HUM = register("echo.hum");
+    public static final SoundEvent ECHO_STINGER = register("echo.stinger");
+    public static final SoundEvent ECHO_STATIC = register("echo.static");
+    public static final SoundEvent ECHO_CONTACT = register("echo.contact");
+    public static final SoundEvent ECHO_CRYSTAL = register("echo.crystal");
+    public static final SoundEvent FLIGHT_QUINDAR_IN = register("flight.quindar_in");
+    public static final SoundEvent FLIGHT_QUINDAR_OUT = register("flight.quindar_out");
+    public static final SoundEvent FLIGHT_CABIN_RUMBLE = register("flight.cabin_rumble");
+    public static final SoundEvent FLIGHT_SEPARATION = register("flight.separation");
+    public static final SoundEvent FLIGHT_PLASMA = register("flight.plasma");
+    public static final SoundEvent FLIGHT_HULL_GROAN = register("flight.hull_groan");
+    public static final SoundEvent ROVER_MOTOR = register("vehicle.rover.motor");
 
     private ModSounds() {
     }

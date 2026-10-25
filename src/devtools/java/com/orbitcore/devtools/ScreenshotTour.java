@@ -12,6 +12,8 @@ import com.orbitcore.block.entity.RegolithProcessorBlockEntity;
 import com.orbitcore.block.entity.RocketAssemblerBlockEntity;
 import com.orbitcore.block.entity.SampleAnalyzerBlockEntity;
 import com.orbitcore.block.entity.SealerBlockEntity;
+import com.orbitcore.client.flight.CockpitView;
+import com.orbitcore.client.flight.FlightCinematics;
 import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.client.render.RocketModelRenderer;
 import com.orbitcore.client.screen.MissionControlScreen;
@@ -188,6 +190,13 @@ public class ScreenshotTour implements ClientModInitializer {
             step(20, c -> c.scheduleStop());
             return;
         }
+        // Быстрый режим для полёта из кабины: файл run/tour-flight-only
+        if (new File(client.runDirectory, "tour-flight-only").exists()) {
+            planCockpit(client);
+            planMoon(client);
+            step(20, c -> c.scheduleStop());
+            return;
+        }
         // Быстрый режим для этапа 0.8: файл run/tour-lunar-only
         if (new File(client.runDirectory, "tour-lunar-only").exists()) {
             planMoonSky(client);
@@ -344,6 +353,7 @@ public class ScreenshotTour implements ClientModInitializer {
 
     /** Этап 0.5: полёт лунной ракеты на орбиту и обратно, кадры кинокамеры. */
     private void planFlight(MinecraftClient client, int[] rocketId) {
+        step(0, c -> cockpit(false));
         server(client, (server, world, player) -> {
             if (world.getEntityById(rocketId[0]) instanceof RocketEntity rocket) {
                 rocket.setFuel(rocket.design().propellantCapacity(), rocket.design().propellantCapacity());
@@ -389,7 +399,51 @@ public class ScreenshotTour implements ClientModInitializer {
         step(30, c -> {
         });
         step(0, c -> shot(c, "29_landed"));
+        step(0, c -> cockpit(true));
         planMoon(client);
+    }
+
+    private static void cockpit(boolean on) {
+        if (CockpitView.enabled() != on) {
+            CockpitView.toggle();
+        }
+    }
+
+    /** Полёт от первого лица: кабина на старте, на подъёме, у края космоса, на орбите, в плазме и под парашютом. */
+    private void planCockpit(MinecraftClient client) {
+        BlockPos pad = origin.north(16);
+        server(client, (server, world, player) -> {
+            server.getGameRules().get(ModGameRules.ENGINEER_MODE).set(false, server);
+            world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server);
+            world.setTimeOfDay(3000);
+            BlockPos top = world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, pad);
+            RocketEntity rocket = ModEntities.ROCKET.create(world);
+            rocket.refreshPositionAndAngles(top.getX() + 0.5, top.getY(), top.getZ() + 0.5, 0, 0);
+            RocketDesign design = new RocketDesign(MOON_ROCKET);
+            rocket.setDesign(design);
+            rocket.setFuel(design.propellantCapacity(), design.propellantCapacity());
+            world.spawnEntity(rocket);
+            player.teleport(world, top.getX() + 2.5, top.getY(), top.getZ() - 2.5, 0, 0);
+            FlightController.launch(rocket, player, RocketDesign.Destination.EARTH_ORBIT);
+        }, 30);
+        step(0, c -> cockpit(true));
+        step(90, c -> shot(c, "c1_countdown"));
+        step(70, c -> shot(c, "c2_ignition"));
+        step(50, c -> shot(c, "c3_liftoff"));
+        waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && r.separationTick() > 0, 900);
+        step(3, c -> shot(c, "c4_separation"));
+        waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && FlightCinematics.altitudeKm(r) > 82, 900);
+        step(0, c -> shot(c, "c5_edge_of_space"));
+        waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && r.phase() == FlightPhase.SPACE, 900);
+        step(40, c -> shot(c, "c6_orbit"));
+        step(0, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_MANEUVER, 0));
+        waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && r.phase() == FlightPhase.REENTRY, 300);
+        step(60, c -> shot(c, "c7_reentry"));
+        waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && r.parachute(), 600);
+        step(40, c -> shot(c, "c8_parachute"));
+        waitFor(c -> c.player.getVehicle() == null, 900);
+        step(30, c -> {
+        });
     }
 
     /** Объёмные модели: лунная ракета с разных сторон, малая ракета, скафандр. */
@@ -513,7 +567,7 @@ public class ScreenshotTour implements ClientModInitializer {
         step(5, c -> shot(c, "31_transfer"));
         step(0, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_SKIP, 0));
         waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && r.phase() == FlightPhase.DESCENT, 400);
-        step(50, c -> {
+        step(100, c -> {
         });
         step(0, c -> shot(c, "32_descent"));
         waitFor(c -> c.player.getVehicle() == null && c.world.getRegistryKey() == ModDimensions.MOON, 1200);

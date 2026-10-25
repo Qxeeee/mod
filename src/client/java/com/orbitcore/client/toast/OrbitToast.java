@@ -48,7 +48,7 @@ public class OrbitToast implements Toast {
         context.fill(0, 0, 3, height, accent);
         if (moonIcon) {
             // Полная Луна — первый кадр полосы фаз
-            context.drawTexture(MOON, 8, 8, 16, 16, 0, 0, 64, 64, 512, 64);
+            context.drawTexture(MOON, 8, 8, 16, 16, 0, 0, 128, 128, 1024, 128);
         } else if (icon != null) {
             context.drawItem(icon, 8, 8);
         }
