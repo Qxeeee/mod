@@ -1,0 +1,155 @@
+plugins {
+    id 'fabric-loom' version "${loom_version}"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupAndSubgroups 'software.bernie'
+            includeGroup 'com.eliotlash.mclib'
+        }
+    }
+    maven {
+        name = 'Ladysnake'
+        url = 'https://maven.ladysnake.org/releases'
+        content {
+            includeGroup 'dev.onyxstudios.cardinal-components-api'
+            includeGroup 'org.ladysnake'
+        }
+    }
+}
+
+sourceSets {
+    // Игровые тесты: запускают сервер и проверяют мод. В готовый .jar не попадают.
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
+loom {
+    // Код клиента (рендер, экраны, катсцены) отдельно от общего кода,
+    // чтобы мод не падал на выделенном сервере
+    splitEnvironmentSourceSets()
+
+    // Миксины клиента (кинокамера полёта) — со своей таблицей имён для готового .jar
+    mixin {
+        add sourceSets.client, 'orbitcore.client.refmap.json'
+    }
+
+    mods {
+        orbitcore {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+        'orbitcore-gametest' {
+            sourceSet sourceSets.gametest
+        }
+    }
+
+    runs {
+        configureEach {
+            // GeckoLib в среде разработки добавляет свои демо-примеры (машинка, мутант-зомби,
+            // террариум и т.д.). У игроков их нет, но в наших запусках они только мешают.
+            vmArg '-Dgeckolib.disable_examples=true'
+        }
+        gametest {
+            server()
+            name 'Game Test'
+            source sourceSets.gametest
+            vmArg '-Dfabric-api.gametest'
+            vmArg "-Dfabric-api.gametest.report-file=${project.layout.buildDirectory.get().asFile}/gametest/junit.xml"
+            runDir 'build/gametest'
+        }
+    }
+}
+
+// Фототур (gradlew runTour): сам создаёт мир, расставляет блоки, открывает экраны
+// и сохраняет скриншоты в run/screenshots/tour. В готовый .jar не попадает.
+sourceSets {
+    devtools {
+        compileClasspath += sourceSets.client.compileClasspath + sourceSets.client.output + sourceSets.main.output
+        runtimeClasspath += sourceSets.client.runtimeClasspath + sourceSets.client.output + sourceSets.main.output
+    }
+}
+
+loom {
+    mods {
+        'orbitcore-devtools' {
+            sourceSet sourceSets.devtools
+        }
+    }
+    runs {
+        tour {
+            client()
+            name 'Screenshot Tour'
+            source sourceSets.devtools
+            runDir 'run'
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // Анимированные модели: ракеты, существа, техника. Игрок ставит отдельно.
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.20.1:${project.geckolib_version}"
+
+    // Встраиваются в наш .jar (include), игроку ставить не нужно.
+    // Данные игрока и мира: кислород, радиация, наука, открытые планеты
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}")
+    modImplementation include("dev.onyxstudios.cardinal-components-api:cardinal-components-world:${project.cca_version}")
+    // Энергия, совместимая с Tech Reborn и другими тех-модами
+    modImplementation include("teamreborn:energy:${project.energy_version}") {
+        transitive = false
+    }
+    // Постобработка экрана: марево, плазма, вспышки
+    modImplementation include("org.ladysnake:satin:${project.satin_version}")
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+    it.options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+// Каждый прогон игровых тестов начинается с чистого мира: иначе космическая программа
+// копила бы очки и открытия от прошлых запусков
+tasks.matching { it.name == 'runGametest' }.configureEach {
+    doFirst {
+        project.delete(layout.buildDirectory.dir('gametest/world'))
+    }
+}
+
+// gradlew release — собрать мод и положить готовый .jar в папку release/
+tasks.register('release', Copy) {
+    group = 'orbitcore'
+    description = 'Собирает мод и кладёт готовый .jar в папку release/'
+    from remapJar
+    into layout.projectDirectory.dir('release')
+}

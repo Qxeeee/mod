@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/sample_analyzer_top",
+    "side": "orbitcore:block/machine_side",
+    "front": "orbitcore:block/sample_analyzer_front"
+  }
+}
