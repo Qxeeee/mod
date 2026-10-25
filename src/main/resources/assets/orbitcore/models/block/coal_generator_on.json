@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/coal_generator_top",
+    "side": "orbitcore:block/machine_side",
+    "front": "orbitcore:block/coal_generator_front_on"
+  }
+}

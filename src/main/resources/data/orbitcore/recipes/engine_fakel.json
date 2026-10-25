@@ -1,0 +1,23 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:heavy_rocketry",
+  "pattern": [
+    "TCT",
+    "TET",
+    "T T"
+  ],
+  "key": {
+    "T": {
+      "tag": "c:titanium_plates"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "E": {
+      "item": "orbitcore:engine_iskra"
+    }
+  },
+  "result": {
+    "item": "orbitcore:engine_fakel"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "PCP",
+    "WMW",
+    "PBP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "result": {
+    "item": "orbitcore:electrolyzer"
+  }
+}

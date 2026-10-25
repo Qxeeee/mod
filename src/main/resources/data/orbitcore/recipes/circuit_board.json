@@ -1,0 +1,24 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "WRW",
+    "SGS"
+  ],
+  "key": {
+    "W": {
+      "item": "orbitcore:copper_wire"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "S": {
+      "tag": "c:silicon"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "item": "orbitcore:circuit_board"
+  }
+}
