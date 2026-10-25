@@ -1,0 +1,8 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:ice_regolith"
+  },
+  "samples": 8,
+  "entry": "lunar_ice"
+}

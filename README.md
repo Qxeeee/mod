@@ -1,1 +1,54 @@
-# mod
+# OrbitCore
+
+Мод для Minecraft **1.20.1 (Fabric)** про космические полёты и исследования: модульные ракеты, кинематографичные старты, Луна, планеты Солнечной системы и сюжет «Эхо».
+
+- Полный план и принятые решения: [docs/PLAN.md](docs/PLAN.md)
+- Готовые `.jar` для игры: [release/](release/)
+
+## Сборка
+
+Нужен только **JDK 17**. Gradle и все библиотеки скачиваются сами.
+
+| Команда | Что делает |
+|---|---|
+| `gradlew build` | Собирает мод в `build/libs/` |
+| `gradlew release` | Собирает мод и кладёт `.jar` в `release/` |
+| `gradlew runClient` | Запускает игру с модом |
+| `gradlew runServer` | Запускает сервер с модом |
+| `gradlew runGametest` | Запускает игровые тесты на сервере |
+| `gradlew runTour` | Фототур: игра сама создаёт мир, расставляет блоки, открывает экраны и сохраняет скриншоты в `run/screenshots/tour`, потом закрывается. Файл `run/tour-models-only` (или `tour-moon-only`, `tour-survival-only`, `tour-lunar-only`, `tour-flight-only`, `tour-echo-only`) включает короткий тур только по своей части |
+
+На Windows команды пишутся так: `.\gradlew build`.
+
+## Как устроен код
+
+```
+src/
+├─ main/      ← общий код (клиент и сервер): блоки, предметы, сущности, измерения
+├─ client/    ← только клиент: рендер, экраны, катсцены, звук
+├─ gametest/  ← игровые тесты, в готовый мод не попадают
+└─ devtools/  ← фототур для проверки внешнего вида, в готовый мод не попадает
+tools/
+├─ textures/generate.py  ← рисует пиксельные текстуры мода (Python + Pillow)
+├─ textures/planets.py   ← реалистичные Земля, Луна, Солнце и вид с орбиты (numpy)
+├─ textures/cockpit.py   ← кабина корабля для полёта от первого лица
+├─ sounds/synthesize.py  ← синтезирует звуки мода: страх пустоты, «Эхо», кабина (numpy + ffmpeg)
+├─ models/generate.py    ← строит объёмные модели ракеты и скафандра (GeckoLib)
+└─ check_assets.py       ← проверяет модели, текстуры, лут и переводы
+blockbench/              ← те же модели проектами Blockbench (.bbmodel), чтобы их открыть и посмотреть
+```
+
+Текстуры не рисуются вручную: правим `tools/textures/generate.py` и запускаем `python tools/textures/generate.py`. Планеты и кабина — так же, скриптами `planets.py` и `cockpit.py`.
+
+Звуки тоже собираются скриптом: `python tools/sounds/synthesize.py`. Какой звук где звучит и как заменить любой из них своим (например, из ElevenLabs) — в [docs/SOUNDS.md](docs/SOUNDS.md).
+
+Объёмные модели (модули ракеты, скафандр) собираются из кубов в `tools/models/generate.py`: `python tools/models/generate.py` пишет геометрию GeckoLib в `assets/orbitcore/geo`, развёртки текстур и проекты Blockbench в `blockbench/`. Если модель удобнее доработать руками, откройте `.bbmodel` в Blockbench (нужен плагин GeckoLib для экспорта), экспортируйте `.geo.json` и текстуру поверх сгенерированных — и уберите эту модель из генератора, чтобы правки не затёрлись.
+
+## Как работаем вдвоём
+
+Где остановились, как слить открытые Pull Request и что делать дальше — в [docs/HANDOFF.md](docs/HANDOFF.md).
+
+1. Перед началом работы: `git switch main` и `git pull`.
+2. Новая задача — новая ветка: `git switch -c feature/<что-делаем>`.
+3. Готово — отправляем ветку и открываем Pull Request в `main`.
+4. Второй участник смотрит и сливает. GitHub сам собирает мод и прогоняет тесты на каждый Pull Request.

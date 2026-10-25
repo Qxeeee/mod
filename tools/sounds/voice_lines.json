@@ -1,0 +1,30 @@
+{
+  "_comment": "Реплики озвучки. Тексты записей с планшетов (zarya_*, builder_*) берутся из файлов перевода. style: radio — эфир ЦУП, computer — компьютер скафандра, record — запись на планшете, ghost — голос в помехах, whisper — шёпот, builders — Строители.",
+  "lines": {
+    "launch_countdown": {"style": "radio", "ru": ["Pavel", "Ключ на старт. Протяжка один. Продувка."], "en": ["Zira", "Key to start. Purge sequence is go."]},
+    "launch_ignition": {"style": "radio", "ru": ["Pavel", "Зажигание."], "en": ["Zira", "Ignition."]},
+    "launch_liftoff": {"style": "radio", "ru": ["Pavel", "Подъём! Есть подъём. Счастливого пути."], "en": ["Zira", "Liftoff! We have liftoff. Godspeed."]},
+    "launch_orbit": {"style": "radio", "ru": ["Pavel", "Выход на орбиту подтверждаем. Добро пожаловать в космос."], "en": ["Zira", "Orbit insertion confirmed. Welcome to space."]},
+    "moon_landing": {"style": "radio", "ru": ["Pavel", "Есть касание. Двигатель выключен. Вы на Луне."], "en": ["Zira", "Contact light. Engine stop. You are on the Moon."]},
+    "signal_received": {"style": "radio", "ru": ["Pavel", "Внимание. Принят неизвестный сигнал. Источник на Луне. Повторяю: это не помеха."], "en": ["Zira", "Attention. Unknown signal received. The source is on the Moon. Repeat: this is not interference."]},
+    "meteor_warning": {"style": "computer", "ru": ["Irina", "Внимание. Болид. Покиньте точку удара."], "en": ["Zira", "Warning. Incoming bolide. Clear the impact zone."]},
+    "scare": {"style": "whisper", "ru": ["Irina", "Ты тоже его видишь?"], "en": ["Zira", "Do you see him too?"]},
+    "radio_1": {"style": "ghost", "ru": ["Irina", "Кто-нибудь... приём... кто-нибудь слышит?"], "en": ["Zira", "Anyone... copy... can anyone hear?"]},
+    "radio_2": {"style": "ghost", "ru": ["Irina", "Заря вызывает Землю... Заря..."], "en": ["Zira", "Zarya calling Earth... Zarya..."]},
+    "radio_3": {"style": "ghost", "ru": ["Irina", "Не смотри вверх."], "en": ["Zira", "Don't look up."]},
+    "radio_4": {"style": "ghost", "ru": ["Pavel", "Оно повторяет всё, что мы говорим."], "en": ["Zira", "It repeats everything we say."]},
+    "radio_5": {"style": "ghost", "ru": ["Irina", "Мы не одни... мы не одни... мы не..."], "en": ["Zira", "We are not alone... not alone... not..."]},
+    "zarya_1": {"style": "record", "ru": ["Irina"], "en": ["Zira"]},
+    "zarya_2": {"style": "record", "ru": ["Irina"], "en": ["Zira"]},
+    "zarya_3": {"style": "record", "ru": ["Irina"], "en": ["Zira"]},
+    "zarya_4": {"style": "record", "ru": ["Pavel"], "en": ["Zira"], "pitch_en": 0.86},
+    "builder_1": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_2": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_3": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_4": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_5": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_6": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_7": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]},
+    "builder_8": {"style": "builders", "ru": ["Pavel"], "en": ["Zira"]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.orbitcore.client.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "orbitcore.client.refmap.json",
+  "client": [
+    "CameraMixin",
+    "EntityRenderDispatcherMixin",
+    "SoundSystemMixin",
+    "WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

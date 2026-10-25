@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:anorthosite",
+    "orbitcore:moon_basalt",
+    "orbitcore:regolith",
+    "orbitcore:maria_regolith",
+    "orbitcore:ilmenite_ore",
+    "orbitcore:ice_regolith"
+  ]
+}

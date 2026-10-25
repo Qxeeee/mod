@@ -1,0 +1,92 @@
+package com.orbitcore.item;
+
+import com.orbitcore.survival.Oxygen;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+/**
+ * Скафандр Т1 «Лунный». Защищает от вакуума и лунных перепадов температуры,
+ * только если надеты все четыре части. В нагруднике — встроенный баллон.
+ *
+ * <p>На игроке рисуется объёмной моделью GeckoLib (assets/orbitcore/geo/armor/spacesuit.geo.json).
+ * Сам рендерер живёт в клиентском коде и подключается через {@link #clientRenderer}.
+ */
+public class SpacesuitItem extends ArmorItem implements OxygenContainer, GeoItem {
+    /** Клиент кладёт сюда фабрику рендерера скафандра; на сервере остаётся пустой. */
+    public static Consumer<Consumer<Object>> clientRenderer = consumer -> {
+    };
+    public static final int CHEST_OXYGEN = 600;
+    /** Рабочий диапазон температур скафандра, °C. */
+    public static final int MIN_TEMPERATURE = -180;
+    public static final int MAX_TEMPERATURE = 150;
+
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
+
+    public SpacesuitItem(ArmorMaterial material, Type type, Settings settings) {
+        super(material, type, settings);
+    }
+
+    @Override
+    public void createRenderer(Consumer<Object> consumer) {
+        clientRenderer.accept(consumer);
+    }
+
+    @Override
+    public Supplier<Object> getRenderProvider() {
+        return renderProvider;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
+
+    @Override
+    public int oxygenCapacity() {
+        return getType() == Type.CHESTPLATE ? CHEST_OXYGEN : 0;
+    }
+
+    public static boolean isWearingFullSuit(LivingEntity entity) {
+        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+            if (!(entity.getEquippedStack(slot).getItem() instanceof SpacesuitItem)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isWearingHelmet(LivingEntity entity) {
+        return entity.getEquippedStack(EquipmentSlot.HEAD).getItem() instanceof SpacesuitItem;
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        if (getType() == Type.CHESTPLATE) {
+            int oxygen = Oxygen.stored(stack);
+            tooltip.add(Text.translatable("tooltip.orbitcore.oxygen", oxygen, CHEST_OXYGEN, Oxygen.time(oxygen))
+                    .formatted(Formatting.AQUA));
+        }
+        tooltip.add(Text.translatable("tooltip.orbitcore.spacesuit").formatted(Formatting.GRAY));
+    }
+}

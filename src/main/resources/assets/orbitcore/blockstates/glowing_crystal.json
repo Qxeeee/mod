@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "orbitcore:block/glowing_crystal"
+    },
+    "facing=down": {
+      "model": "orbitcore:block/glowing_crystal",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "orbitcore:block/glowing_crystal",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "orbitcore:block/glowing_crystal",
+      "x": 90,
+      "y": 180
+    },
+    "facing=east": {
+      "model": "orbitcore:block/glowing_crystal",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west": {
+      "model": "orbitcore:block/glowing_crystal",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

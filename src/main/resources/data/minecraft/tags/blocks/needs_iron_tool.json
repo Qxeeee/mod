@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:rutile_ore",
+    "orbitcore:deepslate_rutile_ore",
+    "orbitcore:titanium_block",
+    "orbitcore:meteorite",
+    "orbitcore:hot_meteorite",
+    "orbitcore:builder_stone"
+  ]
+}

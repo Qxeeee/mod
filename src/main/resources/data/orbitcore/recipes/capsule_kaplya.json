@@ -1,0 +1,26 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    " A ",
+    "GCG",
+    "TTT"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:aluminum_plates"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "T": {
+      "tag": "c:titanium_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:capsule_kaplya"
+  }
+}

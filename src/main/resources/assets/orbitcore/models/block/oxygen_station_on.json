@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/oxygen_station_top",
+    "side": "orbitcore:block/machine_side",
+    "front": "orbitcore:block/oxygen_station_front_on"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/metallurgical_furnace_top",
+    "side": "orbitcore:block/metallurgical_furnace_side",
+    "front": "orbitcore:block/metallurgical_furnace_front_on"
+  }
+}

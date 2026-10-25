@@ -1,0 +1,29 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:spectroscopy",
+  "pattern": [
+    "PGP",
+    "CMC",
+    "PWP"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    }
+  },
+  "result": {
+    "item": "orbitcore:sample_analyzer"
+  }
+}
