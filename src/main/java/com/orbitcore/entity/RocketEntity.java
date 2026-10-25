@@ -8,6 +8,7 @@ import com.orbitcore.rocket.FlightController;
 import com.orbitcore.rocket.FlightPhase;
 import com.orbitcore.rocket.RocketDesign;
 import com.orbitcore.rocket.RocketPart;
+import com.orbitcore.world.ModDimensions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
@@ -29,6 +30,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +52,9 @@ public class RocketEntity extends Entity {
     private static final TrackedData<Float> BASE_Y = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.FLOAT);
     private static final TrackedData<Float> THROTTLE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.FLOAT);
     private static final TrackedData<Boolean> PARACHUTE = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final TrackedData<Float> LANDING_DV = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.FLOAT);
+    private static final TrackedData<Float> VERTICAL_SPEED = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.FLOAT);
+    private static final TrackedData<Boolean> AUTOPILOT = DataTracker.registerData(RocketEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     private RocketDesign design = new RocketDesign(List.of());
     @Nullable
@@ -72,6 +77,9 @@ public class RocketEntity extends Entity {
         dataTracker.startTracking(BASE_Y, 0f);
         dataTracker.startTracking(THROTTLE, 0f);
         dataTracker.startTracking(PARACHUTE, false);
+        dataTracker.startTracking(LANDING_DV, 0f);
+        dataTracker.startTracking(VERTICAL_SPEED, 0f);
+        dataTracker.startTracking(AUTOPILOT, false);
     }
 
     // ------------------------------------------------------------------ конструкция и топливо
@@ -167,6 +175,55 @@ public class RocketEntity extends Entity {
         dataTracker.set(PARACHUTE, open);
     }
 
+    /** Остаток дельта-V на посадку, м/с (для приборов посадки). */
+    public float landingDeltaV() {
+        return dataTracker.get(LANDING_DV);
+    }
+
+    public void setLandingDeltaV(float deltaV) {
+        dataTracker.set(LANDING_DV, deltaV);
+    }
+
+    /** Вертикальная скорость, блоков за такт (отрицательная — вниз). */
+    public float verticalSpeed() {
+        return dataTracker.get(VERTICAL_SPEED);
+    }
+
+    public void setVerticalSpeed(float speed) {
+        dataTracker.set(VERTICAL_SPEED, speed);
+    }
+
+    public boolean autopilot() {
+        return dataTracker.get(AUTOPILOT);
+    }
+
+    public void setAutopilot(boolean autopilot) {
+        dataTracker.set(AUTOPILOT, autopilot);
+    }
+
+    /** Где на Земле стоял стол, с которого улетела ракета: туда вернётся капсула. */
+    private double homeX;
+    private double homeZ;
+    private boolean hasHome;
+
+    public boolean hasHome() {
+        return hasHome;
+    }
+
+    public double homeX() {
+        return homeX;
+    }
+
+    public double homeZ() {
+        return homeZ;
+    }
+
+    public void setHome(double x, double z) {
+        homeX = x;
+        homeZ = z;
+        hasHome = true;
+    }
+
     @Nullable
     public FlightController flight() {
         return flight;
@@ -243,10 +300,24 @@ public class RocketEntity extends Entity {
                 double oz = (random.nextDouble() - 0.5) * 0.6;
                 world.addImportantParticle(ParticleTypes.FLAME, x + ox, y - 0.1, z + oz, ox * 0.2, -0.6 - random.nextDouble() * 0.5, oz * 0.2);
             }
-            world.addImportantParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, x, y - 0.6, z,
-                    (random.nextDouble() - 0.5) * 0.05, -0.05, (random.nextDouble() - 0.5) * 0.05);
+            boolean air = ModDimensions.hasAir(world);
+            if (air) {
+                world.addImportantParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, x, y - 0.6, z,
+                        (random.nextDouble() - 0.5) * 0.05, -0.05, (random.nextDouble() - 0.5) * 0.05);
+            }
+            // Пыль, поднятая струёй с поверхности Луны при посадке
+            if (phase == FlightPhase.DESCENT) {
+                int ground = world.getTopY(Heightmap.Type.MOTION_BLOCKING, getBlockX(), getBlockZ());
+                if (y - ground < 10) {
+                    for (int i = 0; i < 5; i++) {
+                        double angle = random.nextDouble() * Math.PI * 2;
+                        double speed = 0.3 + random.nextDouble() * 0.4;
+                        world.addParticle(ParticleTypes.CLOUD, x, ground + 0.2, z, Math.cos(angle) * speed, 0.01, Math.sin(angle) * speed);
+                    }
+                }
+            }
             // Облако у стола в первые секунды
-            if (y - baseY() < 12 && phase != FlightPhase.DESCENT) {
+            if (air && y - baseY() < 12 && phase != FlightPhase.DESCENT) {
                 for (int i = 0; i < 6; i++) {
                     double angle = random.nextDouble() * Math.PI * 2;
                     double speed = 0.25 + random.nextDouble() * 0.35;
@@ -346,6 +417,9 @@ public class RocketEntity extends Entity {
         setFuel(nbt.getInt("Kerosene"), nbt.getInt("Oxygen"));
         FlightPhase phase = FlightPhase.byId(nbt.getInt("Phase"));
         setBaseY(nbt.getFloat("BaseY"));
+        if (nbt.contains("HomeX")) {
+            setHome(nbt.getDouble("HomeX"), nbt.getDouble("HomeZ"));
+        }
         // Полёт, прерванный перезапуском сервера, заканчивается мягкой посадкой
         setPhase(phase.inFlight() ? FlightPhase.IDLE : phase);
         if (phase.inFlight()) {
@@ -360,5 +434,9 @@ public class RocketEntity extends Entity {
         nbt.putInt("Oxygen", oxygen());
         nbt.putInt("Phase", phase().ordinal());
         nbt.putFloat("BaseY", baseY());
+        if (hasHome) {
+            nbt.putDouble("HomeX", homeX);
+            nbt.putDouble("HomeZ", homeZ);
+        }
     }
 }

@@ -171,6 +171,8 @@ public final class FlightCinematics {
                 }
                 yield altitudeKm(rocket) > 80 ? Text.translatable("flight.orbitcore.sub.space") : null;
             }
+            case TRANSFER -> null;
+            case DESCENT -> Text.translatable(rocket.autopilot() ? "flight.orbitcore.sub.descent_auto" : "flight.orbitcore.sub.descent");
             case REENTRY -> rocket.parachute()
                     ? Text.translatable("flight.orbitcore.sub.parachute")
                     : Text.translatable(t < 80 ? "flight.orbitcore.sub.reentry" : "flight.orbitcore.sub.plasma");

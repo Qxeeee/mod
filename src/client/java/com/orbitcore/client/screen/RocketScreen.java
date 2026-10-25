@@ -127,7 +127,7 @@ public class RocketScreen extends Screen {
     private void drawDestinations(DrawContext context, RocketEntity rocket, int x, int y, int mouseX, int mouseY) {
         for (RocketDesign.Destination destination : RocketDesign.Destination.values()) {
             boolean ok = rocket.design().canReach(destination, rocket.fill());
-            boolean available = FlightController.isAvailable(destination);
+            boolean available = FlightController.isAvailable(destination, rocket.getWorld());
             if (destination == selected) {
                 context.fill(x - 2, y - 1, x + 104, y + 9, ACCENT_DARK);
             } else if (inside(mouseX, mouseY, x - 2, y - 1, 106, 10)) {
@@ -144,7 +144,7 @@ public class RocketScreen extends Screen {
 
     private boolean canLaunch(RocketEntity rocket) {
         RocketDesign design = rocket.design();
-        return rocket.phase() == FlightPhase.IDLE && FlightController.isAvailable(selected) && design.isValid()
+        return rocket.phase() == FlightPhase.IDLE && FlightController.isAvailable(selected, rocket.getWorld()) && design.isValid()
                 && design.has(RocketPart.Kind.CAPSULE) && design.canReach(selected, rocket.fill());
     }
 

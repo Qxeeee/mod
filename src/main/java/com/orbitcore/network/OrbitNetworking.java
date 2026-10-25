@@ -41,7 +41,7 @@ public final class OrbitNetworking {
 
     /** Команды экипажа во время полёта. */
     public static final int COMMAND_SKIP = 0;
-    public static final int COMMAND_DEORBIT = 1;
+    public static final int COMMAND_MANEUVER = 1;
     public static final int COMMAND_THROTTLE = 2;
 
     private OrbitNetworking() {
@@ -93,7 +93,7 @@ public final class OrbitNetworking {
         }
         switch (command) {
             case COMMAND_SKIP -> rocket.flight().skip();
-            case COMMAND_DEORBIT -> rocket.flight().requestDeorbit();
+            case COMMAND_MANEUVER -> rocket.flight().requestManeuver();
             case COMMAND_THROTTLE -> rocket.setThrottle(value);
             default -> {
             }

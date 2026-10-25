@@ -26,21 +26,7 @@ public class FlightGameTest implements FabricGameTest {
     private static final BlockPos PAD = new BlockPos(3, 1, 3);
 
     private static RocketEntity rocketOnPad(TestContext context, List<RocketDesign.Entry> parts, double fill) {
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                context.setBlockState(PAD.add(dx, 0, dz), ModBlocks.LAUNCH_PAD.getDefaultState());
-            }
-        }
-        ServerWorld world = context.getWorld();
-        BlockPos above = context.getAbsolutePos(PAD.up());
-        RocketEntity rocket = ModEntities.ROCKET.create(world);
-        rocket.refreshPositionAndAngles(above.getX() + 0.5, above.getY(), above.getZ() + 0.5, 0, 0);
-        RocketDesign design = new RocketDesign(parts);
-        rocket.setDesign(design);
-        int fuel = (int) (design.propellantCapacity() * fill);
-        rocket.setFuel(fuel, fuel);
-        world.spawnEntity(rocket);
-        return rocket;
+        return FlightGameTestSupport.rocketOnPad(context, PAD, parts, fill);
     }
 
     @GameTest(templateName = EMPTY_STRUCTURE)
@@ -51,7 +37,7 @@ public class FlightGameTest implements FabricGameTest {
         empty.setFuel(empty.design().propellantCapacity(), empty.design().propellantCapacity());
         context.assertTrue(FlightController.whyCannotLaunch(empty, player, Destination.SUBORBITAL) == null, "a fuelled small rocket can go suborbital");
         context.assertTrue(FlightController.whyCannotLaunch(empty, player, Destination.EARTH_ORBIT) != null, "a small rocket must not reach orbit");
-        context.assertTrue(FlightController.whyCannotLaunch(empty, player, Destination.MOON_LANDING) != null, "the Moon is not available yet");
+        context.assertTrue(FlightController.whyCannotLaunch(empty, player, Destination.RETURN_TO_EARTH) != null, "you cannot fly home from Earth");
 
         List<RocketDesign.Entry> noCapsule = RocketGameTest.smallRocket().subList(0, 3);
         empty.setDesign(new RocketDesign(noCapsule));
@@ -95,7 +81,7 @@ public class FlightGameTest implements FabricGameTest {
                 sawSpace[0] = true;
                 context.assertTrue(rocket.design().stages().size() == 1, "the first stage must have separated on the way up");
                 context.assertTrue(rocket.separationTick() > 0, "separation must be recorded for the camera");
-                rocket.flight().requestDeorbit();
+                rocket.flight().requestManeuver();
             }
             context.assertTrue(sawSpace[0] && rocket.phase() == FlightPhase.LANDED, "not back yet: " + rocket.phase());
             rocket.discard();

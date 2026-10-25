@@ -279,16 +279,16 @@ public class MissionControlScreen extends Screen {
             boolean open = program.hasEntry(e.id());
             boolean active = e.id().equals(entry);
             if (active) {
-                context.fill(left + 9, y - 2, left + 8 + listW - 1, y + 16, ACCENT_DARK);
-            } else if (open && inside(mouseX, mouseY, left + 9, y - 2, listW - 2, 18)) {
-                context.fill(left + 9, y - 2, left + 8 + listW - 1, y + 16, PANEL_LIGHT);
+                context.fill(left + 9, y - 2, left + 8 + listW - 1, y + 14, ACCENT_DARK);
+            } else if (open && inside(mouseX, mouseY, left + 9, y - 2, listW - 2, 16)) {
+                context.fill(left + 9, y - 2, left + 8 + listW - 1, y + 14, PANEL_LIGHT);
             }
             if (open) {
                 context.drawItem(new ItemStack(e.icon().get()), left + 11, y - 1);
             }
             Text name = open ? Text.translatable(e.titleKey()) : Text.translatable("gui.orbitcore.unknown");
             context.drawText(textRenderer, trim(name, listW - 26), left + 29, y + 3, open ? TEXT : TEXT_FAINT, false);
-            y += 19;
+            y += 16;
         }
 
         CosmopediaEntry current = CosmopediaEntry.byId(entry);
@@ -341,13 +341,13 @@ public class MissionControlScreen extends Screen {
         } else if (tab == Tab.COSMOPEDIA) {
             int y = top + 59;
             for (CosmopediaEntry e : CosmopediaEntry.ALL) {
-                if (inside(mouseX, mouseY, left + 9, y - 2, 90, 18) && ClientSpaceProgram.get().hasEntry(e.id())) {
+                if (inside(mouseX, mouseY, left + 9, y - 2, 90, 16) && ClientSpaceProgram.get().hasEntry(e.id())) {
                     entry = e.id();
                     textScroll = 0;
                     click();
                     return true;
                 }
-                y += 19;
+                y += 16;
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);

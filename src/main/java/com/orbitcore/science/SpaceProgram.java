@@ -35,6 +35,8 @@ public class SpaceProgram extends PersistentState {
     private final Map<String, Long> lastObservation = new HashMap<>();
     /** Предмет → сколько раз его анализировали. */
     private final Map<Identifier, Integer> analyzed = new HashMap<>();
+    /** Исторические «первые разы» программы: первая посадка на Луну и т. п. */
+    private final Set<String> firsts = new LinkedHashSet<>();
 
     public SpaceProgram() {
         for (CelestialBody body : CelestialBody.values()) {
@@ -163,6 +165,19 @@ public class SpaceProgram extends PersistentState {
         return true;
     }
 
+    /** Отмечает событие; true, если это случилось впервые за всю программу. */
+    public boolean markFirst(MinecraftServer server, String event) {
+        if (!firsts.add(event)) {
+            return false;
+        }
+        changed(server);
+        return true;
+    }
+
+    public boolean hasFirst(String event) {
+        return firsts.contains(event);
+    }
+
     private void changed(MinecraftServer server) {
         markDirty();
         OrbitNetworking.syncProgram(server, this);
@@ -184,6 +199,7 @@ public class SpaceProgram extends PersistentState {
         NbtCompound analyzedNbt = new NbtCompound();
         analyzed.forEach((item, count) -> analyzedNbt.putInt(item.toString(), count));
         nbt.put("Analyzed", analyzedNbt);
+        nbt.put("Firsts", strings(firsts));
         return nbt;
     }
 
@@ -218,6 +234,9 @@ public class SpaceProgram extends PersistentState {
             if (id != null) {
                 program.analyzed.put(id, analyzedNbt.getInt(key));
             }
+        }
+        for (NbtElement element : nbt.getList("Firsts", NbtElement.STRING_TYPE)) {
+            program.firsts.add(element.asString());
         }
         return program;
     }

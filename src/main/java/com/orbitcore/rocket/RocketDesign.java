@@ -1,5 +1,6 @@
 package com.orbitcore.rocket;
 
+import com.orbitcore.world.ModDimensions;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -60,18 +61,29 @@ public final class RocketDesign {
         }
     }
 
-    /** Куда хватает дельта-V. Числа подобраны под игру и меньше настоящих. */
+    /**
+     * Куда хватает дельта-V. Числа подобраны под игру и меньше настоящих.
+     * «Луна и назад» — только ориентир при проектировании: лететь туда отдельно не нужно.
+     */
     public enum Destination {
-        SUBORBITAL(1500), EARTH_ORBIT(3000), MOON_LANDING(5000), MOON_RETURN(6500);
+        SUBORBITAL(1500, false), EARTH_ORBIT(3000, false), MOON_LANDING(5000, false), MOON_RETURN(6500, false),
+        RETURN_TO_EARTH(1500, true);
 
         private final int deltaV;
+        private final boolean fromMoon;
 
-        Destination(int deltaV) {
+        Destination(int deltaV, boolean fromMoon) {
             this.deltaV = deltaV;
+            this.fromMoon = fromMoon;
         }
 
         public int deltaV() {
             return deltaV;
+        }
+
+        /** Цель полёта с Луны (а не с Земли). */
+        public boolean fromMoon() {
+            return fromMoon;
         }
 
         public String translationKey() {
@@ -123,10 +135,30 @@ public final class RocketDesign {
 
     /** Тяговооружённость первой ступени на Земле: больше 1 — ракета оторвётся от стола. */
     public double liftoffTwr(double fill) {
+        return liftoffTwr(fill, 1.0);
+    }
+
+    /** Тяговооружённость при силе тяжести {@code gravity} (в долях земной). */
+    public double liftoffTwr(double fill, double gravity) {
         if (stages.isEmpty()) {
             return 0;
         }
-        return stages.get(0).thrust / (mass(fill) * G0);
+        return stages.get(0).thrust / (mass(fill) * G0 * gravity);
+    }
+
+    /** Какая доля заправки даёт дельта-V {@code deltaV} (для остатка топлива после посадки). */
+    public double fillFor(double deltaV) {
+        double low = 0;
+        double high = 1;
+        for (int i = 0; i < 30; i++) {
+            double mid = (low + high) / 2;
+            if (deltaV(mid) < deltaV) {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
+        return high;
     }
 
     /** Дельта-V каждой ступени (м/с) при заполнении {@code fill}. */
@@ -149,7 +181,8 @@ public final class RocketDesign {
     }
 
     public boolean canReach(Destination destination, double fill) {
-        return isValid() && liftoffTwr(fill) > 1.0 && deltaV(fill) >= destination.deltaV;
+        double gravity = destination.fromMoon() ? ModDimensions.MOON_GRAVITY : 1.0;
+        return isValid() && liftoffTwr(fill, gravity) > 1.0 && deltaV(fill) >= destination.deltaV;
     }
 
     // ------------------------------------------------------------------ разбор

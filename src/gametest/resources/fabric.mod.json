@@ -10,9 +10,13 @@
       "com.orbitcore.gametest.EarthMaterialsGameTest",
       "com.orbitcore.gametest.ScienceGameTest",
       "com.orbitcore.gametest.RocketGameTest",
-      "com.orbitcore.gametest.FlightGameTest"
+      "com.orbitcore.gametest.FlightGameTest",
+      "com.orbitcore.gametest.MoonGameTest"
     ]
   },
+  "mixins": [
+    "orbitcore-gametest.mixins.json"
+  ],
   "depends": {
     "orbitcore": "*",
     "fabric-gametest-api-v1": "*"

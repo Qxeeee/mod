@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "orbitcore:raw_rutile"
+    "orbitcore:raw_rutile",
+    "orbitcore:raw_ilmenite"
   ]
 }

@@ -19,6 +19,9 @@ final class RocketStats {
     static int draw(DrawContext context, TextRenderer text, RocketDesign design, double fill, int x, int y) {
         y = drawSummary(context, text, design, fill, x, y);
         for (RocketDesign.Destination destination : RocketDesign.Destination.values()) {
+            if (destination.fromMoon()) {
+                continue;
+            }
             boolean ok = design.canReach(destination, fill);
             Text line = Text.literal(ok ? "✔ " : "✘ ").append(Text.translatable(destination.translationKey()));
             context.drawText(text, line, x, y, ok ? OrbitStyle.GREEN : OrbitStyle.TEXT_FAINT, false);

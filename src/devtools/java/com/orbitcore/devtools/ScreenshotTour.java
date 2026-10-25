@@ -18,13 +18,20 @@ import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.network.OrbitNetworking;
 import com.orbitcore.rocket.FlightController;
 import com.orbitcore.rocket.FlightPhase;
+import com.orbitcore.block.RegolithBlock;
 import com.orbitcore.registry.ModBlocks;
+import com.orbitcore.registry.ModGameRules;
 import com.orbitcore.registry.ModEntities;
 import com.orbitcore.registry.ModFluids;
 import com.orbitcore.registry.ModItems;
 import com.orbitcore.rocket.RocketDesign;
 import com.orbitcore.rocket.RocketPart;
 import com.orbitcore.science.CelestialBody;
+import com.orbitcore.world.ModDimensions;
+import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.Heightmap;
 import com.orbitcore.science.ObservationTarget;
 import com.orbitcore.science.ScienceType;
 import com.orbitcore.science.SpaceProgram;
@@ -154,6 +161,12 @@ public class ScreenshotTour implements ClientModInitializer {
 
     private void planTour(MinecraftClient client) {
         origin = client.player.getBlockPos();
+        // Быстрый режим для проверки неба Луны: файл run/tour-moon-only
+        if (new File(client.runDirectory, "tour-moon-only").exists()) {
+            planMoonSky(client);
+            step(20, c -> c.scheduleStop());
+            return;
+        }
         BlockPos row = origin.south(4);
         BlockPos furnace = row.west(3);
         BlockPos table = row.west(2);
@@ -321,7 +334,7 @@ public class ScreenshotTour implements ClientModInitializer {
         step(40, c -> {
         });
         step(5, c -> shot(c, "26_orbit"));
-        step(0, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_DEORBIT, 0));
+        step(0, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_MANEUVER, 0));
         waitFor(c -> {
             RocketEntity r = rocketById(c, rocketId[0]);
             return r != null && r.phase() == FlightPhase.REENTRY;
@@ -340,6 +353,80 @@ public class ScreenshotTour implements ClientModInitializer {
         step(30, c -> {
         });
         step(0, c -> shot(c, "29_landed"));
+        planMoon(client);
+    }
+
+    /** Сразу на Луну: небо днём и ночью. */
+    private void planMoonSky(MinecraftClient client) {
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            moon.getChunk(0, 0);
+            int ground = moon.getTopY(Heightmap.Type.MOTION_BLOCKING, 8, 8);
+            world.setTimeOfDay(6000);
+            FabricDimensions.teleport(player, moon, new TeleportTarget(new Vec3d(8.5, ground + 1, 8.5), Vec3d.ZERO, -145f, -32f));
+        }, 120);
+        step(0, c -> shot(c, "moon_sky_day"));
+        server(client, (server, world, player) -> world.setTimeOfDay(18000), 40);
+        step(0, c -> shot(c, "moon_sky_night"));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(player.getX(), player.getY(), player.getZ(), 60f, -60f), 30);
+        step(0, c -> shot(c, "moon_sky_stars"));
+    }
+
+    /** Этап 0.6: полёт на Луну на автопилоте, лунный пейзаж, Земля в небе, ночь, следы. */
+    private void planMoon(MinecraftClient client) {
+        BlockPos pad = origin.south(12);
+        server(client, (server, world, player) -> {
+            server.getGameRules().get(ModGameRules.ENGINEER_MODE).set(false, server);
+            world.setTimeOfDay(5000);
+            RocketEntity rocket = ModEntities.ROCKET.create(world);
+            rocket.refreshPositionAndAngles(pad.getX() + 0.5, pad.getY(), pad.getZ() + 0.5, 0, 0);
+            RocketDesign design = new RocketDesign(MOON_ROCKET);
+            rocket.setDesign(design);
+            rocket.setFuel(design.propellantCapacity(), design.propellantCapacity());
+            world.spawnEntity(rocket);
+            player.teleport(world, pad.getX() + 2.5, pad.getY(), pad.getZ() - 2.5, 0, 0);
+            FlightController.launch(rocket, player, RocketDesign.Destination.MOON_LANDING);
+        }, 30);
+        step(20, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_SKIP, 0));
+        step(5, c -> shot(c, "30_orbit_moon"));
+        step(120, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_MANEUVER, 0));
+        step(5, c -> shot(c, "31_transfer"));
+        step(0, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_SKIP, 0));
+        waitFor(c -> c.player.getVehicle() instanceof RocketEntity r && r.phase() == FlightPhase.DESCENT, 400);
+        step(50, c -> {
+        });
+        step(0, c -> shot(c, "32_descent"));
+        waitFor(c -> c.player.getVehicle() == null && c.world.getRegistryKey() == ModDimensions.MOON, 1200);
+        step(40, c -> {
+        });
+        step(0, c -> shot(c, "33_moon_landed"));
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            BlockPos at = player.getBlockPos();
+            // Цепочка следов от ракеты
+            for (int i = 1; i < 9; i++) {
+                BlockPos step = moon.getTopPosition(Heightmap.Type.MOTION_BLOCKING, at.add(i, 0, i % 2)).down();
+                BlockState state = moon.getBlockState(step);
+                if (state.getBlock() instanceof RegolithBlock) {
+                    moon.setBlockState(step, state.with(RegolithBlock.TRODDEN, true));
+                }
+            }
+            player.networkHandler.requestTeleport(player.getX() - 3, player.getY() + 1, player.getZ() - 3, -45f, 30f);
+        }, 30);
+        step(0, c -> shot(c, "34_footprints"));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(player.getX(), player.getY(), player.getZ(), -145f, -32f), 30);
+        step(0, c -> shot(c, "35_earth_in_moon_sky"));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(player.getX(), player.getY() + 12, player.getZ(), 20f, 12f), 40);
+        step(0, c -> shot(c, "36_moon_landscape"));
+        server(client, (server, world, player) -> {
+            world.setTimeOfDay(18000);
+            player.networkHandler.requestTeleport(player.getX(), player.getY(), player.getZ(), -145f, -25f);
+        }, 40);
+        step(0, c -> shot(c, "37_moon_night"));
+        server(client, (server, world, player) -> server.getGameRules().get(ModGameRules.ENGINEER_MODE).set(true, server), 5);
     }
 
     private static final List<RocketDesign.Entry> MOON_ROCKET = List.of(

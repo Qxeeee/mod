@@ -58,6 +58,14 @@ public final class ModItemGroups {
                         entries.add(ModItems.CAPSULE_KAPLYA);
                         entries.add(ModItems.ROCKET_FINS);
                         entries.add(ModItems.LANDING_LEGS);
+
+                        entries.add(ModBlocks.REGOLITH);
+                        entries.add(ModBlocks.MARIA_REGOLITH);
+                        entries.add(ModBlocks.ANORTHOSITE);
+                        entries.add(ModBlocks.MOON_BASALT);
+                        entries.add(ModBlocks.ILMENITE_ORE);
+                        entries.add(ModItems.RAW_ILMENITE);
+                        entries.add(ModBlocks.ICE_REGOLITH);
                     })
                     .build());
 

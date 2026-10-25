@@ -18,6 +18,10 @@
     "orbitcore:fuel_refinery",
     "orbitcore:air_separator",
     "orbitcore:rocket_assembler",
-    "orbitcore:launch_pad"
+    "orbitcore:launch_pad",
+    "orbitcore:anorthosite",
+    "orbitcore:moon_basalt",
+    "orbitcore:ilmenite_ore",
+    "orbitcore:ice_regolith"
   ]
 }

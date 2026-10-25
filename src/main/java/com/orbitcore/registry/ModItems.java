@@ -11,6 +11,7 @@ import net.minecraft.registry.Registry;
 public final class ModItems {
     public static final Item RAW_BAUXITE = register("raw_bauxite");
     public static final Item RAW_RUTILE = register("raw_rutile");
+    public static final Item RAW_ILMENITE = register("raw_ilmenite");
 
     public static final Item STEEL_INGOT = register("steel_ingot");
     public static final Item ALUMINUM_INGOT = register("aluminum_ingot");

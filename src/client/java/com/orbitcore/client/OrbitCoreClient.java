@@ -3,6 +3,7 @@ package com.orbitcore.client;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.client.flight.FlightCinematics;
 import com.orbitcore.client.network.OrbitClientNetworking;
+import com.orbitcore.client.render.MoonSky;
 import com.orbitcore.client.render.RocketEntityRenderer;
 import com.orbitcore.client.render.RocketStageEntityRenderer;
 import com.orbitcore.client.screen.AirSeparatorScreen;
@@ -58,6 +59,7 @@ public class OrbitCoreClient implements ClientModInitializer {
                 ModFluids.KEROSENE, ModFluids.FLOWING_KEROSENE, ModFluids.LIQUID_OXYGEN, ModFluids.FLOWING_LIQUID_OXYGEN);
         OrbitClientNetworking.register();
         FlightCinematics.register();
+        MoonSky.register();
         EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
         ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 

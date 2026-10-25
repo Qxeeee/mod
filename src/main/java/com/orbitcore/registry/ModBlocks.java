@@ -10,6 +10,7 @@ import com.orbitcore.block.LaunchPadBlock;
 import com.orbitcore.block.MachineBlock;
 import com.orbitcore.block.MetallurgicalFurnaceBlock;
 import com.orbitcore.block.MissionControlBlock;
+import com.orbitcore.block.RegolithBlock;
 import com.orbitcore.block.RocketAssemblerBlock;
 import com.orbitcore.block.SampleAnalyzerBlock;
 import com.orbitcore.block.TelescopeBlock;
@@ -69,6 +70,21 @@ public final class ModBlocks {
     public static final Block FUEL_REFINERY = register("fuel_refinery", new FuelRefineryBlock(machineSettings(8)));
     public static final Block AIR_SEPARATOR = register("air_separator", new AirSeparatorBlock(machineSettings(6)));
     public static final Block ROCKET_ASSEMBLER = register("rocket_assembler", new RocketAssemblerBlock(machineSettings(0)));
+    // Луна
+    public static final Block REGOLITH = register("regolith",
+            new RegolithBlock(AbstractBlock.Settings.copy(Blocks.SAND).mapColor(MapColor.LIGHT_GRAY).strength(0.6f)));
+    public static final Block MARIA_REGOLITH = register("maria_regolith",
+            new RegolithBlock(AbstractBlock.Settings.copy(Blocks.SAND).mapColor(MapColor.GRAY).strength(0.6f)));
+    public static final Block ANORTHOSITE = register("anorthosite",
+            new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.WHITE_GRAY)));
+    public static final Block MOON_BASALT = register("moon_basalt",
+            new Block(AbstractBlock.Settings.copy(Blocks.STONE).mapColor(MapColor.DEEPSLATE_GRAY).strength(1.8f, 6.0f)));
+    public static final Block ILMENITE_ORE = register("ilmenite_ore",
+            new ExperienceDroppingBlock(AbstractBlock.Settings.copy(Blocks.IRON_ORE).mapColor(MapColor.DEEPSLATE_GRAY)));
+    public static final Block ICE_REGOLITH = register("ice_regolith",
+            new Block(AbstractBlock.Settings.copy(Blocks.PACKED_ICE).mapColor(MapColor.PALE_PURPLE).slipperiness(0.6f)
+                    .sounds(BlockSoundGroup.GLASS)));
+
     public static final Block LAUNCH_PAD = register("launch_pad",
             new LaunchPadBlock(AbstractBlock.Settings.create().mapColor(MapColor.GRAY)
                     .requiresTool().strength(5.0f, 12.0f).sounds(BlockSoundGroup.METAL)));

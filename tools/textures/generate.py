@@ -1104,6 +1104,141 @@ def earth_from_orbit():
     return img
 
 
+REGOLITH = [(118, 118, 120), (138, 138, 140), (156, 156, 158), (172, 172, 174), (188, 188, 190)]
+MARIA = [(58, 58, 62), (72, 72, 76), (86, 86, 90), (100, 100, 104), (116, 116, 120)]
+
+
+def dust(palette, seed):
+    """Пыль: мелкая зернистость, редкие камешки с тенью."""
+    rng = random.Random(seed)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, palette[rng.choice((1, 2, 2, 2, 3))])
+    for _ in range(5):
+        x, y = rng.randint(1, 14), rng.randint(1, 14)
+        put(img, x, y, palette[4])
+        put(img, x + 1, y + 1, palette[0])
+    return img
+
+
+def footprints(base, palette):
+    """Отпечаток подошвы скафандра: рифлёный след, вдавленный в пыль."""
+    img = base.copy()
+    for ox, oy in ((3, 1), (9, 8)):
+        for y in range(6):
+            for x in range(3):
+                if (y == 0 or y == 5) and x in (0, 2):
+                    continue
+                put(img, ox + x, oy + y, palette[0] if (y + x) % 2 else palette[1])
+        line(img, ox, oy + 6, ox + 2, oy + 6, palette[4])
+    return img
+
+
+def rock(palette, seed, cracks=3):
+    rng = random.Random(seed)
+    img = new()
+    noisy(img, 0, 0, 15, 15, palette, 2, rng, spread=1)
+    for _ in range(cracks):
+        x, y = rng.randint(0, 15), rng.randint(0, 15)
+        for _ in range(rng.randint(3, 6)):
+            put(img, x, y, palette[0])
+            x += rng.choice((-1, 0, 1))
+            y += rng.choice((0, 1))
+    return img
+
+
+ANORTHOSITE = [(150, 148, 142), (178, 176, 170), (198, 196, 190), (214, 212, 206), (230, 228, 222)]
+BASALT = [(34, 34, 38), (48, 48, 54), (62, 62, 68), (78, 78, 86), (98, 98, 106)]
+ILMENITE = [(18, 18, 22), (40, 40, 48), (70, 72, 84), (120, 124, 140), (190, 196, 214)]
+ICE = [(150, 190, 220), (180, 214, 236), (210, 232, 246), (236, 246, 252)]
+
+
+def ilmenite_ore():
+    img = rock(BASALT, 131, 2)
+    rng = random.Random(132)
+    for cx, cy in ((4, 4), (11, 3), (7, 9), (12, 12), (3, 12)):
+        for _ in range(4):
+            x, y = cx + rng.randint(-1, 1), cy + rng.randint(-1, 1)
+            put(img, x, y, ILMENITE[rng.randint(1, 3)])
+        put(img, cx, cy, ILMENITE[4])
+    return img
+
+
+def ice_regolith():
+    img = dust(REGOLITH, 133)
+    rng = random.Random(134)
+    for _ in range(9):
+        x, y = rng.randint(0, 14), rng.randint(0, 14)
+        put(img, x, y, ICE[rng.randint(1, 3)])
+        if rng.random() < 0.5:
+            put(img, x + 1, y, ICE[0])
+    return img
+
+
+def raw_ilmenite():
+    img = chunk([(18, 18, 22)] + ILMENITE[1:4] + [(150, 156, 176), (200, 206, 224)], 135,
+                [(8, 8, 4.8), (5, 10.5, 3.2), (11, 5.5, 3.0)])
+    for x, y in ((6, 6), (9, 9), (7, 11)):
+        put(img, x, y, (220, 226, 240))
+    return img
+
+
+def earth_disk(size=128):
+    """Земля целиком (полюс сверху) — для перелёта и неба Луны."""
+    land = value_noise_3d(201)
+    clouds = value_noise_3d(202)
+    img = Image.new("RGBA", (size, size), CLEAR)
+    radius = size / 2 - 3
+    for py in range(size):
+        for px in range(size):
+            x, y = (px + 0.5 - size / 2) / radius, (py + 0.5 - size / 2) / radius
+            r2 = x * x + y * y
+            if r2 > 1:
+                d = math.sqrt(r2)
+                if d < 1.07:
+                    img.putpixel((px, py), (110, 170, 255, int(170 * (1 - (d - 1) / 0.07))))
+                continue
+            z = math.sqrt(1 - r2)
+            sx, sy, sz = x * 1.6 + 3.1, y * 1.6 + 1.3, z * 1.6 + 7.0
+            h = land(sx, sy, sz)
+            if abs(y) > 0.88:
+                c = (232, 240, 248)
+            elif h > 0.57:
+                c = (70, 118, 58) if h < 0.66 else (150, 136, 96)
+            else:
+                c = (24, 64, 140)
+            if clouds(sx * 2.2 + 40, sy * 3.5, sz * 2.2) > 0.58:
+                c = (240, 244, 248)
+            k = 0.55 + 0.45 * z
+            img.putpixel((px, py), tuple(int(v * k) for v in c) + (255,))
+    return img
+
+
+def earth_phases(disk):
+    """Восемь фаз Земли для неба Луны (полоса 8×64), 0 — «полноземлие»."""
+    size = 64
+    small = disk.resize((size, size), Image.LANCZOS)
+    sheet = Image.new("RGBA", (size * 8, size), CLEAR)
+    for phase in range(8):
+        frame_img = small.copy()
+        angle = math.pi if phase == 4 else (phase if phase < 4 else phase - 8) * math.pi / 4
+        sun = (-math.sin(angle), 0.0, math.cos(angle))
+        for py in range(size):
+            for px in range(size):
+                r, g, b, a = frame_img.getpixel((px, py))
+                if a < 200:
+                    continue
+                x, y = (px + 0.5 - size / 2) / (size / 2 - 1.5), (py + 0.5 - size / 2) / (size / 2 - 1.5)
+                z = math.sqrt(max(0.0, 1 - x * x - y * y))
+                light = x * sun[0] + y * sun[1] + z * sun[2]
+                if light < 0.04:
+                    k = 0.12 if light < -0.04 else 0.12 + (light + 0.04) / 0.08 * 0.6
+                    frame_img.putpixel((px, py), (int(r * k), int(g * k), int(b * k + 4), a))
+        sheet.paste(frame_img, (phase * size, 0))
+    return sheet
+
+
 def parachute_canopy():
     img = new()
     for y in range(S):
@@ -1203,11 +1338,28 @@ def main():
     save(bucket(LOX), ITEM, "liquid_oxygen_bucket")
     save(rocket_icon(), ITEM, "assembled_rocket")
 
+    regolith = dust(REGOLITH, 121)
+    save(regolith, BLOCK, "regolith")
+    save(footprints(regolith, REGOLITH), BLOCK, "regolith_trodden")
+    maria = dust(MARIA, 122)
+    save(maria, BLOCK, "maria_regolith")
+    save(footprints(maria, MARIA), BLOCK, "maria_regolith_trodden")
+    save(rock(ANORTHOSITE, 123), BLOCK, "anorthosite")
+    save(rock(BASALT, 124), BLOCK, "moon_basalt")
+    save(ilmenite_ore(), BLOCK, "ilmenite_ore")
+    save(ice_regolith(), BLOCK, "ice_regolith")
+    save(raw_ilmenite(), ITEM, "raw_ilmenite")
+    disk = earth_disk()
+    environment = ASSETS / "environment"
+    environment.mkdir(parents=True, exist_ok=True)
+    earth_phases(disk).save(environment / "earth_phases.png")
+
     save(parachute_canopy(), BLOCK, "parachute_canopy")
     save(parachute_line(), BLOCK, "parachute_line")
     flight_gui = GUI / "flight"
     flight_gui.mkdir(parents=True, exist_ok=True)
     earth_from_orbit().save(flight_gui / "earth.png")
+    disk.save(flight_gui / "earth_disk.png")
 
     telescope_gui = GUI / "telescope"
     telescope_gui.mkdir(parents=True, exist_ok=True)
