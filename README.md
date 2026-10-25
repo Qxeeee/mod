@@ -46,6 +46,8 @@ blockbench/              ← те же модели проектами Blockbenc
 
 ## Как работаем вдвоём
 
+Где остановились, как слить открытые Pull Request и что делать дальше — в [docs/HANDOFF.md](docs/HANDOFF.md).
+
 1. Перед началом работы: `git switch main` и `git pull`.
 2. Новая задача — новая ветка: `git switch -c feature/<что-делаем>`.
 3. Готово — отправляем ветку и открываем Pull Request в `main`.
