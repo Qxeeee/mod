@@ -1,0 +1,29 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "GCG",
+    "WBW",
+    "PPP"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "C": {
+      "item": "orbitcore:crystal_shard"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    },
+    "B": {
+      "item": "orbitcore:circuit_board"
+    },
+    "P": {
+      "tag": "c:aluminum_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:signal_scanner"
+  }
+}

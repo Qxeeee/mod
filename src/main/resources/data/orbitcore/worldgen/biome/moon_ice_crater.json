@@ -22,7 +22,9 @@
       "orbitcore:crater"
     ],
     [],
-    [],
+    [
+      "orbitcore:ruin"
+    ],
     [],
     [
       "orbitcore:ice_deposit",

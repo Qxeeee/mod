@@ -1,5 +1,8 @@
 package com.orbitcore.client.network;
 
+import com.orbitcore.client.story.VoiceLines;
+import com.orbitcore.client.story.ScannerHud;
+import com.orbitcore.client.story.HoloLogScreen;
 import com.orbitcore.client.flight.MeteorFx;
 import net.minecraft.util.math.Vec3d;
 import com.orbitcore.registry.ModSounds;
@@ -82,6 +85,15 @@ public final class OrbitClientNetworking {
             int size = buf.readVarInt();
             client.execute(() -> MeteorFx.impact(center, size));
         });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.HOLO_LOG, (client, handler, buf, sender) -> {
+            String log = buf.readString();
+            client.execute(() -> client.setScreen(new HoloLogScreen(log)));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.SCANNER, (client, handler, buf, sender) -> {
+            float distance = buf.readFloat();
+            BlockPos fixed = buf.readBoolean() ? buf.readBlockPos() : null;
+            client.execute(() -> ScannerHud.update(distance, fixed));
+        });
         ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.ECHO_SITE, (client, handler, buf, sender) -> {
             BlockPos echo = buf.readBlockPos();
             BlockPos zarya = buf.readBoolean() ? buf.readBlockPos() : null;
@@ -92,6 +104,7 @@ public final class OrbitClientNetworking {
                     client.getToastManager().add(OrbitToast.signal());
                     client.getSoundManager().play(PositionedSoundInstance.master(ModSounds.FLIGHT_QUINDAR_IN, 1.0f, 0.5f));
                     client.getSoundManager().play(PositionedSoundInstance.master(ModSounds.ECHO_SIGNAL, 1.0f, 0.9f));
+                    VoiceLines.playLater("signal_received", 120);
                 }
             });
         });

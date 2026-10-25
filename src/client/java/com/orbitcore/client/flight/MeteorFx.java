@@ -1,5 +1,6 @@
 package com.orbitcore.client.flight;
 
+import com.orbitcore.client.story.VoiceLines;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.registry.ModSounds;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -48,6 +49,7 @@ public final class MeteorFx {
         target = impact;
         left = ticks;
         total = Math.max(1, ticks);
+        VoiceLines.play(MinecraftClient.getInstance(), "meteor_warning");
     }
 
     public static void impact(Vec3d center, int size) {

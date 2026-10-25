@@ -1,5 +1,11 @@
 package com.orbitcore.gametest;
 
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.Heightmap;
+import com.orbitcore.world.RuinFeature;
+import com.orbitcore.story.HoloTablets;
+import com.orbitcore.block.entity.HoloTabletBlockEntity;
+import com.orbitcore.block.HoloTabletBlock;
 import com.orbitcore.entity.RoverEntity;
 import com.orbitcore.entity.WatcherEntity;
 import com.orbitcore.registry.ModBlocks;
@@ -14,7 +20,6 @@ import com.orbitcore.block.RegolithBlock;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.LecternBlockEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -39,16 +44,17 @@ public class EchoGameTest implements FabricGameTest {
     }
 
     @GameTest(templateName = EMPTY_STRUCTURE)
-    public void zaryaHasLogbookDeadRoverAndTracks(TestContext context) {
+    public void zaryaHasRecordsDeadRoverAndTracks(TestContext context) {
         ServerWorld moon = moon(context);
         BlockPos base = EchoStructures.buildZarya(moon, new BlockPos(6000, 80, 6000), Direction.NORTH, moon.random);
-        boolean logbook = false;
+        boolean record = false;
         for (BlockPos pos : BlockPos.iterate(base.add(-2, 3, -2), base.add(2, 6, 2))) {
-            if (moon.getBlockEntity(pos) instanceof LecternBlockEntity lectern && lectern.hasBook()) {
-                logbook = true;
+            if (moon.getBlockEntity(pos) instanceof HoloTabletBlockEntity tablet && tablet.log().equals("zarya_1")) {
+                record = true;
             }
         }
-        context.assertTrue(logbook, "the Zarya logbook must lie on the lectern");
+        context.assertTrue(record, "the commander's first record must lie inside the lander");
+        context.assertTrue(EchoSite.get(moon).tablets().containsKey("zarya_3"), "the last record must lie where the footprints end");
         List<RoverEntity> rovers = moon.getEntitiesByType(ModEntities.ROVER, new Box(base).expand(6, 8, 50), r -> true);
         context.assertTrue(rovers.size() == 1, "the abandoned rover must stand on the way, found " + rovers.size());
         context.assertTrue(rovers.get(0).battery() == 0, "the abandoned rover battery must be dead");
@@ -160,6 +166,56 @@ public class EchoGameTest implements FabricGameTest {
             context.assertTrue(watcher.isRemoved(), "the watcher must vanish once the player looks at him");
             context.getWorld().getServer().getPlayerManager().remove(player);
         });
+    }
+
+    @GameTest(templateName = EMPTY_STRUCTURE)
+    public void readingATabletDrainsItsSignal(TestContext context) {
+        MinecraftServer server = context.getWorld().getServer();
+        BlockPos pos = new BlockPos(2, 1, 2);
+        context.setBlockState(pos, ModBlocks.HOLO_TABLET);
+        HoloTabletBlockEntity tablet = (HoloTabletBlockEntity) context.getBlockEntity(pos);
+        tablet.setLog("builder_3");
+        ServerPlayerEntity player = context.createMockCreativeServerPlayerInWorld();
+        HoloTablets.read(player, context.getAbsolutePos(pos), tablet);
+        context.assertTrue(SpaceProgram.get(server).hasLog("builder_3"), "the record must be decoded for the whole program");
+        context.assertTrue(!context.getBlockState(pos).get(HoloTabletBlock.ACTIVE), "a read tablet must go dark");
+        server.getPlayerManager().remove(player);
+        context.complete();
+    }
+
+    @GameTest(templateName = EMPTY_STRUCTURE)
+    public void ruinsKeepABuilderRecord(TestContext context) {
+        ServerWorld moon = moon(context);
+        BlockPos column = new BlockPos(-6000, 0, -6000);
+        moon.getChunk(column);
+        BlockPos base = moon.getTopPosition(Heightmap.Type.WORLD_SURFACE_WG, column);
+        RuinFeature.build(moon, base, Random.create(5), "builder_4");
+        boolean found = false;
+        int stone = 0;
+        for (BlockPos pos : BlockPos.iterate(base.add(-7, -3, -7), base.add(7, 8, 7))) {
+            if (moon.getBlockEntity(pos) instanceof HoloTabletBlockEntity tablet && tablet.log().equals("builder_4")) {
+                found = true;
+            }
+            if (moon.getBlockState(pos).isOf(ModBlocks.BUILDER_STONE)) {
+                stone++;
+            }
+        }
+        context.assertTrue(found, "the ruins must keep a tablet with the Builders' record");
+        context.assertTrue(stone > 15, "the ruins must be built of Builder stone, found " + stone);
+        context.complete();
+    }
+
+    @GameTest(templateName = EMPTY_STRUCTURE)
+    public void scannerHearsTheNearestLiveTablet(TestContext context) {
+        ServerWorld moon = moon(context);
+        BlockPos tablet = new BlockPos(9000, 70, 9000);
+        EchoSite.get(moon).addTablet("scanner_test", tablet);
+        BlockPos heard = HoloTablets.nearest(moon, tablet.add(30, 0, -20));
+        context.assertTrue(tablet.equals(heard), "the scanner must hear the tablet 36 blocks away, heard " + heard);
+        EchoSite.get(moon).drain("scanner_test");
+        BlockPos after = HoloTablets.nearest(moon, tablet.add(30, 0, -20));
+        context.assertTrue(!tablet.equals(after), "a drained tablet must fall silent");
+        context.complete();
     }
 
     private static double horizontal(Vec3d a, Vec3d b) {

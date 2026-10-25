@@ -22,7 +22,9 @@
       "orbitcore:crater_rare"
     ],
     [],
-    [],
+    [
+      "orbitcore:ruin"
+    ],
     [],
     [
       "orbitcore:ore_ilmenite"

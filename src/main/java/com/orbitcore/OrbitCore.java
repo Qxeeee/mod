@@ -1,5 +1,6 @@
 package com.orbitcore;
 
+import com.orbitcore.story.HoloTablets;
 import com.orbitcore.world.EchoEvents;
 import com.orbitcore.network.OrbitNetworking;
 import com.orbitcore.registry.ModBlockEntities;
@@ -50,6 +51,7 @@ public class OrbitCore implements ModInitializer {
         LifeSupport.register();
         LunarEvents.register();
         EchoEvents.register();
+        HoloTablets.register();
         LOGGER.info("OrbitCore initialized");
     }
 }

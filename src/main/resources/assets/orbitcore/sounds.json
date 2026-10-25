@@ -389,5 +389,455 @@
         "name": "orbitcore:echo/hologram"
       }
     ]
+  },
+  "voice.launch_countdown.ru": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_countdown_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_countdown.en": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_countdown_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_ignition.ru": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_ignition_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_ignition.en": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_ignition_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_liftoff.ru": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_liftoff_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_liftoff.en": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_liftoff_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_orbit.ru": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_orbit_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.launch_orbit.en": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/launch_orbit_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.moon_landing.ru": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/moon_landing_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.moon_landing.en": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/moon_landing_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.signal_received.ru": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/signal_received_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.signal_received.en": {
+    "subtitle": "subtitles.orbitcore.voice.radio",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/signal_received_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.meteor_warning.ru": {
+    "subtitle": "subtitles.orbitcore.voice.computer",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/meteor_warning_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.meteor_warning.en": {
+    "subtitle": "subtitles.orbitcore.voice.computer",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/meteor_warning_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.scare.ru": {
+    "subtitle": "subtitles.orbitcore.voice.whisper",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/scare_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.scare.en": {
+    "subtitle": "subtitles.orbitcore.voice.whisper",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/scare_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_1.ru": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_1_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_1.en": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_1_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_2.ru": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_2_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_2.en": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_2_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_3.ru": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_3_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_3.en": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_3_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_4.ru": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_4_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_4.en": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_4_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_5.ru": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_5_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.radio_5.en": {
+    "subtitle": "subtitles.orbitcore.voice.ghost",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/radio_5_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_1.ru": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_1_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_1.en": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_1_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_2.ru": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_2_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_2.en": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_2_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_3.ru": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_3_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_3.en": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_3_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_4.ru": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_4_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.zarya_4.en": {
+    "subtitle": "subtitles.orbitcore.voice.record",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/zarya_4_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_1.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_1_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_1.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_1_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_2.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_2_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_2.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_2_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_3.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_3_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_3.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_3_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_4.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_4_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_4.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_4_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_5.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_5_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_5.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_5_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_6.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_6_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_6.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_6_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_7.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_7_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_7.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_7_en",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_8.ru": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_8_ru",
+        "stream": true
+      }
+    ]
+  },
+  "voice.builder_8.en": {
+    "subtitle": "subtitles.orbitcore.voice.builders",
+    "sounds": [
+      {
+        "name": "orbitcore:voice/builder_8_en",
+        "stream": true
+      }
+    ]
   }
 }

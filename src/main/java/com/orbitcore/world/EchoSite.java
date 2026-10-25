@@ -13,6 +13,8 @@ import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,6 +35,10 @@ public class EchoSite extends PersistentState {
     /** Через сколько тиков придёт сигнал; −1 — отсчёт не запущен. */
     private int signalCountdown = -1;
     private final Set<UUID> contacted = new HashSet<>();
+    /** Планшеты сюжета («Заря», кратер Эха): запись → где лежит. */
+    private final Map<String, BlockPos> tablets = new LinkedHashMap<>();
+    /** Планшеты, чей сигнал уже иссяк: записи сюжета и клетки руин. */
+    private final Set<String> drained = new HashSet<>();
     private final Set<UUID> scared = new HashSet<>();
 
     public static EchoSite get(ServerWorld moon) {
@@ -42,12 +48,36 @@ public class EchoSite extends PersistentState {
     /** Центр объекта «Эхо» по горизонтали; высота уточняется при постройке. */
     public BlockPos echo(ServerWorld moon) {
         if (echo == null) {
-            Random random = Random.create(moon.getSeed() ^ 0x4543484FL);
-            float angle = random.nextFloat() * MathHelper.TAU;
-            echo = new BlockPos(Math.round(MathHelper.cos(angle) * ECHO_DISTANCE), 0, Math.round(MathHelper.sin(angle) * ECHO_DISTANCE));
+            echo = echoColumn(moon.getSeed());
             markDirty();
         }
         return echo;
+    }
+
+    /** Где по сиду стоит Эхо (y = 0). Нужен и генератору руин, которому сам мир Луны недоступен. */
+    public static BlockPos echoColumn(long seed) {
+        Random random = Random.create(seed ^ 0x4543484FL);
+        float angle = random.nextFloat() * MathHelper.TAU;
+        return new BlockPos(Math.round(MathHelper.cos(angle) * ECHO_DISTANCE), 0, Math.round(MathHelper.sin(angle) * ECHO_DISTANCE));
+    }
+
+    public void addTablet(String log, BlockPos pos) {
+        tablets.put(log, pos.toImmutable());
+        markDirty();
+    }
+
+    public Map<String, BlockPos> tablets() {
+        return tablets;
+    }
+
+    public boolean drained(String key) {
+        return drained.contains(key);
+    }
+
+    public void drain(String key) {
+        if (drained.add(key)) {
+            markDirty();
+        }
     }
 
     public void setEcho(BlockPos pos) {
@@ -109,6 +139,12 @@ public class EchoSite extends PersistentState {
         nbt.putInt("SignalCountdown", signalCountdown);
         nbt.put("Contacted", uuids(contacted));
         nbt.put("Scared", uuids(scared));
+        NbtCompound tabletsNbt = new NbtCompound();
+        tablets.forEach((log, pos) -> tabletsNbt.put(log, NbtHelper.fromBlockPos(pos)));
+        nbt.put("Tablets", tabletsNbt);
+        NbtList drainedNbt = new NbtList();
+        drained.forEach(key -> drainedNbt.add(NbtString.of(key)));
+        nbt.put("Drained", drainedNbt);
         return nbt;
     }
 
@@ -124,6 +160,14 @@ public class EchoSite extends PersistentState {
         site.signalCountdown = nbt.contains("SignalCountdown") ? nbt.getInt("SignalCountdown") : -1;
         readUuids(nbt.getList("Contacted", NbtElement.STRING_TYPE), site.contacted);
         readUuids(nbt.getList("Scared", NbtElement.STRING_TYPE), site.scared);
+        NbtCompound tabletsNbt = nbt.getCompound("Tablets");
+        for (String log : tabletsNbt.getKeys()) {
+            site.tablets.put(log, NbtHelper.toBlockPos(tabletsNbt.getCompound(log)));
+        }
+        NbtList drainedNbt = nbt.getList("Drained", NbtElement.STRING_TYPE);
+        for (int i = 0; i < drainedNbt.size(); i++) {
+            site.drained.add(drainedNbt.getString(i));
+        }
         return site;
     }
 

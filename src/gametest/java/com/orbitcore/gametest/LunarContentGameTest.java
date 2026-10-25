@@ -69,12 +69,28 @@ public class LunarContentGameTest implements FabricGameTest {
         context.addInstantFinalTask(() -> {
             boolean found = false;
             for (BlockPos pos : BlockPos.iterate(target.add(-3, -6, -3), target.add(3, 3, 3))) {
-                if (world.getBlockState(pos).isOf(ModBlocks.METEORITE)) {
+                if (world.getBlockState(pos).isOf(ModBlocks.METEORITE) || world.getBlockState(pos).isOf(ModBlocks.HOT_METEORITE)) {
                     found = true;
                     break;
                 }
             }
             context.assertTrue(found, "the meteorite must lie in its crater");
+        });
+    }
+
+    @GameTest(templateName = EMPTY_STRUCTURE, tickLimit = 400)
+    public void bigMeteorLeavesAHotRockInItsCrater(TestContext context) {
+        ServerWorld moon = context.getWorld();
+        BlockPos target = context.getAbsolutePos(new BlockPos(4, 0, 4));
+        LunarEvents.spawnMeteor(moon, target, 5);
+        context.addInstantFinalTask(() -> {
+            int hot = 0;
+            for (BlockPos pos : BlockPos.iterate(target.add(-4, -9, -4), target.add(4, 3, 4))) {
+                if (moon.getBlockState(pos).isOf(ModBlocks.HOT_METEORITE)) {
+                    hot++;
+                }
+            }
+            context.assertTrue(hot >= 1, "a big meteor must leave a glowing rock in its crater");
         });
     }
 }

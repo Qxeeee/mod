@@ -1,5 +1,6 @@
 package com.orbitcore.client.sound;
 
+import com.orbitcore.client.story.VoiceLines;
 import com.orbitcore.client.flight.FlightCinematics;
 import com.orbitcore.client.story.EchoCutscene;
 import com.orbitcore.item.SpacesuitItem;
@@ -83,6 +84,7 @@ public final class SpaceDread {
     public static void scare() {
         MinecraftClient client = MinecraftClient.getInstance();
         playInHead(client, ModSounds.ECHO_STINGER, 1.0f, 1.0f);
+        VoiceLines.playLater("scare", 50);
         spike = 1.0f;
         client.inGameHud.setOverlayMessage(Text.translatable("dread.orbitcore.scare").formatted(Formatting.DARK_GRAY, Formatting.ITALIC), false);
     }
@@ -178,9 +180,10 @@ public final class SpaceDread {
             Vec3d at = player.getEyePos().subtract(look.multiply(2.5));
             playAt(client, ModSounds.VOID_WHISPER, at, 0.7f, 0.8f + RANDOM.nextFloat() * 0.25f);
         } else if (r < 0.82f && SpacesuitItem.isWearingHelmet(player)) {
-            playInHead(client, ModSounds.VOID_RADIO_GHOST, 0.55f, 0.9f + RANDOM.nextFloat() * 0.2f);
-            client.inGameHud.setOverlayMessage(Text.translatable(RADIO[RANDOM.nextInt(RADIO.length)])
-                    .formatted(Formatting.DARK_GRAY, Formatting.ITALIC), false);
+            int line = RANDOM.nextInt(RADIO.length);
+            playInHead(client, ModSounds.VOID_RADIO_GHOST, 0.3f, 0.9f + RANDOM.nextFloat() * 0.2f);
+            VoiceLines.play(client, "radio_" + (line + 1));
+            client.inGameHud.setOverlayMessage(Text.translatable(RADIO[line]).formatted(Formatting.DARK_GRAY, Formatting.ITALIC), false);
         } else {
             playInHead(client, ModSounds.VOID_SWELL, 0.35f, 0.85f);
         }

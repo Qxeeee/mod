@@ -1,5 +1,6 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.item.SignalScannerItem;
 import com.orbitcore.item.RoverItem;
 import net.minecraft.util.Rarity;
 import com.orbitcore.OrbitCore;
@@ -52,6 +53,8 @@ public final class ModItems {
     public static final Item CRYSTAL_SHARD = register("crystal_shard");
     public static final Item ECHO_SHARD = Registry.register(Registries.ITEM, OrbitCore.id("echo_shard"),
             new Item(new Item.Settings().maxCount(1).rarity(Rarity.EPIC).fireproof()));
+    public static final Item SIGNAL_SCANNER = Registry.register(Registries.ITEM, OrbitCore.id("signal_scanner"),
+            new SignalScannerItem(new Item.Settings().maxCount(1)));
     public static final Item ROVER = Registry.register(Registries.ITEM, OrbitCore.id("rover"),
             new RoverItem(new Item.Settings().maxCount(1)));
 

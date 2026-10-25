@@ -37,6 +37,8 @@ public class SpaceProgram extends PersistentState {
     private final Map<Identifier, Integer> analyzed = new HashMap<>();
     /** Исторические «первые разы» программы: первая посадка на Луну и т. п. */
     private final Set<String> firsts = new LinkedHashSet<>();
+    /** Расшифрованные записи с голографических планшетов. */
+    private final Set<String> logs = new LinkedHashSet<>();
 
     public SpaceProgram() {
         for (CelestialBody body : CelestialBody.values()) {
@@ -174,6 +176,24 @@ public class SpaceProgram extends PersistentState {
         return true;
     }
 
+    /** Отмечает запись как расшифрованную; true, если её ещё никто не читал. */
+    public boolean readLog(MinecraftServer server, String id) {
+        if (!logs.add(id)) {
+            return false;
+        }
+        changed(server);
+        return true;
+    }
+
+    public boolean hasLog(String id) {
+        return logs.contains(id);
+    }
+
+    /** Расшифрованные записи в том порядке, в каком их нашли. */
+    public java.util.List<String> logs() {
+        return java.util.List.copyOf(logs);
+    }
+
     /** Отмечает событие; true, если это случилось впервые за всю программу. */
     public boolean markFirst(MinecraftServer server, String event) {
         if (!firsts.add(event)) {
@@ -209,6 +229,7 @@ public class SpaceProgram extends PersistentState {
         analyzed.forEach((item, count) -> analyzedNbt.putInt(item.toString(), count));
         nbt.put("Analyzed", analyzedNbt);
         nbt.put("Firsts", strings(firsts));
+        nbt.put("Logs", strings(logs));
         return nbt;
     }
 
@@ -246,6 +267,9 @@ public class SpaceProgram extends PersistentState {
         }
         for (NbtElement element : nbt.getList("Firsts", NbtElement.STRING_TYPE)) {
             program.firsts.add(element.asString());
+        }
+        for (NbtElement element : nbt.getList("Logs", NbtElement.STRING_TYPE)) {
+            program.logs.add(element.asString());
         }
         return program;
     }

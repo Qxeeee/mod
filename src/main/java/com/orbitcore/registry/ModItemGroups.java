@@ -76,6 +76,9 @@ public final class ModItemGroups {
                         entries.add(ModItems.CRYSTAL_SHARD);
                         entries.add(ModBlocks.ECHO_STONE);
                         entries.add(ModItems.ECHO_SHARD);
+                        entries.add(ModItems.SIGNAL_SCANNER);
+                        entries.add(ModBlocks.BUILDER_STONE);
+                        entries.add(ModBlocks.HOLO_TABLET);
 
                         entries.add(ModItems.SPACESUIT_HELMET);
                         entries.add(ModItems.SPACESUIT_CHESTPLATE);

@@ -1,5 +1,10 @@
 package com.orbitcore.client;
 
+import com.orbitcore.client.story.VoiceLines;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import com.orbitcore.registry.ModBlockEntities;
+import com.orbitcore.client.render.HoloTabletRenderer;
+import com.orbitcore.client.story.ScannerHud;
 import com.orbitcore.client.story.EchoCutscene;
 import com.orbitcore.client.render.WatcherEntityRenderer;
 import com.orbitcore.client.render.RoverEntityRenderer;
@@ -87,6 +92,9 @@ public class OrbitCoreClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.ROVER, RoverEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.WATCHER, WatcherEntityRenderer::new);
         EchoCutscene.register();
+        ScannerHud.register();
+        VoiceLines.register();
+        BlockEntityRendererFactories.register(ModBlockEntities.HOLO_TABLET, HoloTabletRenderer::new);
         ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 
         // Руды нарисованы слоем поверх камня, им нужна прозрачность

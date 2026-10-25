@@ -1,6 +1,11 @@
 package com.orbitcore.devtools;
 
-import net.minecraft.client.gui.screen.ingame.BookScreen;
+import com.orbitcore.entity.MeteorEntity;
+import net.minecraft.util.Hand;
+import com.orbitcore.world.RuinFeature;
+import com.orbitcore.story.HoloTablets;
+import com.orbitcore.block.entity.HoloTabletBlockEntity;
+import com.orbitcore.client.story.HoloLogScreen;
 import com.orbitcore.entity.RoverEntity;
 import com.orbitcore.world.EchoStructures;
 import com.orbitcore.world.EchoSite;
@@ -444,8 +449,8 @@ public class ScreenshotTour implements ClientModInitializer {
             lookAt(player, zarya[0].add(way[0].multiply(13)).add(side[0].multiply(9)).add(0, 6, 0), zarya[0].add(0, 3, 0));
         }, 80);
         step(0, c -> shot(c, "e1_zarya_signal"));
-        step(5, c -> c.setScreen(new BookScreen(new BookScreen.WrittenBookContents(EchoStructures.zaryaLogbook()))));
-        step(10, c -> shot(c, "e2_logbook"));
+        step(160, c -> c.setScreen(new HoloLogScreen("zarya_1")));
+        step(0, c -> shot(c, "e2_zarya_record"));
         step(5, c -> c.setScreen(null));
         server(client, (server, world, player) -> lookAt(player, zarya[0].add(way[0].multiply(30)).add(side[0].multiply(7)).add(0, 5, 0),
                 zarya[0].add(way[0].multiply(39))), 40);
@@ -453,6 +458,40 @@ public class ScreenshotTour implements ClientModInitializer {
         server(client, (server, world, player) -> lookAt(player, zarya[0].add(way[0].multiply(56)).add(side[0].multiply(3)).add(0, 9, 0),
                 zarya[0].add(way[0].multiply(66))), 30);
         step(0, c -> shot(c, "e4_footprints_end"));
+
+        // Руины Строителей и сканер: сила сигнала, расшифровка, запись
+        BlockPos[] ruin = new BlockPos[1];
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            BlockPos column = BlockPos.ofFloored(zarya[0].add(side[0].multiply(-40)));
+            BlockPos base = moon.getTopPosition(Heightmap.Type.WORLD_SURFACE_WG, column);
+            RuinFeature.build(moon, base, net.minecraft.util.math.random.Random.create(7), "builder_4");
+            for (BlockPos pos : BlockPos.iterate(base.add(-6, -3, -6), base.add(6, 6, 6))) {
+                if (moon.getBlockEntity(pos) instanceof HoloTabletBlockEntity) {
+                    ruin[0] = pos.toImmutable();
+                    EchoSite.get(moon).addTablet("builder_4", ruin[0]);
+                }
+            }
+            player.setStackInHand(Hand.MAIN_HAND, new ItemStack(ModItems.SIGNAL_SCANNER));
+            Vec3d r = Vec3d.ofBottomCenter(ruin[0]);
+            lookAt(player, r.add(side[0].multiply(-12)).add(0, 5, 0), r.add(0, 1, 0));
+        }, 60);
+        step(0, c -> shot(c, "e12_ruins_scanner"));
+        server(client, (server, world, player) -> {
+            Vec3d r = Vec3d.ofBottomCenter(ruin[0]);
+            lookAt(player, r.add(side[0].multiply(-2.5)).add(0, 1.6, 0), r.add(0, 1.0, 0));
+        }, 30);
+        step(0, c -> shot(c, "e12_hologram"));
+        server(client, (server, world, player) -> HoloTablets.decode(player), 20);
+        step(0, c -> shot(c, "e13_signal_decoded"));
+        server(client, (server, world, player) -> {
+            if (player.getServerWorld().getBlockEntity(ruin[0]) instanceof HoloTabletBlockEntity tablet) {
+                HoloTablets.read(player, ruin[0], tablet);
+            }
+        }, 160);
+        step(0, c -> shot(c, "e14_builder_record"));
+        step(5, c -> c.setScreen(null));
+        server(client, (server, world, player) -> player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY), 5);
 
         // Кратер Эха: туда игрок летит, объект строится, когда он подходит близко
         BlockPos[] base = new BlockPos[1];
@@ -831,12 +870,18 @@ public class ScreenshotTour implements ClientModInitializer {
             impact[0] = target;
             lookAt(player, Vec3d.ofCenter(target).add(-22, 4, -22), Vec3d.ofCenter(target).add(0, 26, 0));
             LunarEvents.spawnMeteor(moon, target, 5);
-        }, 38);
-        step(0, c -> shot(c, "48_meteor_incoming"));
-        step(80, c -> {
-        });
+        }, 50);
+        // Подлёт: тревога скафандра с отсчётом и отметка на грунте
+        step(0, c -> shot(c, "48_meteor_warning"));
         server(client, (server, world, player) ->
-                lookAt(player, Vec3d.ofCenter(impact[0]).add(-8, 6, -8), Vec3d.ofCenter(impact[0]).add(0, -3, 0)), 40);
+                lookAt(player, Vec3d.ofCenter(impact[0]).add(-20, 6, -20), Vec3d.ofCenter(impact[0]).add(0, 3, 0)), 1);
+        waitFor(c -> c.world.getEntitiesByClass(MeteorEntity.class, c.player.getBoundingBox().expand(400), m -> true).isEmpty(), 200);
+        step(3, c -> {
+        });
+        step(40, c -> shot(c, "48_meteor_impact"));
+        step(0, c -> shot(c, "48_meteor_ejecta"));
+        server(client, (server, world, player) ->
+                lookAt(player, Vec3d.ofCenter(impact[0]).add(-8, 6, -8), Vec3d.ofCenter(impact[0]).add(0, -3, 0)), 60);
         step(0, c -> shot(c, "49_meteor_crater"));
         server(client, (server, world, player) -> LunarEvents.moonquake(server.getWorld(ModDimensions.MOON), 1.4f, 120), 40);
         step(0, c -> shot(c, "50_moonquake"));

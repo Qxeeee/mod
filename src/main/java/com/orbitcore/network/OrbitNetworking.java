@@ -43,6 +43,8 @@ public final class OrbitNetworking {
     public static final Identifier QUAKE = OrbitCore.id("quake");
     public static final Identifier METEOR_WARNING = OrbitCore.id("meteor_warning");
     public static final Identifier METEOR_IMPACT = OrbitCore.id("meteor_impact");
+    public static final Identifier HOLO_LOG = OrbitCore.id("holo_log");
+    public static final Identifier SCANNER = OrbitCore.id("scanner");
     public static final Identifier ECHO_SITE = OrbitCore.id("echo_site");
     public static final Identifier ECHO_CONTACT = OrbitCore.id("echo_contact");
     public static final Identifier ECHO_SCARE = OrbitCore.id("echo_scare");
@@ -158,6 +160,24 @@ public final class OrbitNetworking {
         buf.writeDouble(center.z);
         buf.writeVarInt(size);
         ServerPlayNetworking.send(player, METEOR_IMPACT, buf);
+    }
+
+    /** Открыть запись с голографического планшета. */
+    public static void sendHoloLog(ServerPlayerEntity player, String log) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeString(log);
+        ServerPlayNetworking.send(player, HOLO_LOG, buf);
+    }
+
+    /** Сканер в руке: расстояние до ближайшего сигнала (−1 — тишина) и расшифрованный источник, если есть. */
+    public static void sendScanner(ServerPlayerEntity player, float distance, @Nullable BlockPos fixed) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeFloat(distance);
+        buf.writeBoolean(fixed != null);
+        if (fixed != null) {
+            buf.writeBlockPos(fixed);
+        }
+        ServerPlayNetworking.send(player, SCANNER, buf);
     }
 
     /** Где Эхо и «Заря»; {@code announce} — сигнал только что принят (тост и звук). */

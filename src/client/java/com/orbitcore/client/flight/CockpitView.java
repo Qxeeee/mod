@@ -1,5 +1,7 @@
 package com.orbitcore.client.flight;
 
+import com.orbitcore.world.ModDimensions;
+import com.orbitcore.client.story.VoiceLines;
 import com.orbitcore.client.sound.LoopSound;
 import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.registry.ModSounds;
@@ -42,6 +44,9 @@ public final class CockpitView {
     private static int groan = 160;
     @Nullable
     private static String lastSubtitle;
+    @Nullable
+    private static FlightPhase lastPhase;
+    private static int lastTick;
 
     private CockpitView() {
     }
@@ -128,6 +133,7 @@ public final class CockpitView {
     public static void tick(MinecraftClient client, @Nullable RocketEntity rocket) {
         jolt *= 0.86f;
         flash *= 0.82f;
+        missionControl(client, rocket);
         if (rocket == null) {
             rumble = LoopSound.drive(rumble, ModSounds.FLIGHT_CABIN_RUMBLE, SoundCategory.NEUTRAL, 0);
             plasma = LoopSound.drive(plasma, ModSounds.FLIGHT_PLASMA, SoundCategory.NEUTRAL, 0);
@@ -168,6 +174,26 @@ public final class CockpitView {
             play(client, ModSounds.FLIGHT_QUINDAR_IN, 0.35f, 1.0f);
         }
         lastSubtitle = key;
+    }
+
+    /** Голос ЦУП на ключевых моментах полёта: отсчёт, зажигание, подъём, орбита, касание Луны. */
+    private static void missionControl(MinecraftClient client, @Nullable RocketEntity rocket) {
+        FlightPhase phase = rocket == null ? null : rocket.phase();
+        int t = rocket == null ? 0 : rocket.flightTick();
+        if (phase == FlightPhase.COUNTDOWN && lastTick < 20 && t >= 20) {
+            VoiceLines.play(client, "launch_countdown");
+        } else if (phase == FlightPhase.COUNTDOWN && lastTick < FlightController.IGNITION_TICK && t >= FlightController.IGNITION_TICK) {
+            VoiceLines.play(client, "launch_ignition");
+        } else if (phase == FlightPhase.ASCENT && lastPhase == FlightPhase.COUNTDOWN) {
+            VoiceLines.play(client, "launch_liftoff");
+        } else if (phase == FlightPhase.SPACE && lastPhase == FlightPhase.ASCENT) {
+            VoiceLines.playLater("launch_orbit", 30);
+        } else if (rocket == null && lastPhase == FlightPhase.DESCENT && client.world != null
+                && client.world.getRegistryKey() == ModDimensions.MOON) {
+            VoiceLines.playLater("moon_landing", 20);
+        }
+        lastPhase = phase;
+        lastTick = t;
     }
 
     private static void play(MinecraftClient client, SoundEvent sound, float volume, float pitch) {

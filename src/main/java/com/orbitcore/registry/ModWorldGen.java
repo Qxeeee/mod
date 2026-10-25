@@ -1,5 +1,6 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.world.RuinFeature;
 import com.orbitcore.OrbitCore;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
@@ -22,6 +23,8 @@ public final class ModWorldGen {
     /** Ударные кратеры Луны. Где и как часто — в data/orbitcore/worldgen/placed_feature. */
     public static final Feature<DefaultFeatureConfig> CRATER = Registry.register(Registries.FEATURE, OrbitCore.id("crater"),
             new CraterFeature(DefaultFeatureConfig.CODEC));
+    public static final Feature<DefaultFeatureConfig> RUIN = Registry.register(Registries.FEATURE, OrbitCore.id("ruin"),
+            new RuinFeature(DefaultFeatureConfig.CODEC));
 
     private ModWorldGen() {
     }

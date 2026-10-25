@@ -1,5 +1,8 @@
 package com.orbitcore.world;
 
+import com.orbitcore.story.HoloTablets;
+import com.orbitcore.block.entity.HoloTabletBlockEntity;
+import com.orbitcore.block.HoloTabletBlock;
 import com.orbitcore.block.RegolithBlock;
 import com.orbitcore.entity.RoverEntity;
 import com.orbitcore.registry.ModBlocks;
@@ -13,17 +16,11 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.LadderBlock;
-import net.minecraft.block.LecternBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.block.entity.LecternBlockEntity;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -41,8 +38,6 @@ public final class EchoStructures {
     private static final int FLAGS = Block.NOTIFY_LISTENERS | Block.FORCE_STATE;
     /** Радиус кратера «Эха». */
     public static final int ECHO_CRATER = 22;
-    /** Сколько страниц в бортжурнале «Зари». */
-    public static final int JOURNAL_PAGES = 5;
 
     private EchoStructures() {
     }
@@ -50,7 +45,7 @@ public final class EchoStructures {
     // ------------------------------------------------------------------ «Заря»
 
     /**
-     * Брошенный посадочный модуль «Зари». Дверь открыта, на пюпитре бортжурнал.
+     * Брошенный посадочный модуль «Зари». Дверь открыта, на полу планшет с записью командира.
      * От модуля к Эху уходят следы лунохода; сам луноход стоит на полпути с севшей
      * батареей, а дальше идут только следы ног — и обрываются.
      *
@@ -115,11 +110,8 @@ public final class EchoStructures {
         for (int y = 0; y <= 3; y++) {
             p.put(0, y, -3, Blocks.LADDER.getDefaultState().with(LadderBlock.FACING, Direction.NORTH));
         }
-        // Внутри: пюпитр с бортжурналом и ящик с остатками снаряжения
-        p.put(0, 4, 1, Blocks.LECTERN.getDefaultState().with(LecternBlock.FACING, Direction.NORTH).with(LecternBlock.HAS_BOOK, true));
-        if (world.getBlockEntity(p.at(0, 4, 1)) instanceof LecternBlockEntity lectern) {
-            lectern.setBook(zaryaLogbook());
-        }
+        // Внутри: планшет с первой записью командира и ящик с остатками снаряжения
+        tablet(world, p.at(0, 4, 1), HoloTablets.ZARYA_LOGS.get(0), rotation.rotate(Direction.NORTH));
         p.put(-1, 4, 1, Blocks.CHEST.getDefaultState().with(ChestBlock.FACING, Direction.NORTH));
         if (world.getBlockEntity(p.at(-1, 4, 1)) instanceof ChestBlockEntity chest) {
             ItemStack tank = new ItemStack(ModItems.OXYGEN_TANK);
@@ -159,25 +151,22 @@ public final class EchoStructures {
             rover.setBattery(0);
             world.spawnEntity(rover);
         }
+        tablet(world, world.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p.at(2, 0, -39)), HoloTablets.ZARYA_LOGS.get(1), toward);
         for (int i = 42; i <= 64; i++) {
             trodden(world, p.at(i % 2 == 0 ? 0 : 1, 0, -i));
         }
+        // Там, где следы обрываются, в пыли лежит последний планшет командира
+        tablet(world, world.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p.at(0, 0, -66)), HoloTablets.ZARYA_LOGS.get(2), toward);
         return base;
     }
 
-    /** Бортжурнал командира «Зари». Страницы переводятся, как и весь мод. */
-    public static ItemStack zaryaLogbook() {
-        ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
-        NbtCompound nbt = book.getOrCreateNbt();
-        nbt.putString("title", "Zarya");
-        nbt.putString("author", "I. Volkova");
-        NbtList pages = new NbtList();
-        for (int i = 1; i <= JOURNAL_PAGES; i++) {
-            pages.add(NbtString.of(Text.Serializer.toJson(Text.translatable("journal.orbitcore.zarya." + i))));
+    /** Положить планшет с записью и запомнить его: сканер будет слышать его, пока запись не прочитают. */
+    private static void tablet(ServerWorld world, BlockPos at, String log, Direction facing) {
+        world.setBlockState(at, ModBlocks.HOLO_TABLET.getDefaultState().with(HoloTabletBlock.FACING, facing), FLAGS);
+        if (world.getBlockEntity(at) instanceof HoloTabletBlockEntity tablet) {
+            tablet.setLog(log);
         }
-        nbt.put("pages", pages);
-        book.setCustomName(Text.translatable("item.orbitcore.zarya_logbook"));
-        return book;
+        EchoSite.get(world).addTablet(log, at);
     }
 
     private static void trodden(ServerWorld world, BlockPos column) {
@@ -233,6 +222,8 @@ public final class EchoStructures {
             float d = 5 + random.nextFloat() * (ECHO_CRATER - 6);
             crystal(world, floor.add(Math.round(MathHelper.cos(angle) * d), 0, Math.round(MathHelper.sin(angle) * d)));
         }
+        // Записка инженера «Зари» у самого монолита
+        tablet(world, world.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, floor.add(4, 0, 3)), HoloTablets.ZARYA_LOGS.get(3), Direction.NORTH);
         for (int i = 0; i < 7; i++) {
             float angle = random.nextFloat() * MathHelper.TAU;
             float d = 9 + random.nextFloat() * 5;

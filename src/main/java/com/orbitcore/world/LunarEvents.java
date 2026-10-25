@@ -69,7 +69,8 @@ public final class LunarEvents {
         Vec3d impact = new Vec3d(target.getX() + 0.5, ground, target.getZ() + 0.5);
         double angle = random.nextDouble() * Math.PI * 2;
         // Издалека и сверху: секунд пять его видно в небе, пока скафандр отсчитывает время до удара
-        Vec3d start = impact.add(Math.cos(angle) * 130, 170, Math.sin(angle) * 130);
+        // Почти отвесно и высоко: так метеорит остаётся над загруженными чанками, где сервер его двигает
+        Vec3d start = impact.add(Math.cos(angle) * 50, 200, Math.sin(angle) * 50);
         MeteorEntity meteor = ModEntities.METEOR.create(world);
         meteor.refreshPositionAndAngles(start.x, start.y, start.z, 0, 0);
         meteor.setVelocity(impact.subtract(start).normalize().multiply(METEOR_SPEED));

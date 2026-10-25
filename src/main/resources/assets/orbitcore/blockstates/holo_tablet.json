@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=true,facing=north": {
+      "model": "orbitcore:block/holo_tablet"
+    },
+    "active=false,facing=north": {
+      "model": "orbitcore:block/holo_tablet"
+    },
+    "active=true,facing=east": {
+      "model": "orbitcore:block/holo_tablet",
+      "y": 90
+    },
+    "active=false,facing=east": {
+      "model": "orbitcore:block/holo_tablet",
+      "y": 90
+    },
+    "active=true,facing=south": {
+      "model": "orbitcore:block/holo_tablet",
+      "y": 180
+    },
+    "active=false,facing=south": {
+      "model": "orbitcore:block/holo_tablet",
+      "y": 180
+    },
+    "active=true,facing=west": {
+      "model": "orbitcore:block/holo_tablet",
+      "y": 270
+    },
+    "active=false,facing=west": {
+      "model": "orbitcore:block/holo_tablet",
+      "y": 270
+    }
+  }
+}

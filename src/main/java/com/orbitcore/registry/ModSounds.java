@@ -1,5 +1,6 @@
 package com.orbitcore.registry;
 
+import java.util.List;
 import com.orbitcore.OrbitCore;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -47,6 +48,16 @@ public final class ModSounds {
     public static final SoundEvent METEOR_TINNITUS = register("event.meteor.tinnitus");
     public static final SoundEvent ECHO_SCANNER_PING = register("echo.scanner_ping");
     public static final SoundEvent ECHO_HOLOGRAM = register("echo.hologram");
+
+    /** Реплики озвучки: у каждой есть русская и английская запись, voice.<реплика>.ru и .en. */
+    public static final List<String> VOICE_LINES = List.of("launch_countdown", "launch_ignition", "launch_liftoff", "launch_orbit", "moon_landing", "signal_received", "meteor_warning", "scare", "radio_1", "radio_2", "radio_3", "radio_4", "radio_5", "zarya_1", "zarya_2", "zarya_3", "zarya_4", "builder_1", "builder_2", "builder_3", "builder_4", "builder_5", "builder_6", "builder_7", "builder_8");
+
+    static {
+        for (String line : VOICE_LINES) {
+            register("voice." + line + ".ru");
+            register("voice." + line + ".en");
+        }
+    }
 
     private ModSounds() {
     }

@@ -1359,20 +1359,27 @@ def meteorite_block():
 
 
 def hot_meteorite_block():
-    """Только что упавший метеорит: та же корка, но трещины светятся оранжевым."""
-    img = meteorite_block()
+    """Только что упавший метеорит: раскалён докрасна, по нему пятна тёмной корки и яркие трещины."""
     rng = random.Random(163)
-    for _ in range(4):
+    img = new()
+    glow = [(150, 40, 10), (200, 70, 16), (235, 110, 30), (255, 160, 50), (255, 215, 120)]
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, glow[rng.choice((0, 1, 1, 2, 2, 3))])
+    # Пятна остывающей корки
+    for _ in range(7):
+        cx, cy = rng.randint(0, 15), rng.randint(0, 15)
+        for dx in range(-1, 2):
+            for dy in range(-1, 1):
+                if rng.random() < 0.7:
+                    put(img, cx + dx, cy + dy, (60, 30, 22) if rng.random() < 0.6 else (90, 44, 26))
+    # Самые горячие трещины
+    for _ in range(3):
         x, y = rng.randint(0, 15), rng.randint(0, 15)
-        for _ in range(rng.randint(4, 8)):
-            put(img, x, y, (255, rng.randint(120, 200), 40))
+        for _ in range(rng.randint(4, 7)):
+            put(img, x, y, glow[4])
             x = max(0, min(15, x + rng.choice((-1, 0, 1))))
             y = max(0, min(15, y + rng.choice((0, 1))))
-    for yy in range(S):
-        for xx in range(S):
-            r, gg, b, a = img.getpixel((xx, yy))
-            if r < 200:
-                img.putpixel((xx, yy), (min(255, r + 40), gg + 8, b, a))
     return img
 
 
@@ -1488,6 +1495,68 @@ def rover_icon():
     return img
 
 
+BUILDER = [(30, 32, 40), (40, 43, 52), (52, 56, 66), (66, 70, 82)]
+GLYPH = [(70, 120, 140), (110, 190, 210), (170, 240, 250)]
+
+
+def builder_stone():
+    """Камень Строителей: тёмный сланец с выбитыми геометрическими знаками, в бороздах — бледный свет."""
+    rng = random.Random(171)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, BUILDER[rng.choice((0, 1, 1, 2))])
+    for x in range(S):
+        put(img, x, 0, BUILDER[3])
+        put(img, x, 15, BUILDER[0])
+    # Знаки: круг с чертой и ступенчатая спираль
+    for x, y in ((3, 4), (4, 3), (5, 3), (6, 4), (6, 5), (5, 6), (4, 6), (3, 5)):
+        put(img, x, y, GLYPH[0])
+    for y in range(2, 8):
+        put(img, 4 + (1 if y > 4 else 0), y, GLYPH[1] if y in (2, 7) else GLYPH[0])
+    for x, y in ((9, 9), (10, 9), (11, 9), (11, 10), (11, 11), (10, 11), (9, 11), (9, 12), (9, 13), (12, 13), (13, 13), (13, 12)):
+        put(img, x, y, GLYPH[0])
+    put(img, 10, 10, GLYPH[2])
+    return img
+
+
+def holo_tablet_top():
+    """Планшет сверху: тёмное стекло в металлической рамке, по нему бегут строки бирюзового текста."""
+    rng = random.Random(172)
+    img = new()
+    rect(img, 2, 3, 13, 12, (150, 156, 166))
+    rect(img, 3, 4, 12, 11, (8, 20, 28))
+    for y in (5, 7, 9):
+        length = rng.randint(5, 9)
+        for x in range(4, 4 + length):
+            put(img, x, y, GLYPH[1] if rng.random() < 0.7 else GLYPH[0])
+    put(img, 11, 10, GLYPH[2])
+    return img
+
+
+def holo_tablet_side():
+    img = new()
+    rect(img, 0, 14, 15, 15, (120, 126, 136))
+    for x in range(0, 16, 3):
+        put(img, x, 14, (170, 176, 186))
+    return img
+
+
+def signal_scanner():
+    """Сканер сигналов: корпус с зелёным экраном, ручка и антенна-штырь."""
+    img = new()
+    rect(img, 4, 5, 11, 12, (70, 74, 82))
+    rect(img, 5, 6, 10, 9, (12, 40, 30))
+    for x, y in ((6, 8), (7, 7), (8, 8), (9, 7)):
+        put(img, x, y, (124, 240, 176))
+    rect(img, 6, 11, 9, 11, (150, 156, 166))
+    rect(img, 7, 13, 8, 15, (50, 52, 58))
+    rect(img, 10, 1, 10, 4, (180, 186, 196))
+    put(img, 10, 1, (124, 244, 255))
+    outline(img, (20, 22, 26))
+    return img
+
+
 def watcher_skin():
     """Скин Наблюдателя: скафандр «Зари» в пыли, чёрный визор без лица."""
     rng = random.Random(143)
@@ -1534,6 +1603,10 @@ def main():
     save(crystal_shard(), ITEM, "crystal_shard")
     save(echo_shard(), ITEM, "echo_shard")
     save(rover_icon(), ITEM, "rover")
+    save(builder_stone(), BLOCK, "builder_stone")
+    save(holo_tablet_top(), BLOCK, "holo_tablet_top")
+    save(holo_tablet_side(), BLOCK, "holo_tablet_side")
+    save(signal_scanner(), ITEM, "signal_scanner")
     save(watcher_skin(), ASSETS / "entity", "watcher")
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")

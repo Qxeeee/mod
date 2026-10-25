@@ -1,5 +1,6 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.block.HoloTabletBlock;
 import com.orbitcore.block.HotMeteoriteBlock;
 import com.orbitcore.block.EchoStoneBlock;
 import com.orbitcore.block.GlowingCrystalBlock;
@@ -115,6 +116,14 @@ public final class ModBlocks {
     public static final Block GLOWING_CRYSTAL = register("glowing_crystal",
             new GlowingCrystalBlock(AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).mapColor(MapColor.CYAN)
                     .strength(1.5f).luminance(state -> 10)));
+
+    // Руины Строителей и их записи
+    public static final Block BUILDER_STONE = register("builder_stone",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.BLACK).requiresTool().strength(6.0f, 12.0f)
+                    .sounds(BlockSoundGroup.DEEPSLATE_TILES).luminance(state -> 1)));
+    public static final Block HOLO_TABLET = register("holo_tablet",
+            new HoloTabletBlock(AbstractBlock.Settings.create().mapColor(MapColor.CYAN).strength(-1.0f, 3600000.0f).dropsNothing()
+                    .nonOpaque().sounds(BlockSoundGroup.GLASS).luminance(state -> state.get(HoloTabletBlock.ACTIVE) ? 7 : 2)));
 
     // Жизнеобеспечение
     public static final Block OXYGEN_STATION = register("oxygen_station", new OxygenStationBlock(machineSettings(5)));

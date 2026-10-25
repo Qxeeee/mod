@@ -1,5 +1,6 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.block.entity.HoloTabletBlockEntity;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.block.entity.AirSeparatorBlockEntity;
 import com.orbitcore.block.entity.CoalGeneratorBlockEntity;
@@ -41,6 +42,8 @@ public final class ModBlockEntities {
             register("oxygen_station", OxygenStationBlockEntity::new, ModBlocks.OXYGEN_STATION);
     public static final BlockEntityType<SealerBlockEntity> SEALER =
             register("sealer", SealerBlockEntity::new, ModBlocks.SEALER);
+    public static final BlockEntityType<HoloTabletBlockEntity> HOLO_TABLET =
+            register("holo_tablet", HoloTabletBlockEntity::new, ModBlocks.HOLO_TABLET);
 
     private ModBlockEntities() {
     }

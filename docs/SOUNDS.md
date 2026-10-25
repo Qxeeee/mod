@@ -47,13 +47,51 @@ python tools/sounds/synthesize.py
 | `echo/contact.ogg` | Катсцена у объекта | `endlessly rising shepard tone building tension with alien signal fragments, ends in sudden silence` |
 | `echo/crystal1–3.ogg` | Светящиеся кристаллы | `single glassy crystal chime, bell-like, ethereal, long decay` |
 
+## Метеориты
+
+В вакууме удар не слышен: только толчок через подошвы, а если близко — звон в ушах, и остальные звуки на несколько секунд глохнут.
+
+| Файл | Когда звучит | Подсказка |
+|---|---|---|
+| `meteor/ground_impact.ogg` | Удар метеорита, как его чувствуют через грунт | `deep muffled ground thump felt through boots, low rumble, no air blast` |
+| `meteor/tinnitus.ogg` | Звон в ушах после близкого удара | `high pitched ear ringing tinnitus after an explosion, slowly fading` |
+
+## Сканер и планшеты
+
+| Файл | Когда звучит | Подсказка |
+|---|---|---|
+| `echo/scanner_ping.ogg` | Сканер слышит планшет: чем ближе, тем чаще и выше | `short clean sonar ping with a small echo` |
+| `echo/hologram.ogg` | Голограмма включается | `hologram flickering on, rising electric tone and soft hum` |
+
 ## Полёт и техника
 
 | Файл | Когда звучит | Подсказка |
 |---|---|---|
 | `flight/quindar_in.ogg`, `quindar_out.ogg` | Каждая новая фраза ЦУП | Это тоны Квиндар NASA: чистый синус 2525 Гц и 2475 Гц по 250 мс. Генерировать не нужно |
 | `flight/cabin_rumble.ogg` | Рёв двигателей внутри кабины | `rocket engine rumble heard from inside a spacecraft cabin, heavy low vibration, seamless loop` |
+| `flight/rocket_roar.ogg` | Рёв двигателей снаружи: звук летит вместе с ракетой | `real rocket engine roar, broadband crackling exhaust, deep rumble, no rhythm, seamless loop` |
+| `flight/ignition.ogg` | Зажигание на столе | `rocket engine ignition, rising low rumble then a heavy burst of flame` |
+| `flight/arrival.ogg` | Прибытие на Луну и возвращение на Землю (вместо гула портала) | `soft descending whoosh followed by two calm spacecraft computer chimes` |
 | `flight/separation.ogg` | Отделение ступени | `spacecraft stage separation, pyrotechnic bang, metallic clank, gas hiss` |
 | `flight/plasma.ogg` | Вход в атмосферу | `spacecraft reentry plasma roar with crackling, seamless loop` |
 | `flight/hull_groan.ogg` | Корпус скрипит под нагрузкой | `spacecraft hull creaking under stress, deep metallic groan` |
 | `vehicle/rover_motor.ogg` | Мотор лунохода | `small electric rover motor whine with gear rumble, seamless loop` |
+
+## Озвучка
+
+Реплики собирает [`tools/sounds/voice.py`](../tools/sounds/voice.py) из голосов Windows (Microsoft Irina и Pavel — русский, Microsoft Zira — английский) и обрабатывает их под нужную сцену. Список реплик — в [`tools/sounds/voice_lines.json`](../tools/sounds/voice_lines.json), тексты записей с планшетов берутся из файлов перевода.
+
+```
+python tools/sounds/voice.py
+```
+
+| Реплики | Голос | Обработка |
+|---|---|---|
+| `launch_*`, `moon_landing`, `signal_received` | ЦУП (Павел) | Эфир: узкая полоса, лёгкий перегруз, тоны Квиндар |
+| `meteor_warning` | Компьютер скафандра (Ирина) | Ровный «цифровой» голос с двумя сигналами |
+| `radio_1`–`radio_5` | Голоса «Зари» в помехах | Ниже обычного, рвётся, тонет в эхе |
+| `scare` | Шёпот | От голоса остаётся одно дыхание |
+| `zarya_1`–`zarya_4` | Волкова (Ирина), Седов (Павел) | Запись с плёнки: плывёт, шипит |
+| `builder_1`–`builder_8` | Строители | Голос ниже человеческого, октава вниз, обратное эхо |
+
+Файлы лежат в `sounds/voice/<реплика>_<язык>.ogg` и играют на языке игры. Любую реплику можно заменить записью живого актёра или голосом из ElevenLabs: моно `.ogg` с тем же именем.

@@ -29,6 +29,7 @@
     "orbitcore:regolith_processor",
     "orbitcore:meteorite",
     "orbitcore:glowing_crystal",
-    "orbitcore:hot_meteorite"
+    "orbitcore:hot_meteorite",
+    "orbitcore:builder_stone"
   ]
 }
