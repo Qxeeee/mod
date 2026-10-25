@@ -52,6 +52,11 @@ loom {
     }
 
     runs {
+        configureEach {
+            // GeckoLib в среде разработки добавляет свои демо-примеры (машинка, мутант-зомби,
+            // террариум и т.д.). У игроков их нет, но в наших запусках они только мешают.
+            vmArg '-Dgeckolib.disable_examples=true'
+        }
         gametest {
             server()
             name 'Game Test'

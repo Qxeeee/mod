@@ -1,0 +1,15 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "item": "orbitcore:copper_wire",
+    "count": 6
+  }
+}

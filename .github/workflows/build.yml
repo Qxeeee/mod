@@ -18,6 +18,9 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
+      - name: Check assets
+        run: python3 tools/check_assets.py
+
       - name: Build
         run: ./gradlew build
 

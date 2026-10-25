@@ -1,4 +1,49 @@
 {
   "modmenu.nameTranslation.orbitcore": "OrbitCore",
-  "modmenu.descriptionTranslation.orbitcore": "Space flight and exploration: modular rockets, cinematic launches, the Moon and beyond."
+  "modmenu.descriptionTranslation.orbitcore": "Space flight and exploration: modular rockets, cinematic launches, the Moon and beyond.",
+  "itemGroup.orbitcore": "OrbitCore",
+
+  "block.orbitcore.bauxite_ore": "Bauxite Ore",
+  "block.orbitcore.rutile_ore": "Rutile Ore",
+  "block.orbitcore.deepslate_rutile_ore": "Deepslate Rutile Ore",
+  "block.orbitcore.steel_block": "Block of Steel",
+  "block.orbitcore.aluminum_block": "Block of Aluminum",
+  "block.orbitcore.titanium_block": "Block of Titanium",
+  "block.orbitcore.machine_casing": "Machine Casing",
+  "block.orbitcore.metallurgical_furnace": "Metallurgical Furnace",
+  "block.orbitcore.coal_generator": "Coal Generator",
+  "block.orbitcore.electrolyzer": "Electrolyzer",
+  "block.orbitcore.engineering_table": "Engineering Table",
+
+  "item.orbitcore.raw_bauxite": "Bauxite",
+  "item.orbitcore.raw_rutile": "Rutile",
+  "item.orbitcore.steel_ingot": "Steel Ingot",
+  "item.orbitcore.aluminum_ingot": "Aluminum Ingot",
+  "item.orbitcore.titanium_ingot": "Titanium Ingot",
+  "item.orbitcore.silicon": "Silicon",
+  "item.orbitcore.steel_plate": "Steel Plate",
+  "item.orbitcore.aluminum_plate": "Aluminum Plate",
+  "item.orbitcore.titanium_plate": "Titanium Plate",
+  "item.orbitcore.copper_wire": "Copper Wire",
+  "item.orbitcore.circuit_board": "Circuit Board",
+
+  "container.orbitcore.engineering_table": "Engineering Table",
+
+  "gui.orbitcore.heat": "Temperature: %s °C",
+  "gui.orbitcore.heat_required": "Required to smelt: %s °C",
+  "gui.orbitcore.energy": "Energy: %s / %s E",
+  "gui.orbitcore.generating": "+%s E/t",
+  "gui.orbitcore.idle": "Idle",
+  "gui.orbitcore.no_energy": "No energy",
+
+  "tooltip.orbitcore.bauxite_ore": "Found near the surface, Y 24–120",
+  "tooltip.orbitcore.rutile_ore": "Found deep underground, below Y 40",
+  "tooltip.orbitcore.deepslate_rutile_ore": "Found deep underground, below Y 40",
+  "tooltip.orbitcore.raw_bauxite": "The Electrolyzer turns it into aluminum",
+  "tooltip.orbitcore.raw_rutile": "Smelts in the Metallurgical Furnace at 1600 °C",
+  "tooltip.orbitcore.silicon": "The basis of circuit boards and solar panels",
+  "tooltip.orbitcore.metallurgical_furnace": "Heats up with fuel. Smelts steel, titanium and silicon",
+  "tooltip.orbitcore.coal_generator": "Burns fuel and powers neighbouring machines",
+  "tooltip.orbitcore.electrolyzer": "Runs on energy. Extracts aluminum from bauxite",
+  "tooltip.orbitcore.engineering_table": "Assembles parts and machines"
 }

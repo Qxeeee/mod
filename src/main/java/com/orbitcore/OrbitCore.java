@@ -1,5 +1,12 @@
 package com.orbitcore;
 
+import com.orbitcore.registry.ModBlockEntities;
+import com.orbitcore.registry.ModBlocks;
+import com.orbitcore.registry.ModItemGroups;
+import com.orbitcore.registry.ModItems;
+import com.orbitcore.registry.ModRecipes;
+import com.orbitcore.registry.ModScreenHandlers;
+import com.orbitcore.registry.ModWorldGen;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -20,6 +27,13 @@ public class OrbitCore implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModBlocks.register();
+        ModItems.register();
+        ModBlockEntities.register();
+        ModRecipes.register();
+        ModScreenHandlers.register();
+        ModItemGroups.register();
+        ModWorldGen.register();
         LOGGER.info("OrbitCore initialized");
     }
 }

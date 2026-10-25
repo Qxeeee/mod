@@ -1,0 +1,50 @@
+package com.orbitcore.registry;
+
+import com.orbitcore.OrbitCore;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
+
+public final class ModItemGroups {
+    public static final ItemGroup ORBITCORE = Registry.register(Registries.ITEM_GROUP, OrbitCore.id("main"),
+            FabricItemGroup.builder()
+                    .displayName(Text.translatable("itemGroup.orbitcore"))
+                    .icon(() -> new ItemStack(ModBlocks.METALLURGICAL_FURNACE))
+                    .entries((context, entries) -> {
+                        entries.add(ModBlocks.BAUXITE_ORE);
+                        entries.add(ModBlocks.RUTILE_ORE);
+                        entries.add(ModBlocks.DEEPSLATE_RUTILE_ORE);
+                        entries.add(ModItems.RAW_BAUXITE);
+                        entries.add(ModItems.RAW_RUTILE);
+
+                        entries.add(ModItems.STEEL_INGOT);
+                        entries.add(ModItems.ALUMINUM_INGOT);
+                        entries.add(ModItems.TITANIUM_INGOT);
+                        entries.add(ModItems.SILICON);
+                        entries.add(ModBlocks.STEEL_BLOCK);
+                        entries.add(ModBlocks.ALUMINUM_BLOCK);
+                        entries.add(ModBlocks.TITANIUM_BLOCK);
+
+                        entries.add(ModItems.STEEL_PLATE);
+                        entries.add(ModItems.ALUMINUM_PLATE);
+                        entries.add(ModItems.TITANIUM_PLATE);
+                        entries.add(ModItems.COPPER_WIRE);
+                        entries.add(ModItems.CIRCUIT_BOARD);
+                        entries.add(ModBlocks.MACHINE_CASING);
+
+                        entries.add(ModBlocks.METALLURGICAL_FURNACE);
+                        entries.add(ModBlocks.ENGINEERING_TABLE);
+                        entries.add(ModBlocks.COAL_GENERATOR);
+                        entries.add(ModBlocks.ELECTROLYZER);
+                    })
+                    .build());
+
+    private ModItemGroups() {
+    }
+
+    public static void register() {
+    }
+}

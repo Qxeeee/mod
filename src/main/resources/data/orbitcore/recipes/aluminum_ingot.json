@@ -1,0 +1,11 @@
+{
+  "type": "orbitcore:electrolysis",
+  "ingredient": {
+    "item": "orbitcore:raw_bauxite"
+  },
+  "result": {
+    "item": "orbitcore:aluminum_ingot"
+  },
+  "energy_per_tick": 24,
+  "time": 200
+}
