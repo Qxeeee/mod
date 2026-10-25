@@ -1,0 +1,16 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "A A",
+    "A A"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:aluminum_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:rocket_fins"
+  }
+}

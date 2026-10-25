@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:vacuum",
+    "orbitcore:radiation",
+    "orbitcore:heat",
+    "orbitcore:cold"
+  ]
+}

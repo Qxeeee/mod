@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:rutile_ore",
+    "orbitcore:deepslate_rutile_ore",
+    "orbitcore:ilmenite_ore"
+  ]
+}

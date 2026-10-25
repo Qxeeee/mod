@@ -1,0 +1,14 @@
+{
+  "type": "orbitcore:metallurgy",
+  "ingredient": {
+    "item": "minecraft:iron_ingot"
+  },
+  "reductant": {
+    "tag": "minecraft:coals"
+  },
+  "result": {
+    "item": "orbitcore:steel_ingot"
+  },
+  "heat": 1200,
+  "time": 200
+}

@@ -1,0 +1,29 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "PHP",
+    "CMC",
+    "PWP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    }
+  },
+  "result": {
+    "item": "orbitcore:regolith_processor"
+  }
+}

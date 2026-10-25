@@ -1,0 +1,6 @@
+{
+  "message_id": "orbitcore.vacuum",
+  "exhaustion": 0.0,
+  "scaling": "never",
+  "effects": "drowning"
+}
