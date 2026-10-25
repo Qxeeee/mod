@@ -1,0 +1,14 @@
+{
+  "type": "orbitcore:metallurgy",
+  "ingredient": {
+    "tag": "minecraft:sand"
+  },
+  "reductant": {
+    "tag": "minecraft:coals"
+  },
+  "result": {
+    "item": "orbitcore:silicon"
+  },
+  "heat": 1400,
+  "time": 160
+}

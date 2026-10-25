@@ -1,0 +1,15 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "#",
+    "#"
+  ],
+  "key": {
+    "#": {
+      "tag": "c:aluminum_ingots"
+    }
+  },
+  "result": {
+    "item": "orbitcore:aluminum_plate"
+  }
+}

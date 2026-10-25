@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/sealer_top",
+    "side": "orbitcore:block/machine_side",
+    "front": "orbitcore:block/sealer_front_on"
+  }
+}

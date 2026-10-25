@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.orbitcore.gametest.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "TestServerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

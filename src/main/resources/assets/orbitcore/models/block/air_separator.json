@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "orbitcore:block/air_separator_top",
+    "side": "orbitcore:block/machine_side",
+    "front": "orbitcore:block/air_separator_front"
+  }
+}
