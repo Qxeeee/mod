@@ -1,6 +1,7 @@
 package com.orbitcore.registry;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.entity.MeteorEntity;
 import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.entity.RocketStageEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -25,6 +26,15 @@ public final class ModEntities {
                     .dimensions(EntityDimensions.fixed(1.0f, 2.0f))
                     .trackRangeChunks(32)
                     .trackedUpdateRate(2)
+                    .forceTrackedVelocityUpdates(true)
+                    .fireImmune()
+                    .build());
+
+    public static final EntityType<MeteorEntity> METEOR = Registry.register(Registries.ENTITY_TYPE, OrbitCore.id("meteor"),
+            FabricEntityTypeBuilder.<MeteorEntity>create(SpawnGroup.MISC, MeteorEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0f, 1.0f))
+                    .trackRangeChunks(16)
+                    .trackedUpdateRate(1)
                     .forceTrackedVelocityUpdates(true)
                     .fireImmune()
                     .build());

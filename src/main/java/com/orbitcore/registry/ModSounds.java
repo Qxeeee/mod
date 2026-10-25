@@ -16,6 +16,9 @@ public final class ModSounds {
     public static final SoundEvent OXYGEN_REFILL = register("block.oxygen_station.refill");
     public static final SoundEvent SUIT_ALARM = register("item.spacesuit.alarm");
     public static final SoundEvent DOSIMETER_CLICK = register("item.dosimeter.click");
+    public static final SoundEvent METEOR_INCOMING = register("event.meteor.incoming");
+    public static final SoundEvent METEOR_IMPACT = register("event.meteor.impact");
+    public static final SoundEvent MOONQUAKE = register("event.moonquake");
 
     private ModSounds() {
     }

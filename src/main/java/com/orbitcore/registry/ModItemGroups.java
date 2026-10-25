@@ -66,6 +66,11 @@ public final class ModItemGroups {
                         entries.add(ModBlocks.ILMENITE_ORE);
                         entries.add(ModItems.RAW_ILMENITE);
                         entries.add(ModBlocks.ICE_REGOLITH);
+                        entries.add(ModBlocks.METEORITE);
+                        entries.add(ModItems.RAW_METEORIC_IRON);
+                        entries.add(ModBlocks.REGOLITH_PROCESSOR);
+                        entries.add(ModItems.GAS_CANISTER);
+                        entries.add(ModItems.HELIUM3_CANISTER);
 
                         entries.add(ModItems.SPACESUIT_HELMET);
                         entries.add(ModItems.SPACESUIT_CHESTPLATE);

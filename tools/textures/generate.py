@@ -1518,6 +1518,83 @@ def spacesuit_layer(second):
     return img
 
 
+# ---------------------------------------------------------------- лунная добыча
+
+HELIUM = [(90, 50, 140), (150, 100, 210), (200, 160, 240), (240, 220, 255)]
+METEOR = [(28, 24, 22), (44, 38, 34), (62, 54, 48), (86, 76, 66)]
+
+
+def processor_front(lit, phase=0):
+    img = machine_side(160, vents=False)
+    # Барабан печи с окошком: внутри светится прокалённый грунт
+    rect(img, 2, 2, 13, 9, (40, 42, 48))
+    frame(img, 2, 2, 13, 9, STEEL[4], STEEL[0])
+    for x in range(4, 12):
+        for y in range(4, 8):
+            glow = GLOW[(x + y + phase) % 4] if lit else (70, 64, 60)
+            put(img, x, y, glow if (x + y + phase) % 3 else (120, 110, 100) if not lit else GLOW[1])
+    # Шкала гелия и выходной патрубок
+    rect(img, 3, 11, 9, 13, (30, 26, 40))
+    for x in range(3, 3 + (2 + phase if lit else 1)):
+        line(img, x, 11, x, 13, HELIUM[2])
+    rect(img, 11, 11, 13, 13, STEEL[2])
+    put(img, 12, 12, (200, 40, 40) if not lit else (90, 230, 120))
+    return img
+
+
+def processor_top():
+    def detail(img):
+        # Загрузочная воронка
+        for i in range(5):
+            frame(img, 2 + i, 2 + i, 13 - i, 13 - i, STEEL[4 - min(i, 3)], STEEL[0])
+        rect(img, 7, 7, 8, 8, (20, 20, 24))
+    return machine_top(161, detail)
+
+
+def meteorite_block():
+    rng = random.Random(162)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, METEOR[rng.randint(0, 2)])
+    # Корка плавления — тёмные «капли» и металлические проблески
+    for _ in range(9):
+        x, y = rng.randint(0, 15), rng.randint(0, 15)
+        put(img, x, y, (190, 188, 180))
+        if rng.random() < 0.5:
+            put(img, min(15, x + 1), y, (150, 148, 140))
+    for _ in range(6):
+        x, y = rng.randint(1, 14), rng.randint(1, 14)
+        put(img, x, y, (110, 70, 40))
+    return img
+
+
+def gas_canister(fill=None):
+    img = new()
+    body = fill or [(120, 128, 140), (160, 168, 180), (200, 206, 216)]
+    for y in range(4, 15):
+        for x in range(5, 11):
+            if y in (4, 14) and x in (5, 10):
+                continue
+            put(img, x, y, body[2] if x == 6 else body[1] if x < 9 else body[0])
+    rect(img, 7, 1, 8, 3, STEEL[3])
+    line(img, 6, 1, 9, 1, STEEL[1])
+    if fill:
+        # Знак He-3 на этикетке
+        rect(img, 6, 8, 9, 10, (240, 240, 245))
+        put(img, 7, 9, HELIUM[0])
+        put(img, 8, 9, HELIUM[0])
+    outline(img, (40, 40, 52))
+    return img
+
+
+def raw_meteoric_iron():
+    img = chunk(METEOR + [(110, 98, 86), (140, 126, 110)], 163, [(8, 8, 4.8), (5, 10, 3.0), (11, 6, 3.0)])
+    for x, y in ((6, 7), (9, 9), (10, 6), (7, 10)):
+        put(img, x, y, (196, 192, 184))
+    return img
+
+
 def main():
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")
@@ -1648,6 +1725,14 @@ def main():
     armor.mkdir(parents=True, exist_ok=True)
     spacesuit_layer(False).save(armor / "orbitcore_spacesuit_layer_1.png")
     spacesuit_layer(True).save(armor / "orbitcore_spacesuit_layer_2.png")
+
+    save(processor_front(False), BLOCK, "regolith_processor_front")
+    save_animation([processor_front(True, p) for p in range(4)], BLOCK, "regolith_processor_front_on", 4)
+    save(processor_top(), BLOCK, "regolith_processor_top")
+    save(meteorite_block(), BLOCK, "meteorite")
+    save(gas_canister(), ITEM, "gas_canister")
+    save(gas_canister(HELIUM), ITEM, "helium3_canister")
+    save(raw_meteoric_iron(), ITEM, "raw_meteoric_iron")
 
 
 if __name__ == "__main__":

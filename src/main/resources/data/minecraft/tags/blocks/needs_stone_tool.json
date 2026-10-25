@@ -18,6 +18,7 @@
     "orbitcore:ilmenite_ore",
     "orbitcore:oxygen_station",
     "orbitcore:sealer",
-    "orbitcore:airlock_door"
+    "orbitcore:airlock_door",
+    "orbitcore:regolith_processor"
   ]
 }

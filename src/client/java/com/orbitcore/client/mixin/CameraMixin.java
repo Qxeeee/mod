@@ -2,6 +2,7 @@ package com.orbitcore.client.mixin;
 
 import com.orbitcore.client.flight.CameraShot;
 import com.orbitcore.client.flight.FlightCinematics;
+import com.orbitcore.client.flight.QuakeShake;
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.BlockView;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Во время полёта камеру ставит кинорежиссёр {@link FlightCinematics}, а не игрок.
+ * При лунотрясении камера дрожит ({@link QuakeShake}).
  */
 @Mixin(Camera.class)
 public abstract class CameraMixin {
@@ -29,6 +31,13 @@ public abstract class CameraMixin {
         if (shot != null) {
             setRotation(shot.yaw(), shot.pitch());
             setPos(shot.x(), shot.y(), shot.z());
+            return;
+        }
+        // Лунотрясение: взгляд дрожит, но управление у игрока остаётся
+        float[] quake = QuakeShake.offset(tickDelta);
+        if (quake != null) {
+            Camera camera = (Camera) (Object) this;
+            setRotation(camera.getYaw() + quake[0], camera.getPitch() + quake[1]);
         }
     }
 }

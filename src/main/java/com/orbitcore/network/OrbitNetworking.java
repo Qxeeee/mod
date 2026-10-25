@@ -38,6 +38,7 @@ public final class OrbitNetworking {
     public static final Identifier UNLOCK_RESEARCH = OrbitCore.id("unlock_research");
     public static final Identifier LAUNCH = OrbitCore.id("launch");
     public static final Identifier FLIGHT_COMMAND = OrbitCore.id("flight_command");
+    public static final Identifier QUAKE = OrbitCore.id("quake");
 
     /** Команды экипажа во время полёта. */
     public static final int COMMAND_SKIP = 0;
@@ -122,6 +123,14 @@ public final class OrbitNetworking {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeVarInt(rocket.getId());
         ServerPlayNetworking.send(player, OPEN_ROCKET, buf);
+    }
+
+    /** Лунотрясение: клиент трясёт камеру {@code ticks} тиков с силой {@code strength}. */
+    public static void sendQuake(ServerPlayerEntity player, float strength, int ticks) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeFloat(strength);
+        buf.writeVarInt(ticks);
+        ServerPlayNetworking.send(player, QUAKE, buf);
     }
 
     public static void announceDiscovery(MinecraftServer server, CelestialBody body) {

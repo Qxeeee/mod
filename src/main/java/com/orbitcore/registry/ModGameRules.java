@@ -15,6 +15,10 @@ public final class ModGameRules {
     public static final GameRules.Key<GameRules.BooleanRule> ENGINEER_MODE =
             GameRuleRegistry.register("orbitcoreEngineerMode", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
 
+    /** Метеориты и лунотрясения на Луне. */
+    public static final GameRules.Key<GameRules.BooleanRule> LUNAR_EVENTS =
+            GameRuleRegistry.register("orbitcoreLunarEvents", GameRules.Category.MISC, GameRuleFactory.createBooleanRule(true));
+
     private ModGameRules() {
     }
 

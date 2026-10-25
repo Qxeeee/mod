@@ -8,6 +8,7 @@ import com.orbitcore.block.entity.ElectrolyzerBlockEntity;
 import com.orbitcore.block.entity.FuelRefineryBlockEntity;
 import com.orbitcore.block.entity.MetallurgicalFurnaceBlockEntity;
 import com.orbitcore.block.entity.OxygenStationBlockEntity;
+import com.orbitcore.block.entity.RegolithProcessorBlockEntity;
 import com.orbitcore.block.entity.RocketAssemblerBlockEntity;
 import com.orbitcore.block.entity.SampleAnalyzerBlockEntity;
 import com.orbitcore.block.entity.SealerBlockEntity;
@@ -35,6 +36,7 @@ import com.orbitcore.science.ScienceType;
 import com.orbitcore.science.SpaceProgram;
 import com.orbitcore.survival.LifeSupport;
 import com.orbitcore.survival.Oxygen;
+import com.orbitcore.world.LunarEvents;
 import com.orbitcore.world.ModDimensions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -45,8 +47,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.Perspective;
 import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
@@ -183,6 +185,13 @@ public class ScreenshotTour implements ClientModInitializer {
         // Быстрый режим для моделей ракеты и скафандра: файл run/tour-models-only
         if (new File(client.runDirectory, "tour-models-only").exists()) {
             planModels(client);
+            step(20, c -> c.scheduleStop());
+            return;
+        }
+        // Быстрый режим для этапа 0.8: файл run/tour-lunar-only
+        if (new File(client.runDirectory, "tour-lunar-only").exists()) {
+            planMoonSky(client);
+            planLunar(client);
             step(20, c -> c.scheduleStop());
             return;
         }
@@ -615,6 +624,52 @@ public class ScreenshotTour implements ClientModInitializer {
         server(client, (server, world, player) -> {
             player.changeGameMode(GameMode.CREATIVE);
             player.setAir(player.getMaxAir());
+        }, 5);
+        planLunar(client);
+    }
+
+    /** Этап 0.8: переработчик реголита, падение метеорита, кратер с обломком. */
+    private void planLunar(MinecraftClient client) {
+        BlockPos[] spot = new BlockPos[1];
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            world.setTimeOfDay(5000);
+            BlockPos at = moon.getTopPosition(Heightmap.Type.MOTION_BLOCKING, player.getBlockPos().add(-14, 0, 10));
+            spot[0] = at;
+            moon.setBlockState(at, ModBlocks.REGOLITH_PROCESSOR.getDefaultState().with(MachineBlock.FACING, Direction.NORTH));
+            RegolithProcessorBlockEntity processor = (RegolithProcessorBlockEntity) moon.getBlockEntity(at);
+            processor.energy.amount = processor.energy.capacity;
+            processor.setStack(RegolithProcessorBlockEntity.INPUT, new ItemStack(ModBlocks.MARIA_REGOLITH, 48));
+            processor.setStack(RegolithProcessorBlockEntity.CANISTER_IN, new ItemStack(ModItems.GAS_CANISTER, 4));
+            processor.setStack(RegolithProcessorBlockEntity.CANISTER_OUT, new ItemStack(ModItems.HELIUM3_CANISTER, 2));
+            processor.setStack(RegolithProcessorBlockEntity.OUTPUT, new ItemStack(Items.IRON_NUGGET, 5));
+            processor.oxygen.fillMb(1750);
+            lookAt(player, Vec3d.ofCenter(at).add(0, 1.2, -2.5), Vec3d.ofCenter(at));
+        }, 60);
+        openMachineOn(client, ModDimensions.MOON, () -> spot[0], () -> Vec3d.ofCenter(spot[0]).add(0, 0, -2.5));
+        step(0, c -> shot(c, "47_regolith_processor"));
+        step(5, c -> c.setScreen(null));
+
+        // Метеорит падает метрах в двадцати, камера смотрит на место удара
+        BlockPos[] impact = new BlockPos[1];
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            BlockPos target = moon.getTopPosition(Heightmap.Type.MOTION_BLOCKING, spot[0].add(20, 0, 14));
+            impact[0] = target;
+            lookAt(player, Vec3d.ofCenter(target).add(-22, 4, -22), Vec3d.ofCenter(target).add(0, 26, 0));
+            LunarEvents.spawnMeteor(moon, target, 5);
+        }, 38);
+        step(0, c -> shot(c, "48_meteor_incoming"));
+        step(80, c -> {
+        });
+        server(client, (server, world, player) ->
+                lookAt(player, Vec3d.ofCenter(impact[0]).add(-8, 6, -8), Vec3d.ofCenter(impact[0]).add(0, -3, 0)), 40);
+        step(0, c -> shot(c, "49_meteor_crater"));
+        server(client, (server, world, player) -> LunarEvents.moonquake(server.getWorld(ModDimensions.MOON), 1.4f, 120), 40);
+        step(0, c -> shot(c, "50_moonquake"));
+        server(client, (server, world, player) -> {
+            player.getAbilities().flying = false;
+            player.sendAbilitiesUpdate();
         }, 5);
     }
 

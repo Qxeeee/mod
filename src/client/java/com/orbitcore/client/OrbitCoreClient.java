@@ -2,8 +2,10 @@ package com.orbitcore.client;
 
 import com.orbitcore.OrbitCore;
 import com.orbitcore.client.flight.FlightCinematics;
+import com.orbitcore.client.flight.QuakeShake;
 import com.orbitcore.client.hud.SuitHud;
 import com.orbitcore.client.network.OrbitClientNetworking;
+import com.orbitcore.client.render.MeteorEntityRenderer;
 import com.orbitcore.client.render.MoonSky;
 import com.orbitcore.client.render.RocketEntityRenderer;
 import com.orbitcore.client.render.RocketStageEntityRenderer;
@@ -15,6 +17,7 @@ import com.orbitcore.client.screen.EngineeringTableScreen;
 import com.orbitcore.client.screen.FuelRefineryScreen;
 import com.orbitcore.client.screen.MetallurgicalFurnaceScreen;
 import com.orbitcore.client.screen.OxygenStationScreen;
+import com.orbitcore.client.screen.RegolithProcessorScreen;
 import com.orbitcore.client.screen.RocketAssemblerScreen;
 import com.orbitcore.client.screen.SampleAnalyzerScreen;
 import com.orbitcore.client.screen.SealerScreen;
@@ -53,6 +56,7 @@ public class OrbitCoreClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.AIR_SEPARATOR, AirSeparatorScreen::new);
         HandledScreens.register(ModScreenHandlers.ROCKET_ASSEMBLER, RocketAssemblerScreen::new);
         HandledScreens.register(ModScreenHandlers.OXYGEN_STATION, OxygenStationScreen::new);
+        HandledScreens.register(ModScreenHandlers.REGOLITH_PROCESSOR, RegolithProcessorScreen::new);
         HandledScreens.register(ModScreenHandlers.SEALER, SealerScreen::new);
         EntityRendererRegistry.register(ModEntities.ROCKET, RocketEntityRenderer::new);
 
@@ -68,6 +72,8 @@ public class OrbitCoreClient implements ClientModInitializer {
         MoonSky.register();
         SuitHud.register();
         SpacesuitRenderer.register();
+        QuakeShake.register();
+        EntityRendererRegistry.register(ModEntities.METEOR, MeteorEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
         ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 

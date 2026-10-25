@@ -1,5 +1,6 @@
 package com.orbitcore.client.network;
 
+import com.orbitcore.client.flight.QuakeShake;
 import com.orbitcore.client.screen.MissionControlScreen;
 import com.orbitcore.client.screen.RocketScreen;
 import com.orbitcore.client.screen.TelescopeScreen;
@@ -56,6 +57,11 @@ public final class OrbitClientNetworking {
                     client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_PLAYER_LEVELUP, 1.4f));
                 }
             });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.QUAKE, (client, handler, buf, sender) -> {
+            float strength = buf.readFloat();
+            int ticks = buf.readVarInt();
+            client.execute(() -> QuakeShake.start(strength, ticks));
         });
         ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.OPEN_ROCKET, (client, handler, buf, sender) -> {
             int entityId = buf.readVarInt();

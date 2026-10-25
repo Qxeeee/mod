@@ -3,6 +3,7 @@
   "values": [
     "orbitcore:rutile_ore",
     "orbitcore:deepslate_rutile_ore",
-    "orbitcore:titanium_block"
+    "orbitcore:titanium_block",
+    "orbitcore:meteorite"
   ]
 }

@@ -13,6 +13,7 @@ import com.orbitcore.block.MetallurgicalFurnaceBlock;
 import com.orbitcore.block.MissionControlBlock;
 import com.orbitcore.block.OxygenStationBlock;
 import com.orbitcore.block.RegolithBlock;
+import com.orbitcore.block.RegolithProcessorBlock;
 import com.orbitcore.block.RocketAssemblerBlock;
 import com.orbitcore.block.SampleAnalyzerBlock;
 import com.orbitcore.block.SealerBlock;
@@ -94,6 +95,11 @@ public final class ModBlocks {
     public static final Block LAUNCH_PAD = register("launch_pad",
             new LaunchPadBlock(AbstractBlock.Settings.create().mapColor(MapColor.GRAY)
                     .requiresTool().strength(5.0f, 12.0f).sounds(BlockSoundGroup.METAL)));
+
+    // Лунная добыча и метеориты
+    public static final Block REGOLITH_PROCESSOR = register("regolith_processor", new RegolithProcessorBlock(machineSettings(7)));
+    public static final Block METEORITE = register("meteorite",
+            new Block(AbstractBlock.Settings.copy(Blocks.ANCIENT_DEBRIS).mapColor(MapColor.BLACK).strength(8.0f, 1200.0f)));
 
     // Жизнеобеспечение
     public static final Block OXYGEN_STATION = register("oxygen_station", new OxygenStationBlock(machineSettings(5)));

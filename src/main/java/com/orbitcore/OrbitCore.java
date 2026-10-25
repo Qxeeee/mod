@@ -13,6 +13,7 @@ import com.orbitcore.registry.ModScreenHandlers;
 import com.orbitcore.registry.ModSounds;
 import com.orbitcore.registry.ModWorldGen;
 import com.orbitcore.survival.LifeSupport;
+import com.orbitcore.world.LunarEvents;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class OrbitCore implements ModInitializer {
         ModWorldGen.register();
         OrbitNetworking.register();
         LifeSupport.register();
+        LunarEvents.register();
         LOGGER.info("OrbitCore initialized");
     }
 }

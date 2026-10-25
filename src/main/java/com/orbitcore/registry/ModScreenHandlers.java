@@ -8,6 +8,7 @@ import com.orbitcore.screen.EngineeringTableScreenHandler;
 import com.orbitcore.screen.FuelRefineryScreenHandler;
 import com.orbitcore.screen.MetallurgicalFurnaceScreenHandler;
 import com.orbitcore.screen.OxygenStationScreenHandler;
+import com.orbitcore.screen.RegolithProcessorScreenHandler;
 import com.orbitcore.screen.RocketAssemblerScreenHandler;
 import com.orbitcore.screen.SampleAnalyzerScreenHandler;
 import com.orbitcore.screen.SealerScreenHandler;
@@ -34,6 +35,8 @@ public final class ModScreenHandlers {
             register("air_separator", AirSeparatorScreenHandler::new);
     public static final ScreenHandlerType<RocketAssemblerScreenHandler> ROCKET_ASSEMBLER =
             register("rocket_assembler", RocketAssemblerScreenHandler::new);
+    public static final ScreenHandlerType<RegolithProcessorScreenHandler> REGOLITH_PROCESSOR =
+            register("regolith_processor", RegolithProcessorScreenHandler::new);
     public static final ScreenHandlerType<OxygenStationScreenHandler> OXYGEN_STATION =
             register("oxygen_station", OxygenStationScreenHandler::new);
     public static final ScreenHandlerType<SealerScreenHandler> SEALER =

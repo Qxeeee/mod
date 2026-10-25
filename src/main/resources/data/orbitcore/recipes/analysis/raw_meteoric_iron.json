@@ -1,0 +1,7 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:raw_meteoric_iron"
+  },
+  "samples": 4
+}

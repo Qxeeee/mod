@@ -296,5 +296,20 @@
   "subtitles.orbitcore.spacesuit.alarm": "Скафандр: мало кислорода",
   "subtitles.orbitcore.dosimeter.click": "Щёлкает дозиметр",
   "gui.orbitcore.sealer.blocked": "Решётка закрыта блоком",
-  "message.orbitcore.flight.no_spacesuit": "На вас нет полного скафандра: в капсуле есть воздух, но снаружи на Луне — вакуум"
+  "message.orbitcore.flight.no_spacesuit": "На вас нет полного скафандра: в капсуле есть воздух, но снаружи на Луне — вакуум",
+  "block.orbitcore.regolith_processor": "Переработчик реголита",
+  "block.orbitcore.meteorite": "Никелево-железный метеорит",
+  "item.orbitcore.gas_canister": "Газовый баллон",
+  "item.orbitcore.helium3_canister": "Баллон гелия-3",
+  "item.orbitcore.raw_meteoric_iron": "Метеоритное железо",
+  "tooltip.orbitcore.regolith_processor": "Реголит → гелий-3, ильменит → кислород и железо, лёд → вода",
+  "tooltip.orbitcore.helium3_canister": "Топливо будущих термоядерных реакторов. На Земле его почти нет",
+  "tooltip.orbitcore.gas_canister": "Наполняется гелием-3 в переработчике реголита",
+  "tooltip.orbitcore.meteorite": "Упал с неба. Внутри — железо с никелем",
+  "gui.orbitcore.helium3": "Гелий-3: %s / %s",
+  "gui.orbitcore.helium3.hint": "Положите газовый баллон: каждые 1000 — один баллон",
+  "message.orbitcore.meteor": "☄ Метеорит! Берегитесь неба",
+  "subtitles.orbitcore.meteor.incoming": "Свистит метеорит",
+  "subtitles.orbitcore.meteor.impact": "Удар метеорита",
+  "subtitles.orbitcore.moonquake": "Гудит лунотрясение"
 }

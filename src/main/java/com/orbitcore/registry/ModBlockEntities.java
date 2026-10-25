@@ -7,6 +7,7 @@ import com.orbitcore.block.entity.ElectrolyzerBlockEntity;
 import com.orbitcore.block.entity.FuelRefineryBlockEntity;
 import com.orbitcore.block.entity.MetallurgicalFurnaceBlockEntity;
 import com.orbitcore.block.entity.OxygenStationBlockEntity;
+import com.orbitcore.block.entity.RegolithProcessorBlockEntity;
 import com.orbitcore.block.entity.RocketAssemblerBlockEntity;
 import com.orbitcore.block.entity.SampleAnalyzerBlockEntity;
 import com.orbitcore.block.entity.SealerBlockEntity;
@@ -34,6 +35,8 @@ public final class ModBlockEntities {
             register("air_separator", AirSeparatorBlockEntity::new, ModBlocks.AIR_SEPARATOR);
     public static final BlockEntityType<RocketAssemblerBlockEntity> ROCKET_ASSEMBLER =
             register("rocket_assembler", RocketAssemblerBlockEntity::new, ModBlocks.ROCKET_ASSEMBLER);
+    public static final BlockEntityType<RegolithProcessorBlockEntity> REGOLITH_PROCESSOR =
+            register("regolith_processor", RegolithProcessorBlockEntity::new, ModBlocks.REGOLITH_PROCESSOR);
     public static final BlockEntityType<OxygenStationBlockEntity> OXYGEN_STATION =
             register("oxygen_station", OxygenStationBlockEntity::new, ModBlocks.OXYGEN_STATION);
     public static final BlockEntityType<SealerBlockEntity> SEALER =
@@ -55,11 +58,13 @@ public final class ModBlockEntities {
         EnergyStorage.SIDED.registerForBlockEntity((analyzer, side) -> analyzer.energy, SAMPLE_ANALYZER);
         EnergyStorage.SIDED.registerForBlockEntity((refinery, side) -> refinery.energy, FUEL_REFINERY);
         EnergyStorage.SIDED.registerForBlockEntity((separator, side) -> separator.energy, AIR_SEPARATOR);
+        EnergyStorage.SIDED.registerForBlockEntity((processor, side) -> processor.energy, REGOLITH_PROCESSOR);
         EnergyStorage.SIDED.registerForBlockEntity((station, side) -> station.energy, OXYGEN_STATION);
         EnergyStorage.SIDED.registerForBlockEntity((sealer, side) -> sealer.energy, SEALER);
         FluidStorage.SIDED.registerForBlockEntity((refinery, side) -> refinery.pipes, FUEL_REFINERY);
         FluidStorage.SIDED.registerForBlockEntity((separator, side) -> separator.pipes, AIR_SEPARATOR);
         FluidStorage.SIDED.registerForBlockEntity((station, side) -> station.pipes, OXYGEN_STATION);
+        FluidStorage.SIDED.registerForBlockEntity((processor, side) -> processor.pipes, REGOLITH_PROCESSOR);
         FluidStorage.SIDED.registerForBlockEntity((sealer, side) -> sealer.pipes, SEALER);
     }
 }

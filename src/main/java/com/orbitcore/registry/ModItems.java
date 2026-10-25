@@ -40,6 +40,12 @@ public final class ModItems {
     public static final Item ASSEMBLED_ROCKET = Registry.register(Registries.ITEM, OrbitCore.id("assembled_rocket"),
             new RocketItem(new Item.Settings()));
 
+    // Лунная добыча
+    public static final Item GAS_CANISTER = register("gas_canister");
+    public static final Item HELIUM3_CANISTER = Registry.register(Registries.ITEM, OrbitCore.id("helium3_canister"),
+            new Item(new Item.Settings().maxCount(16)));
+    public static final Item RAW_METEORIC_IRON = register("raw_meteoric_iron");
+
     // Жизнеобеспечение
     public static final Item SPACESUIT_HELMET = suit("spacesuit_helmet", ArmorItem.Type.HELMET);
     public static final Item SPACESUIT_CHESTPLATE = suit("spacesuit_chestplate", ArmorItem.Type.CHESTPLATE);

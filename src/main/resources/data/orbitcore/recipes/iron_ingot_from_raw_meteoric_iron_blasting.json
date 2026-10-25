@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "orbitcore:raw_meteoric_iron"
+  },
+  "result": "minecraft:iron_ingot",
+  "experience": 0.8,
+  "cookingtime": 100
+}

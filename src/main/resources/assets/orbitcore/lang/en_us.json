@@ -296,5 +296,20 @@
   "subtitles.orbitcore.spacesuit.alarm": "Suit: oxygen low",
   "subtitles.orbitcore.dosimeter.click": "Dosimeter clicks",
   "gui.orbitcore.sealer.blocked": "Outlet is blocked",
-  "message.orbitcore.flight.no_spacesuit": "You are not wearing a full spacesuit: the capsule has air, but outside on the Moon there is only vacuum"
+  "message.orbitcore.flight.no_spacesuit": "You are not wearing a full spacesuit: the capsule has air, but outside on the Moon there is only vacuum",
+  "block.orbitcore.regolith_processor": "Regolith Processor",
+  "block.orbitcore.meteorite": "Nickel-Iron Meteorite",
+  "item.orbitcore.gas_canister": "Gas Canister",
+  "item.orbitcore.helium3_canister": "Helium-3 Canister",
+  "item.orbitcore.raw_meteoric_iron": "Raw Meteoric Iron",
+  "tooltip.orbitcore.regolith_processor": "Regolith → helium-3, ilmenite → oxygen and iron, ice → water",
+  "tooltip.orbitcore.helium3_canister": "Fuel for future fusion reactors. Earth has almost none",
+  "tooltip.orbitcore.gas_canister": "Filled with helium-3 in the regolith processor",
+  "tooltip.orbitcore.meteorite": "Fell from the sky. Iron and nickel inside",
+  "gui.orbitcore.helium3": "Helium-3: %s / %s",
+  "gui.orbitcore.helium3.hint": "Insert a gas canister: one per 1000",
+  "message.orbitcore.meteor": "☄ Meteorite incoming! Watch the sky",
+  "subtitles.orbitcore.meteor.incoming": "Meteorite whistles",
+  "subtitles.orbitcore.meteor.impact": "Meteorite impact",
+  "subtitles.orbitcore.moonquake": "Moonquake rumbles"
 }
