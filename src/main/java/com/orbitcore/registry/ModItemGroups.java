@@ -39,6 +39,10 @@ public final class ModItemGroups {
                         entries.add(ModBlocks.ENGINEERING_TABLE);
                         entries.add(ModBlocks.COAL_GENERATOR);
                         entries.add(ModBlocks.ELECTROLYZER);
+
+                        entries.add(ModBlocks.TELESCOPE);
+                        entries.add(ModBlocks.MISSION_CONTROL);
+                        entries.add(ModBlocks.SAMPLE_ANALYZER);
                     })
                     .build());
 

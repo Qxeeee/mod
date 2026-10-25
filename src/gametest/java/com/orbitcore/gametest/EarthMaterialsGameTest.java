@@ -5,6 +5,7 @@ import com.orbitcore.block.MachineBlock;
 import com.orbitcore.block.entity.CoalGeneratorBlockEntity;
 import com.orbitcore.block.entity.ElectrolyzerBlockEntity;
 import com.orbitcore.block.entity.MetallurgicalFurnaceBlockEntity;
+import com.orbitcore.block.entity.SampleAnalyzerBlockEntity;
 import com.orbitcore.registry.ModBlocks;
 import com.orbitcore.registry.ModItems;
 import com.orbitcore.registry.ModRecipes;
@@ -67,6 +68,23 @@ public class EarthMaterialsGameTest implements FabricGameTest {
 
         context.addInstantFinalTask(() -> context.assertTrue(
                 electrolyzer.getStack(ElectrolyzerBlockEntity.OUTPUT).isOf(ModItems.ALUMINUM_INGOT), "no aluminum yet"));
+    }
+
+    @GameTest(templateName = EMPTY_STRUCTURE, tickLimit = 200)
+    public void generatorSharesEnergyBetweenNeighbours(TestContext context) {
+        BlockPos left = new BlockPos(1, 1, 1);
+        BlockPos middle = new BlockPos(2, 1, 1);
+        BlockPos right = new BlockPos(3, 1, 1);
+        context.setBlockState(left, ModBlocks.SAMPLE_ANALYZER.getDefaultState());
+        context.setBlockState(middle, ModBlocks.COAL_GENERATOR.getDefaultState());
+        context.setBlockState(right, ModBlocks.ELECTROLYZER.getDefaultState());
+        ((CoalGeneratorBlockEntity) context.getBlockEntity(middle)).setStack(CoalGeneratorBlockEntity.FUEL, new ItemStack(Items.COAL));
+        SampleAnalyzerBlockEntity analyzer = (SampleAnalyzerBlockEntity) context.getBlockEntity(left);
+        ElectrolyzerBlockEntity electrolyzer = (ElectrolyzerBlockEntity) context.getBlockEntity(right);
+
+        // Оба соседа должны получать энергию одновременно, а не по очереди
+        context.addInstantFinalTask(() -> context.assertTrue(analyzer.energy.amount >= 300 && electrolyzer.energy.amount >= 300,
+                "energy split: analyzer " + analyzer.energy.amount + ", electrolyzer " + electrolyzer.energy.amount));
     }
 
     @GameTest(templateName = EMPTY_STRUCTURE)

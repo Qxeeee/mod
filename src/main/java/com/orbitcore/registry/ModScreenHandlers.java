@@ -5,6 +5,7 @@ import com.orbitcore.screen.CoalGeneratorScreenHandler;
 import com.orbitcore.screen.ElectrolyzerScreenHandler;
 import com.orbitcore.screen.EngineeringTableScreenHandler;
 import com.orbitcore.screen.MetallurgicalFurnaceScreenHandler;
+import com.orbitcore.screen.SampleAnalyzerScreenHandler;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
@@ -20,6 +21,8 @@ public final class ModScreenHandlers {
             register("electrolyzer", ElectrolyzerScreenHandler::new);
     public static final ScreenHandlerType<EngineeringTableScreenHandler> ENGINEERING_TABLE =
             register("engineering_table", EngineeringTableScreenHandler::new);
+    public static final ScreenHandlerType<SampleAnalyzerScreenHandler> SAMPLE_ANALYZER =
+            register("sample_analyzer", SampleAnalyzerScreenHandler::new);
 
     private ModScreenHandlers() {
     }

@@ -4,6 +4,7 @@ import com.orbitcore.OrbitCore;
 import com.orbitcore.block.entity.CoalGeneratorBlockEntity;
 import com.orbitcore.block.entity.ElectrolyzerBlockEntity;
 import com.orbitcore.block.entity.MetallurgicalFurnaceBlockEntity;
+import com.orbitcore.block.entity.SampleAnalyzerBlockEntity;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -19,6 +20,8 @@ public final class ModBlockEntities {
             register("coal_generator", CoalGeneratorBlockEntity::new, ModBlocks.COAL_GENERATOR);
     public static final BlockEntityType<ElectrolyzerBlockEntity> ELECTROLYZER =
             register("electrolyzer", ElectrolyzerBlockEntity::new, ModBlocks.ELECTROLYZER);
+    public static final BlockEntityType<SampleAnalyzerBlockEntity> SAMPLE_ANALYZER =
+            register("sample_analyzer", SampleAnalyzerBlockEntity::new, ModBlocks.SAMPLE_ANALYZER);
 
     private ModBlockEntities() {
     }
@@ -33,5 +36,6 @@ public final class ModBlockEntities {
         // Энергия доступна с любой стороны: генератор отдаёт, электролизёр принимает
         EnergyStorage.SIDED.registerForBlockEntity((generator, side) -> generator.energy, COAL_GENERATOR);
         EnergyStorage.SIDED.registerForBlockEntity((electrolyzer, side) -> electrolyzer.energy, ELECTROLYZER);
+        EnergyStorage.SIDED.registerForBlockEntity((analyzer, side) -> analyzer.energy, SAMPLE_ANALYZER);
     }
 }

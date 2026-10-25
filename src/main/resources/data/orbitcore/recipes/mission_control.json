@@ -1,0 +1,28 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "GGG",
+    "CMC",
+    "PWP"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    }
+  },
+  "result": {
+    "item": "orbitcore:mission_control"
+  }
+}

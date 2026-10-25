@@ -13,21 +13,21 @@ import com.orbitcore.screen.MachineScreenHandler;
 import java.util.List;
 
 /**
- * Общий стиль интерфейсов OrbitCore: тёмная панель приборов с голубыми акцентами.
- * Всё рисуется кодом, без текстур, чтобы стиль было легко менять в одном месте.
+ * Основа окон машин OrbitCore: тёмная панель приборов с голубыми акцентами.
+ * Всё рисуется кодом, без текстур; цвета — в {@link OrbitStyle}.
  */
 public abstract class OrbitScreen<T extends ScreenHandler> extends HandledScreen<T> {
-    protected static final int BORDER = 0xFF06090F;
-    protected static final int PANEL = 0xFF1B2333;
-    protected static final int PANEL_LIGHT = 0xFF2C3A54;
-    protected static final int PANEL_DARK = 0xFF111826;
-    protected static final int SLOT = 0xFF0A0F18;
-    protected static final int ACCENT = 0xFF4FD1E8;
-    protected static final int ACCENT_DARK = 0xFF1C6E80;
-    protected static final int TEXT = 0xFFDCE8F5;
-    protected static final int TEXT_DIM = 0xFF8EA2BE;
-    protected static final int ENERGY_TOP = 0xFF7CF0B0;
-    protected static final int ENERGY_BOTTOM = 0xFF1E8C6A;
+    protected static final int BORDER = OrbitStyle.BORDER;
+    protected static final int PANEL = OrbitStyle.PANEL;
+    protected static final int PANEL_LIGHT = OrbitStyle.PANEL_LIGHT;
+    protected static final int PANEL_DARK = OrbitStyle.PANEL_DARK;
+    protected static final int SLOT = OrbitStyle.SLOT;
+    protected static final int ACCENT = OrbitStyle.ACCENT;
+    protected static final int ACCENT_DARK = OrbitStyle.ACCENT_DARK;
+    protected static final int TEXT = OrbitStyle.TEXT;
+    protected static final int TEXT_DIM = OrbitStyle.TEXT_DIM;
+    protected static final int ENERGY_TOP = OrbitStyle.ENERGY_TOP;
+    protected static final int ENERGY_BOTTOM = OrbitStyle.ENERGY_BOTTOM;
 
     protected OrbitScreen(T handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -54,10 +54,7 @@ public abstract class OrbitScreen<T extends ScreenHandler> extends HandledScreen
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         int left = x;
         int top = y;
-        context.fill(left, top, left + backgroundWidth, top + backgroundHeight, BORDER);
-        context.fill(left + 1, top + 1, left + backgroundWidth - 1, top + backgroundHeight - 1, PANEL_LIGHT);
-        context.fill(left + 2, top + 2, left + backgroundWidth - 1, top + backgroundHeight - 1, PANEL_DARK);
-        context.fill(left + 2, top + 2, left + backgroundWidth - 2, top + backgroundHeight - 2, PANEL);
+        OrbitStyle.panel(context, left, top, backgroundWidth, backgroundHeight);
         // Полоса-акцент под заголовком и разделитель над инвентарём игрока
         context.fill(left + 7, top + 14, left + backgroundWidth - 7, top + 15, ACCENT_DARK);
         context.fill(left + 7, top + playerInventoryTitleY - 3, left + backgroundWidth - 7, top + playerInventoryTitleY - 2, PANEL_LIGHT);

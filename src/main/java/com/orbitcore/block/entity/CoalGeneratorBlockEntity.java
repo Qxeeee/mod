@@ -18,6 +18,9 @@ import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.EnergyStorageUtil;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Угольный генератор: сжигает топливо и отдаёт энергию соседним блокам
  * (нашим машинам и любым машинам на Team Reborn Energy).
@@ -84,11 +87,18 @@ public class CoalGeneratorBlockEntity extends MachineBlockEntity {
             igniteFuel();
         }
 
+        List<EnergyStorage> targets = new ArrayList<>();
         for (Direction direction : Direction.values()) {
             EnergyStorage target = EnergyStorage.SIDED.find(world, pos.offset(direction), direction.getOpposite());
-            if (target != null) {
-                EnergyStorageUtil.move(energy, target, MAX_OUTPUT, null);
+            if (target != null && target.supportsInsertion()) {
+                targets.add(target);
             }
+        }
+        // Делим поровну: иначе первый сосед забирал бы всё, а остальные простаивали.
+        // Что сосед не взял, достаётся следующим.
+        for (int i = 0; i < targets.size(); i++) {
+            long share = Math.min(MAX_OUTPUT, energy.amount) / (targets.size() - i);
+            EnergyStorageUtil.move(energy, targets.get(i), share, null);
         }
 
         setLit(world, pos, state, burnTime > 0);

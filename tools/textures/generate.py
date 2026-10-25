@@ -522,6 +522,210 @@ def table_front():
     return img
 
 
+BRASS = [(70, 46, 18), (118, 80, 30), (168, 120, 46), (206, 160, 70), (236, 200, 110), (252, 232, 170)]
+SCREEN_GREEN = [(8, 22, 16), (14, 46, 30), (30, 110, 64), (70, 200, 120), (170, 255, 200)]
+GUI = ASSETS / "gui"
+
+
+def telescope_tube():
+    rng = random.Random(61)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            shade = 3 if y in (4, 5, 6) else 2
+            shade += 1 if y in (5,) else 0
+            if x in (0, 7, 15):
+                shade = 1
+            put(img, x, y, BRASS[max(1, min(5, shade + (rng.random() < 0.12)))])
+    for y in (0, 15):
+        line(img, 0, y, 15, y, BRASS[0])
+    return img
+
+
+def telescope_metal():
+    rng = random.Random(62)
+    img = new()
+    noisy(img, 0, 0, 15, 15, STEEL, 1, rng)
+    for x in (0, 15):
+        line(img, x, 0, x, 15, STEEL[0])
+    return img
+
+
+def telescope_lens():
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            d = math.hypot(x - 7.5, y - 7.5)
+            if d > 7.2:
+                put(img, x, y, BRASS[1])
+            elif d > 6:
+                put(img, x, y, BRASS[3])
+            else:
+                put(img, x, y, (30, 60 + int(d * 8), 120 + int(d * 10)))
+    for x, y in ((5, 4), (6, 4), (4, 5)):
+        put(img, x, y, (220, 240, 255))
+    return img
+
+
+def mission_screen():
+    img = new()
+    rect(img, 0, 0, 15, 15, STEEL[1])
+    rect(img, 1, 1, 14, 11, SCREEN_GREEN[0])
+    # Планета и орбита
+    for a in range(0, 360, 10):
+        t = math.radians(a)
+        put(img, round(7.5 + 5.5 * math.cos(t)), round(6 + 3.2 * math.sin(t)), SCREEN_GREEN[2])
+    for y in range(4, 9):
+        for x in range(5, 11):
+            if math.hypot(x - 7.5, y - 6) < 2.1:
+                put(img, x, y, SCREEN_GREEN[3])
+    put(img, 13, 5, SCREEN_GREEN[4])
+    line(img, 2, 10, 5, 10, SCREEN_GREEN[2])
+    line(img, 10, 10, 13, 10, SCREEN_GREEN[2])
+    frame(img, 0, 0, 15, 12, STEEL[3], STEEL[0])
+    rect(img, 0, 13, 15, 15, STEEL[2])
+    for x in (3, 7, 11):
+        put(img, x, 14, (230, 180, 40) if x == 7 else (180, 40, 40))
+    return img
+
+
+def mission_panel():
+    rng = random.Random(63)
+    img = new()
+    noisy(img, 0, 0, 15, 15, STEEL, 2, rng)
+    frame(img, 0, 0, 15, 15, STEEL[4], STEEL[0])
+    colors = [(180, 40, 40), (230, 180, 40), (60, 180, 90), (60, 150, 220)]
+    for row, y in enumerate((3, 7, 11)):
+        for col, x in enumerate((3, 6, 9, 12)):
+            c = colors[(row + col) % 4] if rng.random() < 0.6 else STEEL[4]
+            put(img, x, y, c)
+            put(img, x + 1, y, c)
+            put(img, x, y + 1, STEEL[0])
+    return img
+
+
+def mission_side():
+    img = machine_side(64, vents=True)
+    rect(img, 3, 12, 12, 13, (230, 180, 40))
+    return img
+
+
+def analyzer_front(lit, phase=0):
+    img = machine_side(71, vents=False)
+    # Камера с образцом
+    rect(img, 2, 2, 8, 9, (12, 18, 26))
+    frame(img, 1, 1, 9, 10, STEEL[4], STEEL[0])
+    rect(img, 3, 7, 7, 8, STEEL[3])
+    rect(img, 4, 5, 6, 6, BAUXITE[3])
+    if lit:
+        line(img, 5, 2, 5, 4, CYAN[4])
+        put(img, 4, 3, CYAN[2])
+        put(img, 6, 3, CYAN[2])
+    # Экран спектра
+    rect(img, 10, 2, 14, 9, SCREEN_GREEN[0])
+    frame(img, 10, 2, 14, 9, STEEL[0], STEEL[4])
+    rng = random.Random(500 + phase)
+    for x in range(11, 14):
+        h = rng.randint(1, 5) if lit else 1
+        line(img, x, 8, x, 8 - h + 1, SCREEN_GREEN[3] if lit else SCREEN_GREEN[1])
+    # Кнопки
+    for x, c in ((3, (60, 180, 90)), (6, (230, 180, 40)), (9, (180, 40, 40))):
+        put(img, x, 12, c if lit or x != 3 else STEEL[2])
+        put(img, x + 1, 12, c if lit or x != 3 else STEEL[2])
+    return img
+
+
+def analyzer_top():
+    def detail(img):
+        for y in range(3, 13):
+            for x in range(3, 13):
+                d = math.hypot(x - 7.5, y - 7.5)
+                if d < 4.6:
+                    put(img, x, y, (40 + int(d * 10), 90 + int(d * 12), 120 + int(d * 10)) if d < 3.6 else STEEL[1])
+        put(img, 6, 6, (210, 240, 255))
+    return machine_top(72, detail)
+
+
+def moon_phases():
+    """Луна для окуляра телескопа: 8 фаз по 64×64 в одну полосу (0 — полнолуние, 4 — новолуние)."""
+    size = 64
+    rng = random.Random(81)
+    craters = [(rng.uniform(-0.8, 0.8), rng.uniform(-0.8, 0.8), rng.uniform(0.03, 0.09)) for _ in range(26)]
+    grid = [[rng.random() for _ in range(33)] for _ in range(33)]
+
+    def smooth_noise(x, y, cells):
+        """Плавный шум: сетка cells×cells на квадрат [-1, 1]², сглаженная интерполяция."""
+        gx, gy = (x + 1) / 2 * cells, (y + 1) / 2 * cells
+        ix, iy = max(0, min(cells - 1, int(gx))), max(0, min(cells - 1, int(gy)))
+        fx, fy = gx - ix, gy - iy
+        fx, fy = fx * fx * (3 - 2 * fx), fy * fy * (3 - 2 * fy)
+        top = grid[iy][ix] * (1 - fx) + grid[iy][ix + 1] * fx
+        bottom = grid[iy + 1][ix] * (1 - fx) + grid[iy + 1][ix + 1] * fx
+        return top * (1 - fy) + bottom * fy
+
+    def maria(x, y):
+        # Несколько слоёв шума; моря тяготеют к северо-западу видимой стороны, как у настоящей Луны
+        n = smooth_noise(x, y, 5) * 0.55 + smooth_noise(-y, x, 11) * 0.3 + smooth_noise(x, -y, 23) * 0.15
+        bias = 0.16 * (-x * 0.6 - y * 0.4)
+        return max(0.0, min(1.0, (n + bias - 0.47) * 7))
+    sheet = Image.new("RGBA", (size * 8, size), CLEAR)
+    base = Image.new("RGBA", (size, size), CLEAR)
+    normals = {}
+    for py in range(size):
+        for px in range(size):
+            x, y = (px + 0.5) / size * 2 - 1, (py + 0.5) / size * 2 - 1
+            r2 = x * x + y * y
+            if r2 > 1:
+                continue
+            z = math.sqrt(1 - r2)
+            v = 0.82 + rng.uniform(-0.035, 0.035) - 0.3 * maria(x, y)
+            for cx, cy, cr in craters:
+                d = math.hypot(x - cx, y - cy)
+                if d < cr:
+                    v -= 0.1
+                elif d < cr * 1.35 and (x - cx) + (y - cy) < 0:
+                    v += 0.08
+            # Кратер Тихо с лучами
+            d = math.hypot(x + 0.15, y - 0.62)
+            if d < 0.06:
+                v += 0.2
+            elif abs(math.sin(math.atan2(y - 0.62, x + 0.15) * 7)) > 0.97 and d < 0.6:
+                v += 0.06
+            v *= 0.75 + 0.25 * z
+            c = max(0, min(255, int(v * 255)))
+            base.putpixel((px, py), (c, c, min(255, c + 6), 255))
+            normals[(px, py)] = (x, y, z)
+    for phase in range(8):
+        frame_img = base.copy()
+        if phase == 4:
+            angle = math.pi
+        else:
+            angle = (phase if phase < 4 else phase - 8) * math.pi / 4
+        sun = (-math.sin(angle), 0.0, math.cos(angle))
+        for (px, py), (x, y, z) in normals.items():
+            light = x * sun[0] + y * sun[1] + z * sun[2]
+            if light < 0.04:
+                r, g, b, a = frame_img.getpixel((px, py))
+                k = 0.1 if light < -0.04 else 0.1 + (light + 0.04) / 0.08 * 0.6
+                frame_img.putpixel((px, py), (int(r * k), int(g * k), int(b * k + 6), a))
+        sheet.paste(frame_img, (phase * size, 0))
+    return sheet
+
+
+def eyepiece():
+    """Круг окуляра: прозрачный центр и мягкое затемнение к краю."""
+    size = 256
+    img = Image.new("RGBA", (size, size), CLEAR)
+    for y in range(size):
+        for x in range(size):
+            d = math.hypot(x + 0.5 - size / 2, y + 0.5 - size / 2) / (size / 2)
+            if d < 0.86:
+                continue
+            a = 255 if d >= 0.98 else int((d - 0.86) / 0.12 * 255)
+            img.putpixel((x, y), (0, 0, 0, a))
+    return img
+
+
 def main():
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")
@@ -566,6 +770,21 @@ def main():
     save(table_top(), BLOCK, "engineering_table_top")
     save(table_side(), BLOCK, "engineering_table_side")
     save(table_front(), BLOCK, "engineering_table_front")
+
+    save(telescope_tube(), BLOCK, "telescope_tube")
+    save(telescope_metal(), BLOCK, "telescope_metal")
+    save(telescope_lens(), BLOCK, "telescope_lens")
+    save(mission_screen(), BLOCK, "mission_control_screen")
+    save(mission_panel(), BLOCK, "mission_control_panel")
+    save(mission_side(), BLOCK, "mission_control_side")
+    save(analyzer_front(False), BLOCK, "sample_analyzer_front")
+    save_animation([analyzer_front(True, p) for p in range(4)], BLOCK, "sample_analyzer_front_on", 4)
+    save(analyzer_top(), BLOCK, "sample_analyzer_top")
+
+    telescope_gui = GUI / "telescope"
+    telescope_gui.mkdir(parents=True, exist_ok=True)
+    moon_phases().save(telescope_gui / "moon.png")
+    eyepiece().save(telescope_gui / "eyepiece.png")
 
 
 if __name__ == "__main__":

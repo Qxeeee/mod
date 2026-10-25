@@ -4,7 +4,9 @@ import com.orbitcore.OrbitCore;
 import com.orbitcore.client.screen.CoalGeneratorScreen;
 import com.orbitcore.client.screen.ElectrolyzerScreen;
 import com.orbitcore.client.screen.EngineeringTableScreen;
+import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.client.screen.MetallurgicalFurnaceScreen;
+import com.orbitcore.client.screen.SampleAnalyzerScreen;
 import com.orbitcore.registry.ModBlocks;
 import com.orbitcore.registry.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
@@ -29,6 +31,8 @@ public class OrbitCoreClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.COAL_GENERATOR, CoalGeneratorScreen::new);
         HandledScreens.register(ModScreenHandlers.ELECTROLYZER, ElectrolyzerScreen::new);
         HandledScreens.register(ModScreenHandlers.ENGINEERING_TABLE, EngineeringTableScreen::new);
+        HandledScreens.register(ModScreenHandlers.SAMPLE_ANALYZER, SampleAnalyzerScreen::new);
+        OrbitClientNetworking.register();
 
         // Руды нарисованы слоем поверх камня, им нужна прозрачность
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(),

@@ -1,0 +1,8 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:silicon"
+  },
+  "samples": 1,
+  "entry": "silicon"
+}

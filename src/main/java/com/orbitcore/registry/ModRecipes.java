@@ -1,6 +1,7 @@
 package com.orbitcore.registry;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.recipe.AnalysisRecipe;
 import com.orbitcore.recipe.ElectrolysisRecipe;
 import com.orbitcore.recipe.EngineeringRecipe;
 import com.orbitcore.recipe.MetallurgyRecipe;
@@ -15,6 +16,7 @@ public final class ModRecipes {
     public static final RecipeType<MetallurgyRecipe> METALLURGY = type("metallurgy");
     public static final RecipeType<ElectrolysisRecipe> ELECTROLYSIS = type("electrolysis");
     public static final RecipeType<EngineeringRecipe> ENGINEERING = type("engineering");
+    public static final RecipeType<AnalysisRecipe> ANALYSIS = type("analysis");
 
     public static final RecipeSerializer<MetallurgyRecipe> METALLURGY_SERIALIZER =
             serializer("metallurgy", new MetallurgyRecipe.Serializer());
@@ -22,6 +24,8 @@ public final class ModRecipes {
             serializer("electrolysis", new ElectrolysisRecipe.Serializer());
     public static final RecipeSerializer<EngineeringRecipe> ENGINEERING_SERIALIZER =
             serializer("engineering", new EngineeringRecipe.Serializer());
+    public static final RecipeSerializer<AnalysisRecipe> ANALYSIS_SERIALIZER =
+            serializer("analysis", new AnalysisRecipe.Serializer());
 
     private ModRecipes() {
     }

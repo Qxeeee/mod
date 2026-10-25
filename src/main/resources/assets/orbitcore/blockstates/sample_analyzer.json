@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "orbitcore:block/sample_analyzer"
+    },
+    "facing=north,lit=true": {
+      "model": "orbitcore:block/sample_analyzer_on"
+    },
+    "facing=east,lit=false": {
+      "model": "orbitcore:block/sample_analyzer",
+      "y": 90
+    },
+    "facing=east,lit=true": {
+      "model": "orbitcore:block/sample_analyzer_on",
+      "y": 90
+    },
+    "facing=south,lit=false": {
+      "model": "orbitcore:block/sample_analyzer",
+      "y": 180
+    },
+    "facing=south,lit=true": {
+      "model": "orbitcore:block/sample_analyzer_on",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "orbitcore:block/sample_analyzer",
+      "y": 270
+    },
+    "facing=west,lit=true": {
+      "model": "orbitcore:block/sample_analyzer_on",
+      "y": 270
+    }
+  }
+}

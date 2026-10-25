@@ -68,6 +68,31 @@ loom {
     }
 }
 
+// Фототур (gradlew runTour): сам создаёт мир, расставляет блоки, открывает экраны
+// и сохраняет скриншоты в run/screenshots/tour. В готовый .jar не попадает.
+sourceSets {
+    devtools {
+        compileClasspath += sourceSets.client.compileClasspath + sourceSets.client.output + sourceSets.main.output
+        runtimeClasspath += sourceSets.client.runtimeClasspath + sourceSets.client.output + sourceSets.main.output
+    }
+}
+
+loom {
+    mods {
+        'orbitcore-devtools' {
+            sourceSet sourceSets.devtools
+        }
+    }
+    runs {
+        tour {
+            client()
+            name 'Screenshot Tour'
+            source sourceSets.devtools
+            runDir 'run'
+        }
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -106,6 +131,14 @@ tasks.withType(JavaCompile).configureEach {
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+// Каждый прогон игровых тестов начинается с чистого мира: иначе космическая программа
+// копила бы очки и открытия от прошлых запусков
+tasks.matching { it.name == 'runGametest' }.configureEach {
+    doFirst {
+        project.delete(layout.buildDirectory.dir('gametest/world'))
+    }
 }
 
 // gradlew release — собрать мод и положить готовый .jar в папку release/

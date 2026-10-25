@@ -4,6 +4,7 @@ import com.orbitcore.recipe.EngineeringRecipe;
 import com.orbitcore.registry.ModBlocks;
 import com.orbitcore.registry.ModRecipes;
 import com.orbitcore.registry.ModScreenHandlers;
+import com.orbitcore.science.SpaceProgram;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
@@ -68,7 +69,8 @@ public class EngineeringTableScreenHandler extends ScreenHandler {
         }
         ItemStack stack = ItemStack.EMPTY;
         Optional<EngineeringRecipe> recipe = world.getRecipeManager().getFirstMatch(ModRecipes.ENGINEERING, input, world);
-        if (recipe.isPresent()) {
+        // Рецепт, для которого ещё нет исследования, ничего не выдаёт (экран покажет, чего не хватает)
+        if (recipe.isPresent() && SpaceProgram.get(world.getServer()).hasResearch(recipe.get().research())) {
             result.setLastRecipe(recipe.get());
             stack = recipe.get().craft(input, world.getRegistryManager());
         }
@@ -76,6 +78,11 @@ public class EngineeringTableScreenHandler extends ScreenHandler {
         handler.setPreviousTrackedSlot(0, stack);
         ((ServerPlayerEntity) player).networkHandler.sendPacket(
                 new ScreenHandlerSlotUpdateS2CPacket(handler.syncId, handler.nextRevision(), 0, stack));
+    }
+
+    /** Сетка 3×3 — экран смотрит в неё, чтобы показать, какое исследование нужно рецепту. */
+    public RecipeInputInventory input() {
+        return input;
     }
 
     @Override

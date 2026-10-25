@@ -1,5 +1,6 @@
 package com.orbitcore;
 
+import com.orbitcore.network.OrbitNetworking;
 import com.orbitcore.registry.ModBlockEntities;
 import com.orbitcore.registry.ModBlocks;
 import com.orbitcore.registry.ModItemGroups;
@@ -34,6 +35,7 @@ public class OrbitCore implements ModInitializer {
         ModScreenHandlers.register();
         ModItemGroups.register();
         ModWorldGen.register();
+        OrbitNetworking.register();
         LOGGER.info("OrbitCore initialized");
     }
 }

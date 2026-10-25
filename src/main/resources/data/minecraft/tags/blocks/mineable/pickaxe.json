@@ -11,6 +11,9 @@
     "orbitcore:metallurgical_furnace",
     "orbitcore:coal_generator",
     "orbitcore:electrolyzer",
-    "orbitcore:engineering_table"
+    "orbitcore:engineering_table",
+    "orbitcore:telescope",
+    "orbitcore:mission_control",
+    "orbitcore:sample_analyzer"
   ]
 }

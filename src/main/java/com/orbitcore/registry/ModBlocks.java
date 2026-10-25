@@ -6,6 +6,9 @@ import com.orbitcore.block.ElectrolyzerBlock;
 import com.orbitcore.block.EngineeringTableBlock;
 import com.orbitcore.block.MachineBlock;
 import com.orbitcore.block.MetallurgicalFurnaceBlock;
+import com.orbitcore.block.MissionControlBlock;
+import com.orbitcore.block.SampleAnalyzerBlock;
+import com.orbitcore.block.TelescopeBlock;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -46,6 +49,17 @@ public final class ModBlocks {
     public static final Block ENGINEERING_TABLE = register("engineering_table",
             new EngineeringTableBlock(AbstractBlock.Settings.create().mapColor(MapColor.IRON_GRAY)
                     .requiresTool().strength(2.5f, 6.0f).sounds(BlockSoundGroup.METAL)));
+
+    // Наука
+    public static final Block TELESCOPE = register("telescope",
+            new TelescopeBlock(AbstractBlock.Settings.create().mapColor(MapColor.ORANGE)
+                    .strength(1.5f).sounds(BlockSoundGroup.COPPER).nonOpaque()));
+    public static final Block MISSION_CONTROL = register("mission_control",
+            new MissionControlBlock(AbstractBlock.Settings.create().mapColor(MapColor.IRON_GRAY)
+                    .requiresTool().strength(3.5f, 6.0f).sounds(BlockSoundGroup.METAL).nonOpaque()
+                    .luminance(state -> 6)));
+    public static final Block SAMPLE_ANALYZER = register("sample_analyzer",
+            new SampleAnalyzerBlock(machineSettings(9)));
 
     private ModBlocks() {
     }
