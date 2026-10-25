@@ -25,6 +25,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.TeleportTarget;
@@ -122,6 +123,21 @@ public final class FlightController {
             return Text.translatable("message.orbitcore.flight.busy");
         }
         return null;
+    }
+
+    /**
+     * Самая высокая точка грунта под основанием ракеты. Ракета шириной в три блока
+     * садится на верхний бугор под собой, а не на грунт под центром.
+     */
+    private static int groundUnder(World world, RocketEntity rocket) {
+        Box box = rocket.getBoundingBox();
+        int ground = world.getBottomY();
+        for (int x = (int) Math.floor(box.minX); x <= (int) Math.floor(box.maxX); x++) {
+            for (int z = (int) Math.floor(box.minZ); z <= (int) Math.floor(box.maxZ); z++) {
+                ground = Math.max(ground, world.getTopY(Heightmap.Type.MOTION_BLOCKING, x, z));
+            }
+        }
+        return ground;
     }
 
     /** Экипаж выходит из ракеты и встаёт рядом, на грунт, лицом к ней. */
@@ -426,7 +442,7 @@ public final class FlightController {
         double gravity = G * ModDimensions.gravity(world);
         RocketDesign design = rocket.design();
         double maxAccel = design.liftoffTwr(0.5) * G;
-        int ground = world.getTopY(Heightmap.Type.MOTION_BLOCKING, rocket.getBlockX(), rocket.getBlockZ());
+        int ground = groundUnder(world, rocket);
         double height = rocket.getY() - ground;
 
         float throttle = rocket.autopilot() ? autopilot(height, gravity, maxAccel) : rocket.throttle();
@@ -528,7 +544,7 @@ public final class FlightController {
     }
 
     private void reentry(ServerWorld world, int tick) {
-        int ground = world.getTopY(Heightmap.Type.MOTION_BLOCKING, rocket.getBlockX(), rocket.getBlockZ());
+        int ground = groundUnder(world, rocket);
         double height = rocket.getY() - ground;
         if (!rocket.parachute() && height < PARACHUTE_HEIGHT) {
             rocket.setParachute(true);
