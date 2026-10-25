@@ -290,14 +290,13 @@ public final class FlightController {
         if (tick % 20 == 0 && tick < COUNTDOWN_TICKS) {
             sound(world, SoundEvents.BLOCK_NOTE_BLOCK_BIT.value(), 1.0f, tick >= IGNITION_TICK ? 1.4f : 1.0f);
         }
+        // Сам рёв двигателей играет клиент (RocketEngineSounds), здесь только зажигание
         if (tick == IGNITION_TICK) {
-            sound(world, SoundEvents.ENTITY_GENERIC_EXPLODE, 2.0f, 0.5f);
-            sound(world, SoundEvents.ITEM_FIRECHARGE_USE, 2.0f, 0.5f);
+            sound(world, ModSounds.FLIGHT_IGNITION, 3.0f, 1.0f);
         }
         if (tick >= COUNTDOWN_TICKS) {
             rocket.setFuel(0, 0);
             rocket.setPhase(FlightPhase.ASCENT);
-            sound(world, SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, 3.0f, 0.5f);
         }
     }
 
@@ -310,9 +309,6 @@ public final class FlightController {
         }
         rocket.setPosition(rocket.getX() + velX, rocket.getY() + velY, rocket.getZ());
         rocket.setVerticalSpeed((float) velY);
-        if (tick % 30 == 0 && tick < 400) {
-            sound(world, SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, 2.5f, 0.4f);
-        }
         double progress = (rocket.getY() - rocket.baseY()) / spaceAltitude();
         if (separated < separations.size() && progress >= separations.get(separated)) {
             separate(true);
@@ -460,9 +456,6 @@ public final class FlightController {
         rocket.setLandingDeltaV((float) Math.max(0, rocket.landingDeltaV() - accel * DV_PER_TICK));
         velY += accel - gravity;
         rocket.setVerticalSpeed((float) velY);
-        if (throttle > 0.05f && rocket.flightTick() % 12 == 0) {
-            sound(world, SoundEvents.BLOCK_FIRE_AMBIENT, 1.5f, 0.6f);
-        }
         rocket.move(MovementType.SELF, new Vec3d(0, velY, 0));
         if (rocket.isOnGround() || rocket.verticalCollision) {
             touchdown(world, -velY);
@@ -561,9 +554,6 @@ public final class FlightController {
             velY += (-0.2 - velY) * 0.08;
         } else {
             velY = Math.max(velY - 0.03, -3.0);
-            if (tick % 20 == 0) {
-                sound(world, SoundEvents.BLOCK_FIRE_AMBIENT, 2.0f, 0.5f);
-            }
         }
         rocket.setVerticalSpeed((float) velY);
         rocket.move(MovementType.SELF, new Vec3d(0, velY, 0));

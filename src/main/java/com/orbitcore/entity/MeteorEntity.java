@@ -1,7 +1,14 @@
 package com.orbitcore.entity;
 
+import net.minecraft.world.Heightmap;
+import net.minecraft.util.math.Box;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.block.BlockState;
+import com.orbitcore.network.OrbitNetworking;
 import com.orbitcore.registry.ModBlocks;
-import com.orbitcore.registry.ModSounds;
 import com.orbitcore.world.CraterFeature;
 import com.orbitcore.world.ModDimensions;
 import net.minecraft.entity.Entity;
@@ -12,7 +19,6 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -87,19 +93,65 @@ public class MeteorEntity extends Entity {
         }
     }
 
-    /** Удар: кратер, обломок метеорита на дне, ударная волна. */
+    /**
+     * Удар: верхний слой грунта разлетается медленными дугами, на дне кратера —
+     * раскалённый обломок. Воздуха нет, поэтому взрыва не слышно: игроки рядом
+     * чувствуют толчок через грунт, видят вспышку, и у них звенит в ушах.
+     */
     public void impact(ServerWorld world, BlockPos at) {
+        ejecta(world, at);
         BlockPos bottom = CraterFeature.blast(world, at, size, world.random);
-        world.setBlockState(bottom, ModBlocks.METEORITE.getDefaultState());
+        world.setBlockState(bottom, ModBlocks.HOT_METEORITE.getDefaultState());
         if (size >= 5) {
-            world.setBlockState(bottom.up(), ModBlocks.METEORITE.getDefaultState());
+            world.setBlockState(bottom.up(), ModBlocks.HOT_METEORITE.getDefaultState());
         }
         Vec3d center = Vec3d.ofCenter(bottom);
-        world.createExplosion(this, center.x, center.y + 1, center.z, size * 0.6f, World.ExplosionSourceType.NONE);
-        world.playSound(null, bottom, ModSounds.METEOR_IMPACT, SoundCategory.AMBIENT, 4.0f, 0.7f + random.nextFloat() * 0.2f);
-        world.spawnParticles(ParticleTypes.CLOUD, center.x, center.y + 1, center.z, 60, size * 0.6, 1.0, size * 0.6, 0.15);
-        world.spawnParticles(ParticleTypes.LAVA, center.x, center.y + 1, center.z, 12, 1.0, 0.5, 1.0, 0.1);
+        shockwave(world, center);
+        world.spawnParticles(ParticleTypes.FLASH, center.x, center.y + 1, center.z, 2, 0, 0, 0, 0);
+        world.spawnParticles(new BlockStateParticleEffect(ParticleTypes.BLOCK, ModBlocks.REGOLITH.getDefaultState()),
+                center.x, center.y + 1, center.z, 160, size * 0.5, 0.4, size * 0.5, 0.8);
+        world.spawnParticles(ParticleTypes.LAVA, center.x, center.y + 1, center.z, 16, 1.0, 0.5, 1.0, 0.1);
+        for (ServerPlayerEntity player : world.getPlayers(p -> p.squaredDistanceTo(center) < 220 * 220)) {
+            OrbitNetworking.sendMeteorImpact(player, center, size);
+        }
         discard();
+    }
+
+    /** Выброс: глыбы грунта из будущего кратера летят наружу и вверх, при низкой тяжести — долго. */
+    private void ejecta(ServerWorld world, BlockPos at) {
+        int count = 6 + size * 2;
+        for (int i = 0; i < count; i++) {
+            double angle = random.nextDouble() * Math.PI * 2;
+            double r = random.nextDouble() * size * 0.8;
+            BlockPos column = BlockPos.ofFloored(at.getX() + Math.cos(angle) * r, at.getY(), at.getZ() + Math.sin(angle) * r);
+            BlockPos top = world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, column).down();
+            BlockState state = world.getBlockState(top);
+            if (state.isAir() || state.hasBlockEntity()) {
+                continue;
+            }
+            FallingBlockEntity block = FallingBlockEntity.spawnFromBlock(world, top, state);
+            block.dropItem = false;
+            block.setDestroyedOnLanding();
+            double out = 0.15 + random.nextDouble() * 0.25;
+            block.setVelocity(Math.cos(angle) * out, 0.25 + random.nextDouble() * 0.25, Math.sin(angle) * out);
+            block.velocityModified = true;
+        }
+    }
+
+    /** Ударная волна по грунту: бьёт и отбрасывает, но блоки не ломает. */
+    private void shockwave(ServerWorld world, Vec3d center) {
+        double radius = size * 1.8;
+        for (Entity entity : world.getOtherEntities(this, new Box(center, center).expand(radius))) {
+            double distance = entity.getPos().distanceTo(center);
+            if (distance > radius || !(entity instanceof LivingEntity)) {
+                continue;
+            }
+            float strength = (float) (1 - distance / radius);
+            entity.damage(world.getDamageSources().explosion(this, null), size * 2.5f * strength);
+            Vec3d push = entity.getPos().subtract(center).normalize().multiply(strength * 1.2);
+            entity.addVelocity(push.x, 0.3 * strength, push.z);
+            entity.velocityModified = true;
+        }
     }
 
     @Override

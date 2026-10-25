@@ -14,6 +14,8 @@ import com.orbitcore.client.render.RocketEntityRenderer;
 import com.orbitcore.client.render.RocketStageEntityRenderer;
 import com.orbitcore.client.render.geo.SpacesuitRenderer;
 import com.orbitcore.client.sound.SpaceDread;
+import com.orbitcore.client.sound.RocketEngineSounds;
+import com.orbitcore.client.flight.MeteorFx;
 import com.orbitcore.client.screen.AirSeparatorScreen;
 import com.orbitcore.client.screen.CoalGeneratorScreen;
 import com.orbitcore.client.screen.ElectrolyzerScreen;
@@ -78,6 +80,8 @@ public class OrbitCoreClient implements ClientModInitializer {
         SpacesuitRenderer.register();
         QuakeShake.register();
         SpaceDread.register();
+        MeteorFx.register();
+        RocketEngineSounds.register();
         EntityRendererRegistry.register(ModEntities.METEOR, MeteorEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ROVER, RoverEntityRenderer::new);

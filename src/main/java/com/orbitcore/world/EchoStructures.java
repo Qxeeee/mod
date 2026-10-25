@@ -134,16 +134,18 @@ public final class EchoStructures {
         p.put(1, 8, 1, Blocks.LIGHTNING_ROD.getDefaultState());
         p.put(-1, 8, 1, Blocks.IRON_BARS.getDefaultState());
         p.put(-1, 9, 1, Blocks.DAYLIGHT_DETECTOR.getDefaultState());
-        // Флаг экспедиции
-        for (int y = 0; y <= 4; y++) {
+        // Флаг США: синий крыж у древка и красно-белые полосы
+        for (int y = 0; y <= 5; y++) {
             p.put(4, y, -5, Blocks.IRON_BARS.getDefaultState());
         }
-        p.put(5, 4, -5, Blocks.WHITE_WOOL.getDefaultState());
-        p.put(6, 4, -5, Blocks.WHITE_WOOL.getDefaultState());
-        p.put(5, 3, -5, Blocks.BLUE_WOOL.getDefaultState());
-        p.put(6, 3, -5, Blocks.BLUE_WOOL.getDefaultState());
-        p.put(5, 2, -5, Blocks.RED_WOOL.getDefaultState());
-        p.put(6, 2, -5, Blocks.RED_WOOL.getDefaultState());
+        for (int x = 5; x <= 9; x++) {
+            for (int y = 2; y <= 5; y++) {
+                boolean canton = x <= 6 && y >= 4;
+                BlockState wool = canton ? Blocks.BLUE_WOOL.getDefaultState()
+                        : (y % 2 == 1 ? Blocks.RED_WOOL : Blocks.WHITE_WOOL).getDefaultState();
+                p.put(x, y, -5, wool);
+            }
+        }
 
         // Колея лунохода к Эху, сам луноход с пустой батареей, дальше — шаги, которые обрываются
         for (int i = 6; i <= 36; i++) {

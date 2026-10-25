@@ -28,6 +28,7 @@
     "orbitcore:airlock_door",
     "orbitcore:regolith_processor",
     "orbitcore:meteorite",
-    "orbitcore:glowing_crystal"
+    "orbitcore:glowing_crystal",
+    "orbitcore:hot_meteorite"
   ]
 }

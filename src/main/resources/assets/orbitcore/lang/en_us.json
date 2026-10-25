@@ -398,5 +398,15 @@
   "cosmopedia.orbitcore.echo_crystal.title": "Glowing Crystals",
   "cosmopedia.orbitcore.echo_crystal.text": "The crystals grow in clusters around the Echo object and glow without any source of energy. Under a microscope they show a perfect lattice that nature never makes. Hold a shard to your ear and you can hear it ring in time with the signal.",
   "cosmopedia.orbitcore.echo.title": "The Echo",
-  "cosmopedia.orbitcore.echo.text": "A black faceted monolith at the center of a crater. Its material is unknown and yields to neither tools nor explosives. The object answers radio signals: it repeats them, but each time adds something of its own. The Builders left it here, and it seems they expected us to come."
+  "cosmopedia.orbitcore.echo.text": "A black faceted monolith at the center of a crater. Its material is unknown and yields to neither tools nor explosives. The object answers radio signals: it repeats them, but each time adds something of its own. The Builders left it here, and it seems they expected us to come.",
+  "subtitles.orbitcore.flight.rocket_roar": "Rocket engine roars",
+  "subtitles.orbitcore.flight.ignition": "Engines ignite",
+  "subtitles.orbitcore.flight.arrival": "Onboard computer: arrival",
+  "subtitles.orbitcore.meteor.ground_impact": "The ground jolts from an impact",
+  "subtitles.orbitcore.meteor.tinnitus": "Ears ringing",
+  "subtitles.orbitcore.echo.scanner_ping": "Scanner pings",
+  "subtitles.orbitcore.echo.hologram": "Hologram flickers on",
+  "block.orbitcore.hot_meteorite": "Hot Meteorite",
+  "tooltip.orbitcore.hot_meteorite": "Still glowing. Don't step on it",
+  "hud.orbitcore.meteor": "⚠ BOLIDE · impact in %s s · %s m %s"
 }

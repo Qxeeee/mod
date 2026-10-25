@@ -7,7 +7,8 @@
   "client": [
     "CameraMixin",
     "EntityRenderDispatcherMixin",
-    "SoundSystemMixin"
+    "SoundSystemMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

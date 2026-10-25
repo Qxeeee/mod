@@ -1,5 +1,6 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.block.HotMeteoriteBlock;
 import com.orbitcore.block.EchoStoneBlock;
 import com.orbitcore.block.GlowingCrystalBlock;
 import com.orbitcore.OrbitCore;
@@ -102,6 +103,10 @@ public final class ModBlocks {
     public static final Block REGOLITH_PROCESSOR = register("regolith_processor", new RegolithProcessorBlock(machineSettings(7)));
     public static final Block METEORITE = register("meteorite",
             new Block(AbstractBlock.Settings.copy(Blocks.ANCIENT_DEBRIS).mapColor(MapColor.BLACK).strength(8.0f, 1200.0f)));
+
+    public static final Block HOT_METEORITE = register("hot_meteorite",
+            new HotMeteoriteBlock(AbstractBlock.Settings.copy(Blocks.ANCIENT_DEBRIS).mapColor(MapColor.ORANGE).strength(8.0f, 1200.0f)
+                    .luminance(state -> 13)));
 
     // «Эхо»: материал Строителей и кристаллы вокруг него
     public static final Block ECHO_STONE = register("echo_stone",

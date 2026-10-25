@@ -1,5 +1,7 @@
 package com.orbitcore.client.network;
 
+import com.orbitcore.client.flight.MeteorFx;
+import net.minecraft.util.math.Vec3d;
 import com.orbitcore.registry.ModSounds;
 import com.orbitcore.client.story.EchoCutscene;
 import com.orbitcore.client.sound.SpaceDread;
@@ -69,6 +71,16 @@ public final class OrbitClientNetworking {
         ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.OPEN_ROCKET, (client, handler, buf, sender) -> {
             int entityId = buf.readVarInt();
             client.execute(() -> client.setScreen(new RocketScreen(entityId)));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.METEOR_WARNING, (client, handler, buf, sender) -> {
+            Vec3d impact = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+            int ticks = buf.readVarInt();
+            client.execute(() -> MeteorFx.warn(impact, ticks));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.METEOR_IMPACT, (client, handler, buf, sender) -> {
+            Vec3d center = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
+            int size = buf.readVarInt();
+            client.execute(() -> MeteorFx.impact(center, size));
         });
         ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.ECHO_SITE, (client, handler, buf, sender) -> {
             BlockPos echo = buf.readBlockPos();

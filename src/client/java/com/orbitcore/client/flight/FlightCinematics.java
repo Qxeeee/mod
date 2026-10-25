@@ -10,6 +10,8 @@ import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -21,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 public final class FlightCinematics {
     private static boolean active;
     private static boolean savedHudHidden;
+    @Nullable
+    private static RegistryKey<World> lastWorld;
 
     private FlightCinematics() {
     }
@@ -39,7 +43,14 @@ public final class FlightCinematics {
         return null;
     }
 
+    /** В каком мире игрок был на прошлом тике: при смене мира так видно, откуда он прилетел. */
+    @Nullable
+    public static RegistryKey<World> lastWorld() {
+        return lastWorld;
+    }
+
     private static void tick(MinecraftClient client) {
+        lastWorld = client.world == null ? null : client.world.getRegistryKey();
         RocketEntity rocket = rocket();
         CockpitView.tick(client, rocket);
         if (rocket != null) {

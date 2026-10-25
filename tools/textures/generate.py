@@ -1358,6 +1358,24 @@ def meteorite_block():
     return img
 
 
+def hot_meteorite_block():
+    """Только что упавший метеорит: та же корка, но трещины светятся оранжевым."""
+    img = meteorite_block()
+    rng = random.Random(163)
+    for _ in range(4):
+        x, y = rng.randint(0, 15), rng.randint(0, 15)
+        for _ in range(rng.randint(4, 8)):
+            put(img, x, y, (255, rng.randint(120, 200), 40))
+            x = max(0, min(15, x + rng.choice((-1, 0, 1))))
+            y = max(0, min(15, y + rng.choice((0, 1))))
+    for yy in range(S):
+        for xx in range(S):
+            r, gg, b, a = img.getpixel((xx, yy))
+            if r < 200:
+                img.putpixel((xx, yy), (min(255, r + 40), gg + 8, b, a))
+    return img
+
+
 def gas_canister(fill=None):
     img = new()
     body = fill or [(120, 128, 140), (160, 168, 180), (200, 206, 216)]
@@ -1642,6 +1660,7 @@ def main():
     save_animation([processor_front(True, p) for p in range(4)], BLOCK, "regolith_processor_front_on", 4)
     save(processor_top(), BLOCK, "regolith_processor_top")
     save(meteorite_block(), BLOCK, "meteorite")
+    save(hot_meteorite_block(), BLOCK, "hot_meteorite")
     save(gas_canister(), ITEM, "gas_canister")
     save(gas_canister(HELIUM), ITEM, "helium3_canister")
     save(raw_meteoric_iron(), ITEM, "raw_meteoric_iron")

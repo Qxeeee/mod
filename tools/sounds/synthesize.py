@@ -218,9 +218,10 @@ def void_drone():
     # Диссонанс: тритон сверху, то появляется, то тонет
     x += 0.16 * sine(153.6, s) * smooth_random(s, 0.2) ** 2
     x += 0.07 * sine(217.2 + drift * 3, s) * smooth_random(s, 0.15) ** 3
-    air = bandpass(pink(s), 320, 160) * smooth_random(s, 0.3, 0.1, 1.0)
+    # «Ветер ниоткуда» меняется очень медленно, без ритма: иначе его принимают за дыхание
+    air = bandpass(pink(s), 320, 160) * smooth_random(s, 0.06, 0.5, 1.0)
     air = air / np.max(np.abs(air))
-    x = x * 0.8 + air * 0.35 + normalize(lowpass(brown(s), 90)) * 0.25
+    x = x * 0.8 + air * 0.16 + normalize(lowpass(brown(s), 90)) * 0.25
     return loopable(normalize(reverb(x, 4.0, 0.4, 900)[:int(s * RATE)]), 2.0)
 
 
@@ -286,16 +287,21 @@ def heartbeat():
 
 
 def breath():
-    """Дыхание в шлеме: вдох и выдох, гулкий резонанс стекла."""
-    def phase_(seconds, center, loud):
+    """Дыхание в шлеме: щелчок клапана, мягкий вдох через нос и выдох ртом, без звона."""
+    def phase_(seconds, formants, attack, loud):
         n = int(seconds * RATE)
-        x = bandpass(noise(seconds), center, center * 0.6) + highpass(noise(seconds), 3000) * 0.25
-        return x * np.sin(np.linspace(0, np.pi, n)) ** 2 * loud
-    x = silence(4.2)
-    place(x, phase_(1.4, 900, 0.8), 0.1)
-    place(x, phase_(1.8, 600, 1.0), 1.9)
-    x = resonate(x, [740, 1480, 2210], 12) * 0.5 + x * 0.5
-    return x
+        src = lowpass(pink(seconds), 2600, 2)
+        x = sum(bandpass(src, f, f * 0.45) * g for f, g in formants)
+        t = np.linspace(0, 1, n)
+        env = np.minimum(1, t / attack) ** 1.5 * (1 - t) ** 1.2
+        return x * env * loud
+    x = silence(5.0)
+    click = highpass(noise(0.02), 2500) * decay(int(0.02 * RATE), 0.003)
+    place(x, click * 0.15, 0.05)
+    place(x, phase_(1.3, [(450, 0.6), (1100, 0.8), (2300, 0.25)], 0.35, 0.7), 0.08)
+    place(x, phase_(1.7, [(350, 1.0), (900, 0.6), (1800, 0.15)], 0.15, 1.0), 1.75)
+    # Чуть-чуть замкнутого пространства шлема, но не металлический звон
+    return lowpass(reverb(x, 0.4, 0.12, 2500), 3500)[:len(x)]
 
 
 def knock():
@@ -423,13 +429,13 @@ def quindar(freq):
 
 
 def cabin_rumble():
-    """Кабина на подъёме: низкий рёв двигателей сквозь корпус и мелкая дрожь."""
+    """Кабина на подъёме: рёв двигателей сквозь корпус. Шум без всякого ритма — ракета не стучит, а ревёт."""
     s = 6.0
-    t = t_axis(s)
-    x = lowpass(brown(s), 140, 3) * (0.8 + 0.2 * smooth_random(s, 6))
-    x += lowpass(noise(s), 600) * 0.15 * (0.5 + 0.5 * np.sin(2 * np.pi * 11 * t))
-    x = normalize(x) + normalize(resonate(noise(s), [210, 380, 515], 20)) * 0.25
-    return loopable(normalize(lowpass(x, 1200)), 1.0)
+    roar = lowpass(brown(s), 160, 3) + lowpass(pink(s), 700, 2) * 0.35
+    roar *= 0.85 + 0.15 * smooth_random(s, 1.5)
+    shake = lowpass(noise(s), 45, 2) * 0.6  # инфразвуковая дрожь корпуса
+    x = normalize(roar) + normalize(shake) * 0.4 + normalize(resonate(noise(s), [140, 260, 410], 12)) * 0.12
+    return loopable(normalize(lowpass(x, 900)), 1.0)
 
 
 def separation():
@@ -460,6 +466,91 @@ def rover_motor():
     return loopable(normalize(whine + gears * 0.5), 0.5)
 
 
+def rocket_roar():
+    """Рёв ракеты снаружи: широкий шум с низами и характерным треском ударных волн, без ритма."""
+    s = 6.0
+    n = int(s * RATE)
+    body = lowpass(brown(s), 220, 2) * 1.2 + lowpass(pink(s), 2500, 2) * 0.6
+    body *= 0.85 + 0.15 * smooth_random(s, 2.0)
+    # Треск: редкие несимметричные импульсы, как у настоящего ракетного выхлопа
+    impulses = (rng.random(n) > 0.9965) * (rng.random(n) ** 3) * np.sign(rng.standard_normal(n))
+    crackle = highpass(lowpass(impulses, 6000, 1), 500, 1)
+    x = normalize(body) + normalize(crackle) * 0.45
+    return loopable(normalize(x), 1.0)
+
+
+def ignition():
+    """Зажигание: нарастающий низкий гул и первый удар пламени о стартовый стол."""
+    s = 3.5
+    n = int(s * RATE)
+    t = t_axis(s)
+    src = brown(s)
+    k = t / s
+    # Гул светлеет по мере нарастания: смесь тёмного и более яркого фильтра
+    build = (lowpass(src, 120, 2) * (1 - k) + lowpass(src, 420, 2) * k) * k ** 1.5
+    hit = lowpass(noise(s), 400) * decay(n, 0.25)
+    hit = np.roll(hit, int(2.2 * RATE))
+    hit[:int(2.2 * RATE)] = 0
+    return normalize(build) + normalize(hit) * 0.8
+
+
+def ground_impact():
+    """Удар метеорита, как его слышно в вакууме: только толчок через грунт и подошвы — глухо и низко."""
+    s = 4.0
+    n = int(s * RATE)
+    t = t_axis(s)
+    thump = sine(28 + 40 * np.exp(-t / 0.12), s) * decay(n, 0.7)
+    rumble = lowpass(brown(s), 80, 3) * decay(n, 1.2)
+    rattle = bandpass(noise(s), 900, 500) * decay(n, 0.5) * 0.15  # дрожь шлема и снаряжения
+    return normalize(thump) + normalize(rumble) * 0.6 + normalize(rattle) * 0.25
+
+
+def tinnitus():
+    """Звон в ушах после близкого удара: тонкий писк, медленно гаснет."""
+    s = 5.0
+    n = int(s * RATE)
+    t = t_axis(s)
+    tone = sine(3700 + 30 * np.sin(2 * np.pi * 0.4 * t), s) + 0.4 * sine(3712, s)
+    return tone * envelope(n, 0.05, 0.1, 1) * np.exp(-t / 1.8)
+
+
+def arrival():
+    """Прибытие на Луну: мягкий нисходящий шелест и два спокойных тона бортового компьютера."""
+    s = 3.2
+    n = int(s * RATE)
+    t = t_axis(s)
+    sweep = noise(s)
+    cutoff_low = lowpass(sweep, 300, 2)
+    cutoff_high = lowpass(sweep, 2500, 2)
+    k = np.clip(t / 1.6, 0, 1)
+    whoosh = (cutoff_high * (1 - k) + cutoff_low * k) * np.sin(np.pi * np.clip(t / 2.2, 0, 1)) ** 2
+    chime = np.zeros(n)
+    for at, f in ((1.6, 880.0), (1.95, 1318.5)):
+        tone = sine(f, 1.2) * decay(int(1.2 * RATE), 0.35) * envelope(int(1.2 * RATE), 0.005, 0.05, 1)
+        place(chime, tone, at)
+    return reverb(normalize(whoosh) * 0.6 + normalize(chime) * 0.5, 1.5, 0.25, 4000)[:n]
+
+
+def scanner_ping():
+    """Сканер сигналов: короткий чистый «пинг» с отзвуком."""
+    s = 0.6
+    n = int(s * RATE)
+    tone = sine(1567.98, s) * decay(n, 0.08) + 0.3 * sine(3135.96, s) * decay(n, 0.04)
+    return echo(tone * envelope(n, 0.002, 0.05, 1), 0.11, 0.35, 3)
+
+
+def hologram():
+    """Голограмма включается: нарастающий электрический тон, мерцание и мягкий гул."""
+    s = 2.0
+    n = int(s * RATE)
+    t = t_axis(s)
+    rise = sine(220 + 660 * np.clip(t / 0.5, 0, 1), s) * np.clip(t / 0.5, 0, 1)
+    flicker = 0.7 + 0.3 * smooth_random(s, 12) ** 2
+    hum = (sine(110, s) + 0.5 * sine(220.5, s) + 0.25 * sine(330, s)) * 0.6
+    x = (rise * 0.4 + hum) * flicker + highpass(noise(s), 4000) * 0.04
+    return x * envelope(n, 0.02, 0.6)
+
+
 def main():
     save("ambient/void_drone", void_drone(), 0.8)
     save("ambient/void_swell", void_swell())
@@ -468,7 +559,7 @@ def main():
     for i, (low, high) in enumerate(((60, 160), (90, 260), (45, 120))):
         save(f"ambient/creak{i + 1}", creak(40 + i, low, high))
     save("ambient/heartbeat", heartbeat())
-    save("ambient/breath", breath(), 0.6)
+    save("ambient/breath", breath(), 0.5)
     save("ambient/knock", knock())
     save("ambient/radio_ghost", radio_ghost(), 0.75)
     save("echo/signal", echo_signal())
@@ -485,6 +576,13 @@ def main():
     save("flight/plasma", plasma())
     save("flight/hull_groan", creak(60, 35, 90, 3.2))
     save("vehicle/rover_motor", rover_motor(), 0.7)
+    save("flight/rocket_roar", rocket_roar())
+    save("flight/ignition", ignition())
+    save("flight/arrival", arrival(), 0.7)
+    save("meteor/ground_impact", ground_impact())
+    save("meteor/tinnitus", tinnitus(), 0.35)
+    save("echo/scanner_ping", scanner_ping(), 0.6)
+    save("echo/hologram", hologram(), 0.6)
 
 
 if __name__ == "__main__":

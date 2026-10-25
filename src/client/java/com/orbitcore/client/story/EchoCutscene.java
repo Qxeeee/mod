@@ -15,6 +15,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -89,11 +90,17 @@ public final class EchoCutscene {
         }
         float p = MathHelper.clamp(time(tickDelta) / DURATION, 0, 1);
         double angle = Math.toRadians(30 + p * 220);
-        double radius = MathHelper.lerp(p, 17, 7);
-        double height = MathHelper.lerp(p * p, 2.5, 15);
+        double radius = MathHelper.lerp(p, 13, 8);
+        double height = MathHelper.lerp(p * p, 6, 17);
         double x = base.x + Math.sin(angle) * radius;
         double z = base.z + Math.cos(angle) * radius;
-        return CameraShot.lookAt(x, base.y + height, z, base.x, base.y + MathHelper.lerp(p, 5, 13), base.z);
+        // Склоны кратера поднимаются к краю: камера не должна уходить в грунт
+        double y = base.y + height;
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.world != null) {
+            y = Math.max(y, client.world.getTopY(Heightmap.Type.MOTION_BLOCKING, MathHelper.floor(x), MathHelper.floor(z)) + 2.5);
+        }
+        return CameraShot.lookAt(x, y, z, base.x, base.y + MathHelper.lerp(p, 6, 13), base.z);
     }
 
     /** Кинополосы, субтитры, вспышка в конце. Пока идёт сцена, игрок ничего не нажимает. */

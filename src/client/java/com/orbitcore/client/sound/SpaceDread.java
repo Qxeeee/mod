@@ -1,6 +1,7 @@
 package com.orbitcore.client.sound;
 
 import com.orbitcore.client.flight.FlightCinematics;
+import com.orbitcore.client.story.EchoCutscene;
 import com.orbitcore.item.SpacesuitItem;
 import com.orbitcore.registry.ModSounds;
 import com.orbitcore.survival.LifeSupport;
@@ -46,6 +47,7 @@ public final class SpaceDread {
     private static int nextEvent = 900;
     private static int heartbeat;
     private static int breath;
+    private static int sprintTicks;
     private static int gazeTicks;
     private static int gazeCooldown;
     /** 0–1: насколько темнеют края экрана, когда смотришь в бездну. */
@@ -114,7 +116,8 @@ public final class SpaceDread {
         if (player == null || client.world == null || client.isPaused()) {
             return;
         }
-        boolean active = client.world.getRegistryKey() == ModDimensions.MOON && !player.isSpectator() && FlightCinematics.rocket() == null;
+        boolean active = client.world.getRegistryKey() == ModDimensions.MOON && !player.isSpectator() && FlightCinematics.rocket() == null
+                && !EchoCutscene.active();
         if (!active) {
             fade(drone);
             fade(hum);
@@ -207,10 +210,11 @@ public final class SpaceDread {
             playInHead(client, ModSounds.VOID_HEARTBEAT, panic ? 0.9f : 0.5f, 1.0f);
             heartbeat = panic ? 15 : 22;
         }
-        if (--breath <= 0 && helmet && !data.breathable && (oxygen < 120 || player.isSprinting() || gaze > 0.3f)) {
-            boolean fast = player.isSprinting() || oxygen < 60;
-            playInHead(client, ModSounds.VOID_BREATH, 0.35f, fast ? 1.2f : 1.0f);
-            breath = fast ? 64 : 86;
+        // Дыхание слышно, только когда правда тяжело: воздух на исходе или долгий бег
+        sprintTicks = player.isSprinting() ? sprintTicks + 1 : 0;
+        if (--breath <= 0 && helmet && !data.breathable && (oxygen < 60 || sprintTicks > 100)) {
+            playInHead(client, ModSounds.VOID_BREATH, oxygen < 30 ? 0.22f : 0.14f, 1.0f);
+            breath = 110;
         }
     }
 

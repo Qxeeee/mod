@@ -1,5 +1,6 @@
 package com.orbitcore.network;
 
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.entity.RocketEntity;
@@ -40,6 +41,8 @@ public final class OrbitNetworking {
     public static final Identifier LAUNCH = OrbitCore.id("launch");
     public static final Identifier FLIGHT_COMMAND = OrbitCore.id("flight_command");
     public static final Identifier QUAKE = OrbitCore.id("quake");
+    public static final Identifier METEOR_WARNING = OrbitCore.id("meteor_warning");
+    public static final Identifier METEOR_IMPACT = OrbitCore.id("meteor_impact");
     public static final Identifier ECHO_SITE = OrbitCore.id("echo_site");
     public static final Identifier ECHO_CONTACT = OrbitCore.id("echo_contact");
     public static final Identifier ECHO_SCARE = OrbitCore.id("echo_scare");
@@ -135,6 +138,26 @@ public final class OrbitNetworking {
         buf.writeFloat(strength);
         buf.writeVarInt(ticks);
         ServerPlayNetworking.send(player, QUAKE, buf);
+    }
+
+    /** Метеорит на подлёте: куда упадёт и через сколько тиков. */
+    public static void sendMeteorWarning(ServerPlayerEntity player, Vec3d impact, int ticks) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeDouble(impact.x);
+        buf.writeDouble(impact.y);
+        buf.writeDouble(impact.z);
+        buf.writeVarInt(ticks);
+        ServerPlayNetworking.send(player, METEOR_WARNING, buf);
+    }
+
+    /** Метеорит ударил: клиент трясёт камеру, вспыхивает и глушит звук по расстоянию. */
+    public static void sendMeteorImpact(ServerPlayerEntity player, Vec3d center, int size) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeDouble(center.x);
+        buf.writeDouble(center.y);
+        buf.writeDouble(center.z);
+        buf.writeVarInt(size);
+        ServerPlayNetworking.send(player, METEOR_IMPACT, buf);
     }
 
     /** Где Эхо и «Заря»; {@code announce} — сигнал только что принят (тост и звук). */

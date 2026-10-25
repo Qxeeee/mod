@@ -398,5 +398,15 @@
   "cosmopedia.orbitcore.echo_crystal.title": "Светящиеся кристаллы",
   "cosmopedia.orbitcore.echo_crystal.text": "Кристаллы растут пучками вокруг объекта «Эхо» и светятся без всякого источника энергии. Под микроскопом видна правильная решётка, какой не бывает в природе. Если поднести осколок к уху, слышно, как он звенит в такт сигналу.",
   "cosmopedia.orbitcore.echo.title": "Объект «Эхо»",
-  "cosmopedia.orbitcore.echo.text": "Чёрный многогранный монолит в центре кратера. Материал неизвестен и не поддаётся ни инструменту, ни взрыву. Объект отвечает на радиосигналы: повторяет их, но каждый раз добавляет что-то своё. Его оставили Строители, и, похоже, они ждали, что мы придём."
+  "cosmopedia.orbitcore.echo.text": "Чёрный многогранный монолит в центре кратера. Материал неизвестен и не поддаётся ни инструменту, ни взрыву. Объект отвечает на радиосигналы: повторяет их, но каждый раз добавляет что-то своё. Его оставили Строители, и, похоже, они ждали, что мы придём.",
+  "subtitles.orbitcore.flight.rocket_roar": "Ревёт ракетный двигатель",
+  "subtitles.orbitcore.flight.ignition": "Зажигание двигателей",
+  "subtitles.orbitcore.flight.arrival": "Бортовой компьютер: прибытие",
+  "subtitles.orbitcore.meteor.ground_impact": "Грунт вздрагивает от удара",
+  "subtitles.orbitcore.meteor.tinnitus": "Звенит в ушах",
+  "subtitles.orbitcore.echo.scanner_ping": "Сканер ловит сигнал",
+  "subtitles.orbitcore.echo.hologram": "Включается голограмма",
+  "block.orbitcore.hot_meteorite": "Раскалённый метеорит",
+  "tooltip.orbitcore.hot_meteorite": "Ещё не остыл. Не наступайте",
+  "hud.orbitcore.meteor": "⚠ БОЛИД · удар через %s с · %s м %s"
 }

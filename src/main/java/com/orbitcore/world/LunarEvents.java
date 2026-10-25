@@ -10,8 +10,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -29,7 +27,7 @@ public final class LunarEvents {
     /** В среднем одно лунотрясение за столько тиков (20 минут). */
     public static final int QUAKE_INTERVAL = 20 * 60 * 20;
     /** Скорость метеорита, блоков за тик. */
-    private static final double METEOR_SPEED = 2.5;
+    private static final double METEOR_SPEED = 2.0;
 
     private LunarEvents() {
     }
@@ -70,15 +68,17 @@ public final class LunarEvents {
         int ground = world.getTopY(Heightmap.Type.MOTION_BLOCKING, target.getX(), target.getZ());
         Vec3d impact = new Vec3d(target.getX() + 0.5, ground, target.getZ() + 0.5);
         double angle = random.nextDouble() * Math.PI * 2;
-        Vec3d start = impact.add(Math.cos(angle) * 70, 110, Math.sin(angle) * 70);
+        // Издалека и сверху: секунд пять его видно в небе, пока скафандр отсчитывает время до удара
+        Vec3d start = impact.add(Math.cos(angle) * 130, 170, Math.sin(angle) * 130);
         MeteorEntity meteor = ModEntities.METEOR.create(world);
         meteor.refreshPositionAndAngles(start.x, start.y, start.z, 0, 0);
         meteor.setVelocity(impact.subtract(start).normalize().multiply(METEOR_SPEED));
         meteor.setSize(size);
         world.spawnEntity(meteor);
-        for (ServerPlayerEntity player : world.getPlayers(p -> p.squaredDistanceTo(impact) < 120 * 120)) {
-            player.sendMessage(Text.translatable("message.orbitcore.meteor").formatted(Formatting.GOLD), true);
-            player.playSound(ModSounds.METEOR_INCOMING, SoundCategory.AMBIENT, 1.0f, 1.0f);
+        // В вакууме метеорит не свистит: о нём предупреждает компьютер скафандра
+        int eta = (int) Math.ceil(start.distanceTo(impact) / METEOR_SPEED);
+        for (ServerPlayerEntity player : world.getPlayers(p -> p.squaredDistanceTo(impact) < 160 * 160)) {
+            OrbitNetworking.sendMeteorWarning(player, impact, eta);
         }
         return meteor;
     }

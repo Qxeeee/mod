@@ -40,6 +40,13 @@ public final class ModSounds {
     public static final SoundEvent FLIGHT_PLASMA = register("flight.plasma");
     public static final SoundEvent FLIGHT_HULL_GROAN = register("flight.hull_groan");
     public static final SoundEvent ROVER_MOTOR = register("vehicle.rover.motor");
+    public static final SoundEvent FLIGHT_ROCKET_ROAR = register("flight.rocket_roar");
+    public static final SoundEvent FLIGHT_IGNITION = register("flight.ignition");
+    public static final SoundEvent FLIGHT_ARRIVAL = register("flight.arrival");
+    public static final SoundEvent METEOR_GROUND_IMPACT = register("event.meteor.ground_impact");
+    public static final SoundEvent METEOR_TINNITUS = register("event.meteor.tinnitus");
+    public static final SoundEvent ECHO_SCANNER_PING = register("echo.scanner_ping");
+    public static final SoundEvent ECHO_HOLOGRAM = register("echo.hologram");
 
     private ModSounds() {
     }
