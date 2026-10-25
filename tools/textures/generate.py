@@ -1384,7 +1384,139 @@ def raw_meteoric_iron():
     return img
 
 
+# ---------------------------------------------------------------- «Эхо» и «Заря»
+
+ECHO = [(6, 6, 10), (12, 11, 18), (20, 18, 28), (30, 26, 40)]
+VEIN = [(70, 40, 120), (120, 80, 200), (180, 140, 255)]
+CRYSTAL = [(20, 70, 90), (40, 140, 160), (90, 210, 220), (170, 245, 245), (235, 255, 255)]
+
+
+def echo_stone(phase=0):
+    """Эховый камень: почти чёрный, с тонкими геометричными прожилками, которые медленно разгораются."""
+    rng = random.Random(141)
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, ECHO[rng.choice((0, 0, 1, 1, 2))])
+    glow = (0.35, 0.6, 1.0, 0.6)[phase % 4]
+    lines = [((1, 3), (6, 3), (6, 8)), ((9, 1), (9, 6), (14, 6)), ((3, 11), (8, 11), (8, 14)), ((12, 9), (12, 13))]
+    for path in lines:
+        for (x0, y0), (x1, y1) in zip(path, path[1:]):
+            for i in range(max(abs(x1 - x0), abs(y1 - y0)) + 1):
+                x = x0 + (i if x1 > x0 else -i if x1 < x0 else 0)
+                y = y0 + (i if y1 > y0 else -i if y1 < y0 else 0)
+                c = VEIN[1]
+                put(img, x, y, tuple(int(ECHO[1][k] + (c[k] - ECHO[1][k]) * glow) for k in range(3)))
+        x, y = path[-1]
+        put(img, x, y, tuple(int(ECHO[1][k] + (VEIN[2][k] - ECHO[1][k]) * glow) for k in range(3)))
+    return img
+
+
+def glowing_crystal():
+    """Кристаллы растут пучком из грунта (как друза аметиста, но светятся бирюзой)."""
+    img = new()
+    for base_x, height, lean in ((4, 9, -1), (8, 13, 0), (11, 8, 1), (6, 6, 0)):
+        for i in range(height):
+            y = 15 - i
+            cx = base_x + (lean * i) // 4
+            w = 1 if i > height - 3 else 2
+            for dx in range(-w + 1, w):
+                c = CRYSTAL[min(4, 1 + (i * 3) // height + (1 if dx < 0 else 0))]
+                put(img, cx + dx, y, c)
+        put(img, base_x + (lean * (height - 1)) // 4, 16 - height, CRYSTAL[4])
+    return img
+
+
+def crystal_shard():
+    img = new()
+    pts = [(9, 3), (10, 4), (8, 4), (9, 5), (8, 6), (7, 7), (8, 7), (6, 8), (7, 9), (6, 10), (5, 11), (6, 11), (5, 12)]
+    for i, (x, y) in enumerate(pts):
+        put(img, x, y, CRYSTAL[3 if i % 3 else 2])
+        put(img, x + 1, y + 1, CRYSTAL[1])
+    put(img, 9, 3, CRYSTAL[4])
+    outline(img, (8, 30, 40))
+    return img
+
+
+def echo_shard():
+    """Осколок Эха: чёрный клин с фиолетовым свечением по граням."""
+    img = new()
+    rng = random.Random(142)
+    for y in range(2, 14):
+        half = max(0, 4 - abs(y - 7) // 2)
+        for x in range(8 - half, 8 + half + 1):
+            put(img, x, y, ECHO[rng.randint(0, 2)])
+        put(img, 8 - half, y, VEIN[1])
+        put(img, 8 + half, y, VEIN[0])
+    for x, y in ((8, 4), (7, 6), (8, 8), (9, 10)):
+        put(img, x, y, VEIN[2])
+    outline(img, (10, 4, 20))
+    return img
+
+
+def rover_icon():
+    """Луноход сбоку: рама, сиденья, антенна-зонтик, четыре сетчатых колеса."""
+    img = new()
+    rect(img, 1, 8, 14, 9, (150, 156, 166))
+    rect(img, 3, 6, 5, 7, (70, 74, 82))
+    rect(img, 7, 6, 9, 7, (70, 74, 82))
+    rect(img, 11, 5, 14, 7, (214, 168, 64))
+    rect(img, 12, 1, 12, 5, (150, 156, 166))
+    rect(img, 10, 1, 14, 1, (236, 238, 242))
+    for cx in (3, 12):
+        rect(img, cx - 2, 10, cx + 2, 14, (60, 62, 68))
+        rect(img, cx - 1, 11, cx + 1, 13, (110, 114, 122))
+        put(img, cx, 12, (40, 40, 44))
+    return img
+
+
+def watcher_skin():
+    """Скин Наблюдателя: скафандр «Зари» в пыли, чёрный визор без лица."""
+    rng = random.Random(143)
+    img = new(64, 64)
+    suit = [(176, 178, 182), (196, 198, 202), (214, 216, 220)]
+    dust = (130, 124, 112)
+
+    def box(x, y, w, h, colors=suit, dirt=0.0):
+        for yy in range(y, y + h):
+            for xx in range(x, x + w):
+                c = colors[rng.randint(0, len(colors) - 1)]
+                if rng.random() < dirt * (yy - y + 1) / h:
+                    c = dust
+                put(img, xx, yy, c)
+
+    # Голова (шлем), тело, руки, ноги — по раскладке скина игрока
+    box(0, 0, 32, 16)
+    box(16, 16, 24, 16)
+    box(40, 16, 16, 16)
+    box(0, 16, 16, 16, dirt=0.5)
+    box(16, 48, 16, 16, dirt=0.5)
+    box(32, 48, 16, 16)
+    # Визор: чёрный, с одной холодной искрой отражения
+    rect(img, 9, 9, 14, 14, (6, 6, 9))
+    put(img, 13, 10, (120, 130, 150))
+    rect(img, 8, 8, 15, 8, (120, 122, 128))
+    # Ранец на спине, нашивка с флагом на груди
+    rect(img, 33, 21, 38, 30, (140, 142, 148))
+    rect(img, 34, 22, 37, 24, (90, 92, 98))
+    rect(img, 21, 21, 23, 21, (240, 240, 240))
+    rect(img, 21, 22, 23, 22, (40, 70, 170))
+    rect(img, 21, 23, 23, 23, (190, 40, 40))
+    # Перчатки и ботинки
+    for x0, y0 in ((40, 28), (32, 60)):
+        rect(img, x0, y0, x0 + 15, y0 + 3, (110, 112, 118))
+    for x0, y0 in ((0, 28), (16, 60)):
+        rect(img, x0, y0, x0 + 15, y0 + 3, (80, 80, 84))
+    return img
+
+
 def main():
+    save_animation([echo_stone(i) for i in range(4)], BLOCK, "echo_stone", 30)
+    save(glowing_crystal(), BLOCK, "glowing_crystal")
+    save(crystal_shard(), ITEM, "crystal_shard")
+    save(echo_shard(), ITEM, "echo_shard")
+    save(rover_icon(), ITEM, "rover")
+    save(watcher_skin(), ASSETS / "entity", "watcher")
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")
     save(ingot(TITANIUM, 3), ITEM, "titanium_ingot")

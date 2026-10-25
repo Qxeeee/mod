@@ -1,5 +1,6 @@
 package com.orbitcore.rocket;
 
+import com.orbitcore.world.EchoEvents;
 import com.orbitcore.block.LaunchPadBlock;
 import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.entity.RocketStageEntity;
@@ -495,6 +496,7 @@ public final class FlightController {
         MinecraftServer server = world.getServer();
         reward(world, ScienceType.TELEMETRY, 20);
         boolean first = SpaceProgram.get(server).markFirst(server, "moon_landing");
+        EchoEvents.onMoonLanding(world, rocket.getBlockPos());
         if (player != null) {
             player.stopRiding();
             stepOut(player, rocket, 4, -10f);

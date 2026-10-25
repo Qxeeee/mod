@@ -57,6 +57,12 @@ public final class SpaceDread {
     /** Где стоит Эхо, если игроку уже известен сигнал. */
     @Nullable
     private static BlockPos echo;
+    /** Где брошена «Заря». */
+    @Nullable
+    private static BlockPos zarya;
+    /** Всплеск помех после страшного момента, 0–1. */
+    private static float spike;
+    private static int knockCooldown;
 
     private SpaceDread() {
     }
@@ -66,8 +72,17 @@ public final class SpaceDread {
         HudRenderCallback.EVENT.register(SpaceDread::render);
     }
 
-    public static void setEcho(@Nullable BlockPos pos) {
-        echo = pos;
+    public static void setSite(@Nullable BlockPos echoPos, @Nullable BlockPos zaryaPos) {
+        echo = echoPos;
+        zarya = zaryaPos;
+    }
+
+    /** Страшный момент у кратера: удар по нервам и помехи на весь визор. */
+    public static void scare() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        playInHead(client, ModSounds.ECHO_STINGER, 1.0f, 1.0f);
+        spike = 1.0f;
+        client.inGameHud.setOverlayMessage(Text.translatable("dread.orbitcore.scare").formatted(Formatting.DARK_GRAY, Formatting.ITALIC), false);
     }
 
     @Nullable
@@ -124,6 +139,9 @@ public final class SpaceDread {
             }
         }
         hum = LoopSound.drive(hum, ModSounds.ECHO_HUM, SoundCategory.AMBIENT, humVolume);
+        spike *= 0.985f;
+        glitch = Math.max(glitch, spike);
+        zaryaKnock(client, player, data);
 
         if (--nextEvent <= 0) {
             randomEvent(client, player, data, dread);
@@ -162,6 +180,21 @@ public final class SpaceDread {
                     .formatted(Formatting.DARK_GRAY, Formatting.ITALIC), false);
         } else {
             playInHead(client, ModSounds.VOID_SWELL, 0.35f, 0.85f);
+        }
+    }
+
+    /** Ночью у «Зари» внутри модуля кто-то стучит. Раз за ночь. */
+    private static void zaryaKnock(MinecraftClient client, ClientPlayerEntity player, LifeSupportComponent data) {
+        if (knockCooldown > 0) {
+            knockCooldown--;
+            return;
+        }
+        if (zarya == null || data.breathable || MathHelper.cos(client.world.getSkyAngle(1.0f) * MathHelper.TAU) > 0) {
+            return;
+        }
+        if (player.squaredDistanceTo(Vec3d.ofCenter(zarya)) < 16 * 16) {
+            playAt(client, ModSounds.VOID_KNOCK, Vec3d.ofCenter(zarya).add(0, 5, 0), 1.0f, 0.85f);
+            knockCooldown = 6000;
         }
     }
 

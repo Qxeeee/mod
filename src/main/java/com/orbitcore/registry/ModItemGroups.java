@@ -71,6 +71,11 @@ public final class ModItemGroups {
                         entries.add(ModBlocks.REGOLITH_PROCESSOR);
                         entries.add(ModItems.GAS_CANISTER);
                         entries.add(ModItems.HELIUM3_CANISTER);
+                        entries.add(ModItems.ROVER);
+                        entries.add(ModBlocks.GLOWING_CRYSTAL);
+                        entries.add(ModItems.CRYSTAL_SHARD);
+                        entries.add(ModBlocks.ECHO_STONE);
+                        entries.add(ModItems.ECHO_SHARD);
 
                         entries.add(ModItems.SPACESUIT_HELMET);
                         entries.add(ModItems.SPACESUIT_CHESTPLATE);

@@ -13,7 +13,8 @@
       "com.orbitcore.gametest.FlightGameTest",
       "com.orbitcore.gametest.MoonGameTest",
       "com.orbitcore.gametest.SurvivalGameTest",
-      "com.orbitcore.gametest.LunarContentGameTest"
+      "com.orbitcore.gametest.LunarContentGameTest",
+      "com.orbitcore.gametest.EchoGameTest"
     ]
   },
   "mixins": [

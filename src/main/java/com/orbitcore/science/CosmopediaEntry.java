@@ -23,7 +23,12 @@ public record CosmopediaEntry(String id, Supplier<ItemConvertible> icon, boolean
     public static final CosmopediaEntry ILMENITE = new CosmopediaEntry("ilmenite", () -> ModItems.RAW_ILMENITE, false);
     public static final CosmopediaEntry LUNAR_ICE = new CosmopediaEntry("lunar_ice", () -> ModBlocks.ICE_REGOLITH, false);
 
-    public static final List<CosmopediaEntry> ALL = List.of(EARTH, MOON, BAUXITE, RUTILE, SILICON, REGOLITH, ILMENITE, LUNAR_ICE);
+    public static final CosmopediaEntry ZARYA = new CosmopediaEntry("zarya", () -> Items.WRITTEN_BOOK, false);
+    public static final CosmopediaEntry ECHO_CRYSTAL = new CosmopediaEntry("echo_crystal", () -> ModItems.CRYSTAL_SHARD, false);
+    public static final CosmopediaEntry ECHO = new CosmopediaEntry("echo", () -> ModItems.ECHO_SHARD, false);
+
+    public static final List<CosmopediaEntry> ALL = List.of(EARTH, MOON, BAUXITE, RUTILE, SILICON, REGOLITH, ILMENITE, LUNAR_ICE,
+            ZARYA, ECHO_CRYSTAL, ECHO);
 
     public String titleKey() {
         return "cosmopedia.orbitcore." + id + ".title";

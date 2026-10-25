@@ -1,5 +1,7 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.item.RoverItem;
+import net.minecraft.util.Rarity;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.item.DosimeterItem;
 import com.orbitcore.item.OxygenTankItem;
@@ -45,6 +47,13 @@ public final class ModItems {
     public static final Item HELIUM3_CANISTER = Registry.register(Registries.ITEM, OrbitCore.id("helium3_canister"),
             new Item(new Item.Settings().maxCount(16)));
     public static final Item RAW_METEORIC_IRON = register("raw_meteoric_iron");
+
+    // «Эхо» и луноход
+    public static final Item CRYSTAL_SHARD = register("crystal_shard");
+    public static final Item ECHO_SHARD = Registry.register(Registries.ITEM, OrbitCore.id("echo_shard"),
+            new Item(new Item.Settings().maxCount(1).rarity(Rarity.EPIC).fireproof()));
+    public static final Item ROVER = Registry.register(Registries.ITEM, OrbitCore.id("rover"),
+            new RoverItem(new Item.Settings().maxCount(1)));
 
     // Жизнеобеспечение
     public static final Item SPACESUIT_HELMET = suit("spacesuit_helmet", ArmorItem.Type.HELMET);

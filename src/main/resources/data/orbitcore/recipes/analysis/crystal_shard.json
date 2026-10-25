@@ -1,0 +1,8 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:crystal_shard"
+  },
+  "samples": 6,
+  "entry": "echo_crystal"
+}

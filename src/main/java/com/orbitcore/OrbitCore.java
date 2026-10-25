@@ -1,5 +1,6 @@
 package com.orbitcore;
 
+import com.orbitcore.world.EchoEvents;
 import com.orbitcore.network.OrbitNetworking;
 import com.orbitcore.registry.ModBlockEntities;
 import com.orbitcore.registry.ModBlocks;
@@ -48,6 +49,7 @@ public class OrbitCore implements ModInitializer {
         OrbitNetworking.register();
         LifeSupport.register();
         LunarEvents.register();
+        EchoEvents.register();
         LOGGER.info("OrbitCore initialized");
     }
 }

@@ -1,5 +1,7 @@
 package com.orbitcore.registry;
 
+import com.orbitcore.block.EchoStoneBlock;
+import com.orbitcore.block.GlowingCrystalBlock;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.block.AirSeparatorBlock;
 import com.orbitcore.block.AirlockDoorBlock;
@@ -100,6 +102,14 @@ public final class ModBlocks {
     public static final Block REGOLITH_PROCESSOR = register("regolith_processor", new RegolithProcessorBlock(machineSettings(7)));
     public static final Block METEORITE = register("meteorite",
             new Block(AbstractBlock.Settings.copy(Blocks.ANCIENT_DEBRIS).mapColor(MapColor.BLACK).strength(8.0f, 1200.0f)));
+
+    // «Эхо»: материал Строителей и кристаллы вокруг него
+    public static final Block ECHO_STONE = register("echo_stone",
+            new EchoStoneBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLACK).strength(-1.0f, 3600000.0f)
+                    .dropsNothing().luminance(state -> 3).sounds(BlockSoundGroup.DEEPSLATE_TILES).pistonBehavior(PistonBehavior.BLOCK)));
+    public static final Block GLOWING_CRYSTAL = register("glowing_crystal",
+            new GlowingCrystalBlock(AbstractBlock.Settings.copy(Blocks.AMETHYST_CLUSTER).mapColor(MapColor.CYAN)
+                    .strength(1.5f).luminance(state -> 10)));
 
     // Жизнеобеспечение
     public static final Block OXYGEN_STATION = register("oxygen_station", new OxygenStationBlock(machineSettings(5)));

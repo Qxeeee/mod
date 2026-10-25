@@ -16,7 +16,7 @@
 | `gradlew runClient` | Запускает игру с модом |
 | `gradlew runServer` | Запускает сервер с модом |
 | `gradlew runGametest` | Запускает игровые тесты на сервере |
-| `gradlew runTour` | Фототур: игра сама создаёт мир, расставляет блоки, открывает экраны и сохраняет скриншоты в `run/screenshots/tour`, потом закрывается. Файл `run/tour-models-only` (или `tour-moon-only`, `tour-survival-only`, `tour-lunar-only`, `tour-flight-only`) включает короткий тур только по своей части |
+| `gradlew runTour` | Фототур: игра сама создаёт мир, расставляет блоки, открывает экраны и сохраняет скриншоты в `run/screenshots/tour`, потом закрывается. Файл `run/tour-models-only` (или `tour-moon-only`, `tour-survival-only`, `tour-lunar-only`, `tour-flight-only`, `tour-echo-only`) включает короткий тур только по своей части |
 
 На Windows команды пишутся так: `.\gradlew build`.
 

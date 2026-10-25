@@ -1,5 +1,10 @@
 package com.orbitcore.devtools;
 
+import net.minecraft.client.gui.screen.ingame.BookScreen;
+import com.orbitcore.entity.RoverEntity;
+import com.orbitcore.world.EchoStructures;
+import com.orbitcore.world.EchoSite;
+import com.orbitcore.world.EchoEvents;
 import com.orbitcore.block.HorizontalFacingBlock;
 import com.orbitcore.block.MachineBlock;
 import com.orbitcore.block.RegolithBlock;
@@ -178,6 +183,8 @@ public class ScreenshotTour implements ClientModInitializer {
 
     private void planTour(MinecraftClient client) {
         origin = client.player.getBlockPos();
+        // Тур идёт сам: если окно потеряет фокус, игра не должна вставать на паузу
+        client.options.pauseOnLostFocus = false;
         // Быстрый режим для проверки неба Луны: файл run/tour-moon-only
         if (new File(client.runDirectory, "tour-moon-only").exists()) {
             planMoonSky(client);
@@ -194,6 +201,13 @@ public class ScreenshotTour implements ClientModInitializer {
         if (new File(client.runDirectory, "tour-flight-only").exists()) {
             planCockpit(client);
             planMoon(client);
+            step(20, c -> c.scheduleStop());
+            return;
+        }
+        // Быстрый режим для сюжета «Эхо»: файл run/tour-echo-only
+        if (new File(client.runDirectory, "tour-echo-only").exists()) {
+            planMoonSky(client);
+            planEcho(client);
             step(20, c -> c.scheduleStop());
             return;
         }
@@ -401,6 +415,111 @@ public class ScreenshotTour implements ClientModInitializer {
         step(0, c -> shot(c, "29_landed"));
         step(0, c -> cockpit(true));
         planMoon(client);
+    }
+
+    /** Этап 0.8, часть 2: «Заря», бортжурнал, следы, сигнал, кратер Эха, Наблюдатель, катсцена, луноход. */
+    private void planEcho(MinecraftClient client) {
+        Vec3d[] zarya = new Vec3d[1];
+        Vec3d[] way = new Vec3d[1];
+        Vec3d[] side = new Vec3d[1];
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            world.setTimeOfDay(3000);
+            player.changeGameMode(GameMode.CREATIVE);
+            player.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.SPACESUIT_HELMET));
+            player.equipStack(EquipmentSlot.CHEST, new ItemStack(ModItems.SPACESUIT_CHESTPLATE));
+            player.equipStack(EquipmentSlot.LEGS, new ItemStack(ModItems.SPACESUIT_LEGGINGS));
+            player.equipStack(EquipmentSlot.FEET, new ItemStack(ModItems.SPACESUIT_BOOTS));
+            EchoEvents.onMoonLanding(moon, player.getBlockPos());
+            EchoSite site = EchoSite.get(moon);
+            // Страшный момент снимем отдельно, по команде
+            site.markScared(player.getUuid());
+            site.setSignalCountdown(30);
+            zarya[0] = Vec3d.ofBottomCenter(site.zarya());
+            BlockPos echo = site.echo(moon);
+            // «Заря» развёрнута к Эху по ближайшей стороне света — по ней и ставим камеру
+            Direction toward = Direction.getFacing(echo.getX() - zarya[0].x, 0, echo.getZ() - zarya[0].z);
+            way[0] = Vec3d.of(toward.getVector());
+            side[0] = new Vec3d(-way[0].z, 0, way[0].x);
+            lookAt(player, zarya[0].add(way[0].multiply(13)).add(side[0].multiply(9)).add(0, 6, 0), zarya[0].add(0, 3, 0));
+        }, 80);
+        step(0, c -> shot(c, "e1_zarya_signal"));
+        step(5, c -> c.setScreen(new BookScreen(new BookScreen.WrittenBookContents(EchoStructures.zaryaLogbook()))));
+        step(10, c -> shot(c, "e2_logbook"));
+        step(5, c -> c.setScreen(null));
+        server(client, (server, world, player) -> lookAt(player, zarya[0].add(way[0].multiply(30)).add(side[0].multiply(7)).add(0, 5, 0),
+                zarya[0].add(way[0].multiply(39))), 40);
+        step(0, c -> shot(c, "e3_abandoned_rover"));
+        server(client, (server, world, player) -> lookAt(player, zarya[0].add(way[0].multiply(56)).add(side[0].multiply(3)).add(0, 9, 0),
+                zarya[0].add(way[0].multiply(66))), 30);
+        step(0, c -> shot(c, "e4_footprints_end"));
+
+        // Кратер Эха: туда игрок летит, объект строится, когда он подходит близко
+        BlockPos[] base = new BlockPos[1];
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            BlockPos echo = EchoSite.get(moon).echo(moon);
+            lookAt(player, new Vec3d(echo.getX() + 0.5, 150, echo.getZ() + 60.5), Vec3d.ofCenter(echo));
+        }, 200);
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            EchoSite site = EchoSite.get(moon);
+            base[0] = site.echo(moon);
+            world.setTimeOfDay(6000);
+            Vec3d b = Vec3d.ofBottomCenter(base[0]);
+            lookAt(player, b.add(0, 32, 34), b.add(0, 4, 0));
+        }, 80);
+        step(0, c -> shot(c, "e5_echo_crater"));
+        server(client, (server, world, player) -> {
+            Vec3d b = Vec3d.ofBottomCenter(base[0]);
+            lookAt(player, b.add(5, 9, 11), b.add(0, 9, 0));
+        }, 40);
+        step(0, c -> shot(c, "e6_monolith"));
+        // Страшный момент: удар, помехи — и кто-то стоит за спиной
+        server(client, (server, world, player) -> {
+            Vec3d b = Vec3d.ofBottomCenter(base[0]);
+            lookAt(player, b.add(0, 24, 27), b.add(0, 8, 0));
+            EchoEvents.scare(server.getWorld(ModDimensions.MOON), player);
+        }, 8);
+        step(0, c -> shot(c, "e7_scare"));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(player.getX(), player.getY(), player.getZ(), player.getYaw() + 180, 4), 6);
+        step(0, c -> shot(c, "e8_watcher"));
+        // Касание монолита: катсцена
+        server(client, (server, world, player) -> {
+            world.setTimeOfDay(17000);
+            Vec3d b = Vec3d.ofBottomCenter(base[0]);
+            lookAt(player, b.add(0, 2.6, 4), b.add(0, 2, 0));
+            EchoEvents.touch(player);
+        }, 130);
+        step(0, c -> shot(c, "e9_contact"));
+        step(130, c -> {
+        });
+        // Луноход: игрок за рулём, вид со стороны
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            world.setTimeOfDay(5000);
+            player.getAbilities().flying = false;
+            player.sendAbilitiesUpdate();
+            Vec3d b = Vec3d.ofBottomCenter(base[0]);
+            BlockPos spot = moon.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, BlockPos.ofFloored(b.add(0, 0, 40)));
+            RoverEntity rover = ModEntities.ROVER.create(moon);
+            rover.refreshPositionAndAngles(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, 150, 0);
+            moon.spawnEntity(rover);
+            player.networkHandler.requestTeleport(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5, 150, 15);
+            player.startRiding(rover, true);
+        }, 40);
+        step(0, c -> c.options.setPerspective(Perspective.THIRD_PERSON_BACK));
+        step(20, c -> shot(c, "e10_rover"));
+        // За руль: держим «вперёд» две секунды — луноход должен поехать
+        step(40, c -> c.options.forwardKey.setPressed(true));
+        step(0, c -> shot(c, "e11_rover_driving"));
+        step(10, c -> c.options.forwardKey.setPressed(false));
+        step(0, c -> c.options.setPerspective(Perspective.FIRST_PERSON));
+        server(client, (server, world, player) -> {
+            player.stopRiding();
+            player.changeGameMode(GameMode.CREATIVE);
+        }, 10);
     }
 
     private static void cockpit(boolean on) {
@@ -725,6 +844,7 @@ public class ScreenshotTour implements ClientModInitializer {
             player.getAbilities().flying = false;
             player.sendAbilitiesUpdate();
         }, 5);
+        planEcho(client);
     }
 
     /**

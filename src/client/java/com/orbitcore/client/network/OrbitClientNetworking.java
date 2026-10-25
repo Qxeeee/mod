@@ -1,5 +1,8 @@
 package com.orbitcore.client.network;
 
+import com.orbitcore.registry.ModSounds;
+import com.orbitcore.client.story.EchoCutscene;
+import com.orbitcore.client.sound.SpaceDread;
 import com.orbitcore.client.flight.QuakeShake;
 import com.orbitcore.client.screen.MissionControlScreen;
 import com.orbitcore.client.screen.RocketScreen;
@@ -67,7 +70,29 @@ public final class OrbitClientNetworking {
             int entityId = buf.readVarInt();
             client.execute(() -> client.setScreen(new RocketScreen(entityId)));
         });
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientSpaceProgram.reset());
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.ECHO_SITE, (client, handler, buf, sender) -> {
+            BlockPos echo = buf.readBlockPos();
+            BlockPos zarya = buf.readBoolean() ? buf.readBlockPos() : null;
+            boolean announce = buf.readBoolean();
+            client.execute(() -> {
+                SpaceDread.setSite(echo, zarya);
+                if (announce) {
+                    client.getToastManager().add(OrbitToast.signal());
+                    client.getSoundManager().play(PositionedSoundInstance.master(ModSounds.FLIGHT_QUINDAR_IN, 1.0f, 0.5f));
+                    client.getSoundManager().play(PositionedSoundInstance.master(ModSounds.ECHO_SIGNAL, 1.0f, 0.9f));
+                }
+            });
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.ECHO_CONTACT, (client, handler, buf, sender) -> {
+            BlockPos monolith = buf.readBlockPos();
+            client.execute(() -> EchoCutscene.start(monolith));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(OrbitNetworking.ECHO_SCARE, (client, handler, buf, sender) ->
+                client.execute(SpaceDread::scare));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            ClientSpaceProgram.reset();
+            SpaceDread.setSite(null, null);
+        });
     }
 
     public static void sendObservation(BlockPos telescope, String target) {

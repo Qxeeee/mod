@@ -4,6 +4,9 @@ import com.orbitcore.OrbitCore;
 import com.orbitcore.entity.MeteorEntity;
 import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.entity.RocketStageEntity;
+import com.orbitcore.entity.RoverEntity;
+import com.orbitcore.entity.WatcherEntity;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -39,9 +42,24 @@ public final class ModEntities {
                     .fireImmune()
                     .build());
 
+    public static final EntityType<RoverEntity> ROVER = Registry.register(Registries.ENTITY_TYPE, OrbitCore.id("rover"),
+            FabricEntityTypeBuilder.<RoverEntity>create(SpawnGroup.MISC, RoverEntity::new)
+                    .dimensions(EntityDimensions.fixed(2.4f, 1.3f))
+                    .trackRangeChunks(10)
+                    .trackedUpdateRate(1)
+                    .build());
+    public static final EntityType<WatcherEntity> WATCHER = Registry.register(Registries.ENTITY_TYPE, OrbitCore.id("watcher"),
+            FabricEntityTypeBuilder.<WatcherEntity>create(SpawnGroup.MISC, WatcherEntity::new)
+                    .dimensions(EntityDimensions.fixed(0.6f, 1.8f))
+                    .trackRangeChunks(8)
+                    .disableSummon()
+                    .fireImmune()
+                    .build());
+
     private ModEntities() {
     }
 
     public static void register() {
+        FabricDefaultAttributeRegistry.register(WATCHER, WatcherEntity.createAttributes());
     }
 }

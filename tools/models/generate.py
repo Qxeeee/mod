@@ -240,6 +240,12 @@ def pixel(material, face, c, r, w, h, y, cube, rng):
     if material == "flag":
         # Флажок на плече: синий с красной полосой
         return (40, 80, 170) if r < h / 2 else (200, 50, 40)
+    if material == "tire":
+        # Сетчатое колесо лунохода: стальная сетка с шевронами
+        return noise(rng, (120, 124, 130), 6) if (c % 3 == 0 or r % 3 == 0) else noise(rng, (46, 48, 52), 4)
+    if material == "solar":
+        # Солнечная батарея: тёмно-синие ячейки в серебряной сетке
+        return noise(rng, (180, 184, 192), 4) if (c % 5 == 0 or r % 5 == 0) else noise(rng, (24, 38, 92), 6)
     raise ValueError("unknown material " + material)
 
 
@@ -629,6 +635,49 @@ def spacesuit():
 
 # ================================================================ запуск
 
+# ================================================================ луноход
+
+def rover_body():
+    """Луноход как у «Аполлонов»: открытая рама, два сиденья, пульт, антенна-зонтик, батарея на корме."""
+    model = Model("rover_body")
+    frame = model.bone("frame")
+    frame.add((-16, 6, -24), (32, 3, 48), "steel")
+    frame.add((-14, 9, -20), (28, 1, 40), "dark")
+    # Крылья над колёсами
+    for x in (-21, 15):
+        for z in (-24, 8):
+            frame.add((x, 14, z), (6, 1, 16), "hull")
+    # Сиденья со спинками
+    for x in (-12, 2):
+        frame.add((x, 10, -6), (10, 2, 10), "dark")
+        frame.add((x, 12, 3), (10, 9, 2), "dark")
+    # Пульт управления и ручка
+    frame.add((-5, 10, -19), (10, 9, 5), "panel")
+    frame.add((-1, 12, -12), (2, 7, 2), "black")
+    # Батарея и приборный отсек на корме, в золотой фольге
+    frame.add((-13, 10, 9), (26, 9, 13), "gold_foil")
+    # Солнечная панель над кормой
+    frame.add((-15, 21, 6), (30, 1, 18), "solar")
+    for x in (-13, 12):
+        frame.add((x, 19, 13), (1, 2, 1), "steel")
+    # Мачта и антенна-зонтик
+    frame.add((-1, 10, -24), (2, 24, 2), "steel")
+    frame.add((-8, 33, -30), (16, 1, 14), "hull")
+    frame.add((-4, 32, -27), (8, 1, 8), "steel")
+    return model
+
+
+def rover_wheel():
+    """Колесо: восьмиугольник поперёк оси X, центр — в начале координат (чтобы вращать)."""
+    model = Model("rover_wheel")
+    wheel = model.bone("wheel")
+    wheel.add((-3, -7, -4), (6, 14, 8), "tire")
+    wheel.add((-3, -4, -7), (6, 8, 14), "tire")
+    wheel.add((-3, -6, -6), (6, 12, 12), "tire")
+    wheel.add((-3.5, -2, -2), (7, 4, 4), "steel")
+    return model
+
+
 def main():
     rocket = ASSETS / "geo" / "rocket"
     textures = ASSETS / "textures" / "rocket"
@@ -647,6 +696,8 @@ def main():
         (capsule(), 206),
         (fins(), 207),
         (legs(), 208),
+        (rover_body(), 220),
+        (rover_wheel(), 221),
     ]
     for model, seed in parts:
         save(model, rocket / f"{model.name}.geo.json", textures / f"{model.name}.png", seed)

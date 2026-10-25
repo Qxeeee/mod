@@ -165,6 +165,15 @@ public class SpaceProgram extends PersistentState {
         return true;
     }
 
+    /** Открывает статью Космопедии; true, если её ещё не было. */
+    public boolean addEntry(MinecraftServer server, String id) {
+        if (CosmopediaEntry.byId(id) == null || !cosmopedia.add(id)) {
+            return false;
+        }
+        changed(server);
+        return true;
+    }
+
     /** Отмечает событие; true, если это случилось впервые за всю программу. */
     public boolean markFirst(MinecraftServer server, String event) {
         if (!firsts.add(event)) {

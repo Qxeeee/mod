@@ -1,5 +1,6 @@
 package com.orbitcore.client.mixin;
 
+import com.orbitcore.client.story.EchoCutscene;
 import com.orbitcore.client.flight.CameraShot;
 import com.orbitcore.client.flight.FlightCinematics;
 import com.orbitcore.client.flight.QuakeShake;
@@ -28,6 +29,9 @@ public abstract class CameraMixin {
     private void orbitcore$cinematicCamera(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView,
                                            float tickDelta, CallbackInfo ci) {
         CameraShot shot = FlightCinematics.cameraShot(tickDelta);
+        if (shot == null) {
+            shot = EchoCutscene.cameraShot(tickDelta);
+        }
         if (shot != null) {
             setRotation(shot.yaw(), shot.pitch());
             setPos(shot.x(), shot.y(), shot.z());

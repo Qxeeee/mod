@@ -1,5 +1,6 @@
 package com.orbitcore.client.toast;
 
+import com.orbitcore.registry.ModItems;
 import com.orbitcore.OrbitCore;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.toast.Toast;
@@ -33,6 +34,11 @@ public class OrbitToast implements Toast {
 
     public static OrbitToast discovery(Text body, boolean moon) {
         return new OrbitToast(Text.translatable("toast.orbitcore.discovery"), body, 0xFFF2C66D, null, moon);
+    }
+
+    public static OrbitToast signal() {
+        return new OrbitToast(Text.translatable("toast.orbitcore.signal"), Text.translatable("toast.orbitcore.signal.text"), 0xFFB98CFF,
+                new ItemStack(ModItems.ECHO_SHARD), false);
     }
 
     public static OrbitToast research(Text name, ItemStack icon) {

@@ -1,5 +1,6 @@
 package com.orbitcore.network;
 
+import org.jetbrains.annotations.Nullable;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.rocket.FlightController;
@@ -39,6 +40,9 @@ public final class OrbitNetworking {
     public static final Identifier LAUNCH = OrbitCore.id("launch");
     public static final Identifier FLIGHT_COMMAND = OrbitCore.id("flight_command");
     public static final Identifier QUAKE = OrbitCore.id("quake");
+    public static final Identifier ECHO_SITE = OrbitCore.id("echo_site");
+    public static final Identifier ECHO_CONTACT = OrbitCore.id("echo_contact");
+    public static final Identifier ECHO_SCARE = OrbitCore.id("echo_scare");
 
     /** Команды экипажа во время полёта. */
     public static final int COMMAND_SKIP = 0;
@@ -131,6 +135,30 @@ public final class OrbitNetworking {
         buf.writeFloat(strength);
         buf.writeVarInt(ticks);
         ServerPlayNetworking.send(player, QUAKE, buf);
+    }
+
+    /** Где Эхо и «Заря»; {@code announce} — сигнал только что принят (тост и звук). */
+    public static void sendEchoSite(ServerPlayerEntity player, BlockPos echo, @Nullable BlockPos zarya, boolean announce) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBlockPos(echo);
+        buf.writeBoolean(zarya != null);
+        if (zarya != null) {
+            buf.writeBlockPos(zarya);
+        }
+        buf.writeBoolean(announce);
+        ServerPlayNetworking.send(player, ECHO_SITE, buf);
+    }
+
+    /** Катсцена у монолита: камера облетает его основание. */
+    public static void sendEchoContact(ServerPlayerEntity player, BlockPos monolith) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeBlockPos(monolith);
+        ServerPlayNetworking.send(player, ECHO_CONTACT, buf);
+    }
+
+    /** Страшный момент у кратера: удар, помехи на визоре. */
+    public static void sendScare(ServerPlayerEntity player) {
+        ServerPlayNetworking.send(player, ECHO_SCARE, PacketByteBufs.empty());
     }
 
     public static void announceDiscovery(MinecraftServer server, CelestialBody body) {

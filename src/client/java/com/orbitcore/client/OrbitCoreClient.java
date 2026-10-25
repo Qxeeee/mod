@@ -1,5 +1,8 @@
 package com.orbitcore.client;
 
+import com.orbitcore.client.story.EchoCutscene;
+import com.orbitcore.client.render.WatcherEntityRenderer;
+import com.orbitcore.client.render.RoverEntityRenderer;
 import com.orbitcore.OrbitCore;
 import com.orbitcore.client.flight.FlightCinematics;
 import com.orbitcore.client.flight.QuakeShake;
@@ -77,6 +80,9 @@ public class OrbitCoreClient implements ClientModInitializer {
         SpaceDread.register();
         EntityRendererRegistry.register(ModEntities.METEOR, MeteorEntityRenderer::new);
         EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.ROVER, RoverEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.WATCHER, WatcherEntityRenderer::new);
+        EchoCutscene.register();
         ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 
         // Руды нарисованы слоем поверх камня, им нужна прозрачность
@@ -84,6 +90,7 @@ public class OrbitCoreClient implements ClientModInitializer {
                 ModBlocks.BAUXITE_ORE, ModBlocks.RUTILE_ORE, ModBlocks.DEEPSLATE_RUTILE_ORE);
         // У шлюзовой двери прозрачный иллюминатор
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AIRLOCK_DOOR, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GLOWING_CRYSTAL, RenderLayer.getCutout());
 
         // Подсказка к предмету, если в переводах есть ключ tooltip.orbitcore.<имя>
         ItemTooltipCallback.EVENT.register((stack, context, lines) -> {

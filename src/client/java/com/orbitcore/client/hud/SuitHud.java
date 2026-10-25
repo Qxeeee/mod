@@ -1,5 +1,9 @@
 package com.orbitcore.client.hud;
 
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import com.orbitcore.world.ModDimensions;
+import com.orbitcore.client.sound.SpaceDread;
 import com.orbitcore.item.SpacesuitItem;
 import com.orbitcore.registry.ModItems;
 import com.orbitcore.survival.LifeSupport;
@@ -27,6 +31,8 @@ public final class SuitHud {
     private static final int GREEN = 0xFF7CF0B0;
     private static final int GOLD = 0xFFF2C66D;
     private static final int RED = 0xFFFF6A50;
+    private static final int SIGNAL = 0xFFC9A6FF;
+    private static final String[] ARROWS = {"↑", "↗", "→", "↘", "↓", "↙", "←", "↖"};
 
     private SuitHud() {
     }
@@ -84,7 +90,11 @@ public final class SuitHud {
     private static void drawPanel(DrawContext context, TextRenderer font, ClientPlayerEntity player, LifeSupportComponent data) {
         int x = 6;
         int y = 6;
-        context.fill(x, y, x + 150, y + 52, PANEL);
+        Text signal = signal(player);
+        context.fill(x, y, x + 150, y + (signal != null ? 62 : 52), PANEL);
+        if (signal != null) {
+            line(context, font, x, y + 49, Text.translatable("hud.orbitcore.signal", arrow(player)), signal, SIGNAL);
+        }
 
         int oxygen = Oxygen.total(player);
         int capacity = Math.max(1, Oxygen.totalCapacity(player));
@@ -109,6 +119,32 @@ public final class SuitHud {
 
         line(context, font, x, y + 39, Text.translatable("hud.orbitcore.pressure"),
                 Text.translatable("hud.orbitcore.kpa", data.breathable ? 101 : 0), data.breathable ? TEXT : GOLD);
+    }
+
+    /** Расстояние до источника сигнала, если он уже известен и игрок на Луне. */
+    @Nullable
+    private static Text signal(ClientPlayerEntity player) {
+        BlockPos echo = SpaceDread.echo();
+        if (echo == null || player.getWorld().getRegistryKey() != ModDimensions.MOON) {
+            return null;
+        }
+        double dx = echo.getX() + 0.5 - player.getX();
+        double dz = echo.getZ() + 0.5 - player.getZ();
+        return Text.translatable("hud.orbitcore.signal_distance", Math.round(Math.sqrt(dx * dx + dz * dz)));
+    }
+
+    /** Стрелка на источник сигнала относительно того, куда смотрит игрок. */
+    private static String arrow(ClientPlayerEntity player) {
+        BlockPos echo = SpaceDread.echo();
+        if (echo == null) {
+            return "";
+        }
+        double dx = echo.getX() + 0.5 - player.getX();
+        double dz = echo.getZ() + 0.5 - player.getZ();
+        float target = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90.0f;
+        float relative = MathHelper.wrapDegrees(target - player.getYaw());
+        int sector = Math.floorMod(Math.round(relative / 45.0f), 8);
+        return ARROWS[sector];
     }
 
     private static void drawDosimeter(DrawContext context, TextRenderer font, LifeSupportComponent data) {
