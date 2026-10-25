@@ -7,6 +7,7 @@ import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.client.render.MoonSky;
 import com.orbitcore.client.render.RocketEntityRenderer;
 import com.orbitcore.client.render.RocketStageEntityRenderer;
+import com.orbitcore.client.render.geo.SpacesuitRenderer;
 import com.orbitcore.client.screen.AirSeparatorScreen;
 import com.orbitcore.client.screen.CoalGeneratorScreen;
 import com.orbitcore.client.screen.ElectrolyzerScreen;
@@ -66,6 +67,7 @@ public class OrbitCoreClient implements ClientModInitializer {
         FlightCinematics.register();
         MoonSky.register();
         SuitHud.register();
+        SpacesuitRenderer.register();
         EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
         ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 

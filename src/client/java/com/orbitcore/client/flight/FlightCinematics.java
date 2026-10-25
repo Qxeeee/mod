@@ -86,12 +86,12 @@ public final class FlightCinematics {
             case COUNTDOWN -> {
                 if (t < 100) {
                     // Общий план: стол и ракета целиком, камера медленно наезжает
-                    double radius = 17 - t * 0.04;
+                    double radius = Math.max(17, h * 1.15) - t * 0.04;
                     shot = CameraShot.lookAt(r.x + radius * 0.7, base + 2.5, r.z - radius * 0.7, r.x, base + h * 0.55, r.z);
                 } else {
                     // Низкий план у двигателей, камера облетает ракету
                     double angle = Math.toRadians(-40 + (t - 100) * 0.35);
-                    shot = CameraShot.lookAt(r.x + Math.sin(angle) * 5.5, base + 0.8, r.z - Math.cos(angle) * 5.5,
+                    shot = CameraShot.lookAt(r.x + Math.sin(angle) * 7.5, base + 0.8, r.z - Math.cos(angle) * 7.5,
                             r.x, base + h * 0.4, r.z);
                 }
                 shake = t < FlightController.IGNITION_TICK ? 0 : 0.6f + (t - FlightController.IGNITION_TICK) * 0.02f;
@@ -100,35 +100,36 @@ public final class FlightCinematics {
                 float sinceSeparation = t - rocket.separationTick();
                 if (sinceSeparation >= 0 && sinceSeparation < 60) {
                     // Отделение ступени: смотрим вниз, как она уходит прочь
-                    shot = CameraShot.lookAt(r.x + 3.5, r.y + 1.5, r.z - 4.5, r.x, r.y - 7, r.z);
+                    shot = CameraShot.lookAt(r.x + 5.5, r.y + 2, r.z - 6.5, r.x, r.y - 10, r.z);
                     shake = 1.2f * (1 - sinceSeparation / 60f);
                 } else if (t < 70) {
                     // Отрыв от стола: камера на земле, ракета уходит вверх
-                    shot = CameraShot.lookAt(r.x + 11, base + 2, r.z - 11, r.x, r.y + h * 0.5, r.z);
+                    double far = Math.max(11, h * 0.75);
+                    shot = CameraShot.lookAt(r.x + far, base + 2, r.z - far, r.x, r.y + h * 0.5, r.z);
                     shake = 2.2f - t * 0.02f;
                 } else if (t < 150) {
                     // Взгляд снизу вверх от края стола
-                    shot = CameraShot.lookAt(r.x + 3.5, base + 0.6, r.z - 3.5, r.x, r.y + h * 0.3, r.z);
+                    shot = CameraShot.lookAt(r.x + 4.5, base + 0.6, r.z - 4.5, r.x, r.y + h * 0.3, r.z);
                     shake = 0.8f;
                 } else {
                     // Погоня: камера снизу сбоку, медленно обходит ракету
                     double angle = Math.toRadians(30 + (t - 150) * 0.25);
-                    shot = CameraShot.lookAt(r.x + Math.sin(angle) * 7, r.y - 5 - h * 0.2, r.z - Math.cos(angle) * 7,
+                    shot = CameraShot.lookAt(r.x + Math.sin(angle) * 10, r.y - 5 - h * 0.2, r.z - Math.cos(angle) * 10,
                             r.x, r.y + h * 0.5, r.z);
                     shake = 0.5f;
                 }
             }
             case REENTRY -> {
                 if (rocket.parachute()) {
-                    shot = CameraShot.lookAt(r.x + 7, r.y - 2.5, r.z - 7, r.x, r.y + 2.5, r.z);
+                    shot = CameraShot.lookAt(r.x + 11, r.y - 3, r.z - 11, r.x, r.y + 5, r.z);
                     shake = 0.15f;
                 } else {
-                    shot = CameraShot.lookAt(r.x + 4, r.y + 5, r.z - 4, r.x, r.y, r.z);
+                    shot = CameraShot.lookAt(r.x + 6, r.y + 7, r.z - 6, r.x, r.y + 1, r.z);
                     shake = 1.4f;
                 }
             }
             case DESCENT -> {
-                shot = CameraShot.lookAt(r.x + 6, r.y + h + 3, r.z - 6, r.x, r.y, r.z);
+                shot = CameraShot.lookAt(r.x + 9, r.y + h + 4, r.z - 9, r.x, r.y, r.z);
                 shake = 0.3f + rocket.throttle() * 0.8f;
             }
             default -> {

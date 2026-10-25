@@ -246,7 +246,7 @@ public class RocketEntity extends Entity {
 
     @Override
     public EntityDimensions getDimensions(EntityPose pose) {
-        return EntityDimensions.changing(1.0f, design.height());
+        return EntityDimensions.changing(RocketDesign.RADIUS * 2 - 0.2f, design.height());
     }
 
     /** Космонавт сидит в капсуле: над всеми модулями, что стоят под ней. */
@@ -294,10 +294,11 @@ public class RocketEntity extends Entity {
                 || phase == FlightPhase.COUNTDOWN && flightTick() >= FlightController.IGNITION_TICK
                 || phase == FlightPhase.DESCENT && throttle() > 0.05f;
         if (engines) {
-            int count = phase == FlightPhase.DESCENT ? 2 + (int) (throttle() * 4) : 8;
+            int count = phase == FlightPhase.DESCENT ? 4 + (int) (throttle() * 8) : 16;
             for (int i = 0; i < count; i++) {
-                double ox = (random.nextDouble() - 0.5) * 0.6;
-                double oz = (random.nextDouble() - 0.5) * 0.6;
+                // Струя шириной со срез сопла
+                double ox = (random.nextDouble() - 0.5) * 1.6;
+                double oz = (random.nextDouble() - 0.5) * 1.6;
                 world.addImportantParticle(ParticleTypes.FLAME, x + ox, y - 0.1, z + oz, ox * 0.2, -0.6 - random.nextDouble() * 0.5, oz * 0.2);
             }
             boolean air = ModDimensions.hasAir(world);
@@ -321,17 +322,17 @@ public class RocketEntity extends Entity {
                 for (int i = 0; i < 6; i++) {
                     double angle = random.nextDouble() * Math.PI * 2;
                     double speed = 0.25 + random.nextDouble() * 0.35;
-                    world.addParticle(ParticleTypes.CLOUD, x, baseY() + 0.3, z,
-                            Math.cos(angle) * speed, 0.02, Math.sin(angle) * speed);
+                    world.addParticle(ParticleTypes.CLOUD, x + Math.cos(angle) * RocketDesign.RADIUS, baseY() + 0.3,
+                            z + Math.sin(angle) * RocketDesign.RADIUS, Math.cos(angle) * speed * 1.6, 0.02, Math.sin(angle) * speed * 1.6);
                 }
-                world.addParticle(ParticleTypes.LARGE_SMOKE, x + (random.nextDouble() - 0.5) * 3, baseY() + 0.5,
-                        z + (random.nextDouble() - 0.5) * 3, 0, 0.08, 0);
+                world.addParticle(ParticleTypes.LARGE_SMOKE, x + (random.nextDouble() - 0.5) * 7, baseY() + 0.5,
+                        z + (random.nextDouble() - 0.5) * 7, 0, 0.08, 0);
             }
         } else if (phase == FlightPhase.REENTRY && !parachute()) {
             // Плазма вокруг теплозащиты
             for (int i = 0; i < 6; i++) {
                 double angle = random.nextDouble() * Math.PI * 2;
-                world.addImportantParticle(ParticleTypes.FLAME, x + Math.cos(angle) * 0.5, y + 0.1, z + Math.sin(angle) * 0.5,
+                world.addImportantParticle(ParticleTypes.FLAME, x + Math.cos(angle) * RocketDesign.RADIUS, y + 0.1, z + Math.sin(angle) * RocketDesign.RADIUS,
                         Math.cos(angle) * 0.1, 0.4, Math.sin(angle) * 0.1);
             }
             world.addImportantParticle(ParticleTypes.LARGE_SMOKE, x, y + 1.2, z, 0, 0.3, 0);
@@ -339,7 +340,7 @@ public class RocketEntity extends Entity {
             // Жидкий кислород кипит в баках — холодный пар стекает по бортам
             double angle = random.nextDouble() * Math.PI * 2;
             double vy = y + 0.4 + random.nextDouble() * Math.max(0.5, design.height() * 0.7);
-            world.addParticle(ParticleTypes.CLOUD, x + Math.cos(angle) * 0.45, vy, z + Math.sin(angle) * 0.45,
+            world.addParticle(ParticleTypes.CLOUD, x + Math.cos(angle) * (RocketDesign.RADIUS + 0.05), vy, z + Math.sin(angle) * (RocketDesign.RADIUS + 0.05),
                     Math.cos(angle) * 0.02, -0.03, Math.sin(angle) * 0.02);
         }
     }

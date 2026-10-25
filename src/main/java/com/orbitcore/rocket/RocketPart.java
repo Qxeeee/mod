@@ -8,15 +8,16 @@ import org.jetbrains.annotations.Nullable;
  * <p>Единицы: масса — тонны, тяга — кН, удельный импульс — секунды, топливо — мБ
  * (1 мБ = 1 кг; бак вмещает столько-то керосина и столько же кислорода).
  *
- * @param heightPx высота модуля в пикселях модели (16 = один блок); 0 — модуль крепится вокруг предыдущего
+ * @param heightPx высота модуля в пикселях модели (16 = один блок); 0 — модуль крепится вокруг предыдущего.
+ *                 Модели модулей — в assets/orbitcore/geo/rocket, их строит tools/models/generate.py
  */
 public enum RocketPart {
-    ENGINE_ISKRA("engine_iskra", Kind.ENGINE, 16, 1.0, 120, 290, 0, 4),
-    ENGINE_FAKEL("engine_fakel", Kind.ENGINE, 16, 2.5, 400, 310, 0, 4),
-    FUEL_TANK_SMALL("fuel_tank_small", Kind.TANK, 16, 0.5, 0, 0, 2000, 1),
-    FUEL_TANK_LARGE("fuel_tank_large", Kind.TANK, 32, 1.5, 0, 0, 6000, 1),
-    STAGE_DECOUPLER("stage_decoupler", Kind.DECOUPLER, 4, 0.3, 0, 0, 0, 1),
-    CAPSULE("capsule_kaplya", Kind.CAPSULE, 24, 2.0, 0, 0, 0, 1),
+    ENGINE_ISKRA("engine_iskra", Kind.ENGINE, 40, 1.0, 120, 290, 0, 4),
+    ENGINE_FAKEL("engine_fakel", Kind.ENGINE, 48, 2.5, 400, 310, 0, 4),
+    FUEL_TANK_SMALL("fuel_tank_small", Kind.TANK, 48, 0.5, 0, 0, 2000, 1),
+    FUEL_TANK_LARGE("fuel_tank_large", Kind.TANK, 112, 1.5, 0, 0, 6000, 1),
+    STAGE_DECOUPLER("stage_decoupler", Kind.DECOUPLER, 12, 0.3, 0, 0, 0, 1),
+    CAPSULE("capsule_kaplya", Kind.CAPSULE, 64, 2.0, 0, 0, 0, 1),
     FINS("rocket_fins", Kind.FINS, 0, 0.2, 0, 0, 0, 1),
     LANDING_LEGS("landing_legs", Kind.LEGS, 0, 0.4, 0, 0, 0, 1);
 

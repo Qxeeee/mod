@@ -180,6 +180,12 @@ public class ScreenshotTour implements ClientModInitializer {
             step(20, c -> c.scheduleStop());
             return;
         }
+        // Быстрый режим для моделей ракеты и скафандра: файл run/tour-models-only
+        if (new File(client.runDirectory, "tour-models-only").exists()) {
+            planModels(client);
+            step(20, c -> c.scheduleStop());
+            return;
+        }
         // Быстрый режим для этапа 0.7: файл run/tour-survival-only
         if (new File(client.runDirectory, "tour-survival-only").exists()) {
             planMoonSky(client);
@@ -305,6 +311,7 @@ public class ScreenshotTour implements ClientModInitializer {
             }
             player.teleport(world, origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0f, -16f);
         }, 120);
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(origin).add(0, 1.6, -10), Vec3d.ofCenter(pad).add(0, 15, 0)), 30);
         step(0, c -> shot(c, "14_rocket_on_pad"));
         server(client, (server, world, player) ->
                 player.teleport(world, pad.getX() + 4.5, pad.getY() + 1, pad.getZ() - 5.5, 35f, -30f), 40);
@@ -374,6 +381,89 @@ public class ScreenshotTour implements ClientModInitializer {
         });
         step(0, c -> shot(c, "29_landed"));
         planMoon(client);
+    }
+
+    /** Объёмные модели: лунная ракета с разных сторон, малая ракета, скафандр. */
+    private void planModels(MinecraftClient client) {
+        BlockPos pad = origin.south(14);
+        BlockPos smallPad = pad.east(9);
+        BlockPos landerPad = pad.west(9);
+        server(client, (server, world, player) -> {
+            world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server);
+            world.getGameRules().get(GameRules.DO_WEATHER_CYCLE).set(false, server);
+            world.setWeather(12000, 0, false, false);
+            world.setTimeOfDay(4000);
+            for (BlockPos center : new BlockPos[]{pad, smallPad, landerPad}) {
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        world.setBlockState(center.add(dx, -1, dz), ModBlocks.LAUNCH_PAD.getDefaultState());
+                    }
+                }
+            }
+            spawnRocket(world, pad, MOON_ROCKET);
+            spawnRocket(world, smallPad, List.of(
+                    new RocketDesign.Entry(RocketPart.ENGINE_ISKRA, 1),
+                    new RocketDesign.Entry(RocketPart.FINS, 1),
+                    new RocketDesign.Entry(RocketPart.FUEL_TANK_SMALL, 1),
+                    new RocketDesign.Entry(RocketPart.CAPSULE, 1)));
+            spawnRocket(world, landerPad, List.of(
+                    new RocketDesign.Entry(RocketPart.ENGINE_ISKRA, 1),
+                    new RocketDesign.Entry(RocketPart.FUEL_TANK_LARGE, 1),
+                    new RocketDesign.Entry(RocketPart.LANDING_LEGS, 1),
+                    new RocketDesign.Entry(RocketPart.CAPSULE, 1)));
+            player.getInventory().clear();
+            player.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.SPACESUIT_HELMET));
+            player.equipStack(EquipmentSlot.CHEST, new ItemStack(ModItems.SPACESUIT_CHESTPLATE));
+            player.equipStack(EquipmentSlot.LEGS, new ItemStack(ModItems.SPACESUIT_LEGGINGS));
+            player.equipStack(EquipmentSlot.FEET, new ItemStack(ModItems.SPACESUIT_BOOTS));
+            lookAt(player, Vec3d.ofCenter(pad).add(16, 6, -26), Vec3d.ofCenter(pad).add(0, 15, 0));
+        }, 140);
+        step(0, c -> shot(c, "m1_moon_rocket"));
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(pad).add(5, 1.5, -6), Vec3d.ofCenter(pad).add(0, 2.5, 0)), 40);
+        step(0, c -> shot(c, "m2_engines"));
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(pad).add(4, 0.3, -4), Vec3d.ofCenter(pad).add(0, -0.5, 0)), 40);
+        step(0, c -> shot(c, "m3_from_below"));
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(pad).add(6, 25, -7), Vec3d.ofCenter(pad).add(0, 28, 0)), 40);
+        step(0, c -> shot(c, "m4_capsule"));
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(pad).add(7, 13, -8), Vec3d.ofCenter(pad).add(0, 11, 0)), 40);
+        step(0, c -> shot(c, "m5_legs_and_stage"));
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(smallPad).add(8, 3, -10), Vec3d.ofCenter(smallPad).add(0, 4.5, 0)), 40);
+        step(0, c -> shot(c, "m6_small_rocket"));
+        server(client, (server, world, player) -> lookAt(player, Vec3d.ofCenter(landerPad).add(-9, 4, -11), Vec3d.ofCenter(landerPad).add(0, 5, 0)), 40);
+        step(0, c -> shot(c, "m10_lander_legs"));
+
+        // Скафандр: игрок стоит на земле, камера от третьего лица
+        server(client, (server, world, player) -> {
+            player.getAbilities().flying = false;
+            player.sendAbilitiesUpdate();
+            player.networkHandler.requestTeleport(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 200f, 10f);
+        }, 40);
+        step(20, c -> c.options.setPerspective(Perspective.THIRD_PERSON_FRONT));
+        step(0, c -> shot(c, "m7_suit_front"));
+        step(20, c -> c.options.setPerspective(Perspective.THIRD_PERSON_BACK));
+        step(0, c -> shot(c, "m8_suit_back"));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(player.getX(), player.getY(), player.getZ(), 110f, 5f), 20);
+        step(0, c -> shot(c, "m9_suit_side"));
+        step(5, c -> c.options.setPerspective(Perspective.FIRST_PERSON));
+    }
+
+    private static void spawnRocket(ServerWorld world, BlockPos pad, List<RocketDesign.Entry> parts) {
+        RocketEntity rocket = ModEntities.ROCKET.create(world);
+        rocket.refreshPositionAndAngles(pad.getX() + 0.5, pad.getY(), pad.getZ() + 0.5, 0, 0);
+        RocketDesign design = new RocketDesign(parts);
+        rocket.setDesign(design);
+        world.spawnEntity(rocket);
+    }
+
+    /** Поставить камеру игрока в точку {@code eye} и навести на {@code target}; игрок зависает в полёте. */
+    private static void lookAt(ServerPlayerEntity player, Vec3d eye, Vec3d target) {
+        Vec3d d = target.subtract(eye);
+        float yaw = (float) Math.toDegrees(Math.atan2(-d.x, d.z));
+        float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)));
+        player.getAbilities().flying = true;
+        player.sendAbilitiesUpdate();
+        player.networkHandler.requestTeleport(eye.x, eye.y - player.getStandingEyeHeight(), eye.z, yaw, pitch);
     }
 
     /** Сразу на Луну: небо днём и ночью. */

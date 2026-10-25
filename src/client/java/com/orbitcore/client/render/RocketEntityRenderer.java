@@ -20,7 +20,7 @@ public class RocketEntityRenderer extends EntityRenderer<RocketEntity> {
 
     public RocketEntityRenderer(EntityRendererFactory.Context context) {
         super(context);
-        shadowRadius = 0.7f;
+        shadowRadius = 1.8f;
     }
 
     @Override
@@ -43,7 +43,8 @@ public class RocketEntityRenderer extends EntityRenderer<RocketEntity> {
         matrices.translate(0, rocket.design().height(), 0);
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((float) Math.sin(time * 0.05) * 6));
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((float) Math.cos(time * 0.04) * 5));
-        matrices.scale(4f, 4f, 4f);
+        // Купол втрое шире капсулы
+        matrices.scale(9f, 9f, 9f);
         matrices.translate(-0.5, 0, -0.5);
         MinecraftClient.getInstance().getBlockRenderManager().getModelRenderer().render(matrices.peek(),
                 consumers.getBuffer(RenderLayer.getCutout()), null, model, 1f, 1f, 1f, light, OverlayTexture.DEFAULT_UV);

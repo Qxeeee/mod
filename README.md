@@ -16,7 +16,7 @@
 | `gradlew runClient` | Запускает игру с модом |
 | `gradlew runServer` | Запускает сервер с модом |
 | `gradlew runGametest` | Запускает игровые тесты на сервере |
-| `gradlew runTour` | Фототур: игра сама создаёт мир, расставляет блоки, открывает экраны и сохраняет скриншоты в `run/screenshots/tour`, потом закрывается |
+| `gradlew runTour` | Фототур: игра сама создаёт мир, расставляет блоки, открывает экраны и сохраняет скриншоты в `run/screenshots/tour`, потом закрывается. Файл `run/tour-models-only` (или `tour-moon-only`, `tour-survival-only`) включает короткий тур только по своей части |
 
 На Windows команды пишутся так: `.\gradlew build`.
 
@@ -30,10 +30,14 @@ src/
 └─ devtools/  ← фототур для проверки внешнего вида, в готовый мод не попадает
 tools/
 ├─ textures/generate.py  ← рисует все текстуры мода (Python + Pillow)
+├─ models/generate.py    ← строит объёмные модели ракеты и скафандра (GeckoLib)
 └─ check_assets.py       ← проверяет модели, текстуры, лут и переводы
+blockbench/              ← те же модели проектами Blockbench (.bbmodel), чтобы их открыть и посмотреть
 ```
 
 Текстуры не рисуются вручную: правим `tools/textures/generate.py` и запускаем `python tools/textures/generate.py`.
+
+Объёмные модели (модули ракеты, скафандр) собираются из кубов в `tools/models/generate.py`: `python tools/models/generate.py` пишет геометрию GeckoLib в `assets/orbitcore/geo`, развёртки текстур и проекты Blockbench в `blockbench/`. Если модель удобнее доработать руками, откройте `.bbmodel` в Blockbench (нужен плагин GeckoLib для экспорта), экспортируйте `.geo.json` и текстуру поверх сгенерированных — и уберите эту модель из генератора, чтобы правки не затёрлись.
 
 ## Как работаем вдвоём
 

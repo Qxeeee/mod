@@ -73,7 +73,8 @@ public class RocketItem extends Item {
             return ActionResult.FAIL;
         }
         RocketDesign design = design(context.getStack());
-        Box above = new Box(pad.up()).stretch(0, Math.max(1, design.height()), 0);
+        // Ракета шириной во весь стол: над ним должно быть свободно 3×3 блока
+        Box above = new Box(pad.up()).stretch(0, Math.max(1, design.height()), 0).expand(1, 0, 1);
         if (!world.getEntitiesByClass(RocketEntity.class, above.expand(1, 0, 1), e -> true).isEmpty()) {
             message(player, "message.orbitcore.rocket.pad_occupied");
             return ActionResult.FAIL;

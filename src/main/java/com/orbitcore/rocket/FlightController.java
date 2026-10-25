@@ -124,6 +124,14 @@ public final class FlightController {
         return null;
     }
 
+    /** Экипаж выходит из ракеты и встаёт рядом, на грунт, лицом к ней. */
+    private static void stepOut(ServerPlayerEntity player, RocketEntity rocket, double distance, float pitch) {
+        double x = rocket.getX() + RocketDesign.RADIUS + distance;
+        double z = rocket.getZ();
+        int ground = rocket.getWorld().getTopY(Heightmap.Type.MOTION_BLOCKING, (int) Math.floor(x), (int) Math.floor(z));
+        player.networkHandler.requestTeleport(x, Math.max(rocket.getY(), ground), z, 90f, pitch);
+    }
+
     public static boolean engineerMode(World world) {
         return world.getGameRules().getBoolean(ModGameRules.ENGINEER_MODE);
     }
@@ -468,7 +476,7 @@ public final class FlightController {
         boolean first = SpaceProgram.get(server).markFirst(server, "moon_landing");
         if (player != null) {
             player.stopRiding();
-            player.networkHandler.requestTeleport(rocket.getX() + 2.5, rocket.getY(), rocket.getZ(), 90f, 10f);
+            stepOut(player, rocket, 4, -10f);
             player.fallDistance = 0;
             player.networkHandler.sendPacket(new TitleS2CPacket(Text.translatable("flight.orbitcore.moon_title")));
             player.networkHandler.sendPacket(new SubtitleS2CPacket(Text.translatable(first
@@ -484,7 +492,7 @@ public final class FlightController {
     private void crash(ServerWorld world, @Nullable ServerPlayerEntity player, boolean legs) {
         if (player != null) {
             player.stopRiding();
-            player.networkHandler.requestTeleport(rocket.getX() + 3.5, rocket.getY() + 1, rocket.getZ(), 90f, 20f);
+            stepOut(player, rocket, 5, 5f);
             player.fallDistance = 0;
             player.sendMessage(Text.translatable(legs ? "message.orbitcore.flight.crash" : "message.orbitcore.flight.crash_no_legs")
                     .formatted(Formatting.RED), false);
@@ -550,7 +558,7 @@ public final class FlightController {
         if (player != null && player.getVehicle() == rocket) {
             player.stopRiding();
             // Космонавт выходит рядом и оборачивается к капсуле
-            player.networkHandler.requestTeleport(rocket.getX() + 2.5, rocket.getY(), rocket.getZ(), 90f, 15f);
+            stepOut(player, rocket, 4, -5f);
             player.fallDistance = 0;
             player.sendMessage(Text.translatable("message.orbitcore.flight.landed").formatted(Formatting.GREEN), true);
         }

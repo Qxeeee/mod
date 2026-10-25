@@ -117,6 +117,9 @@ public final class RocketDesign {
         return parts.stream().anyMatch(e -> e.part.kind() == kind);
     }
 
+    /** Радиус корпуса в блоках: модули 48 пикселей в диаметре, ракета шириной в стартовый стол. */
+    public static final float RADIUS = 1.5f;
+
     /** Высота ракеты в блоках. */
     public float height() {
         int px = parts.stream().mapToInt(e -> e.part.heightPx()).sum();
