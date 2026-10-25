@@ -1,0 +1,21 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "PPP",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "C": {
+      "item": "minecraft:gray_concrete"
+    }
+  },
+  "result": {
+    "item": "orbitcore:launch_pad",
+    "count": 9
+  }
+}

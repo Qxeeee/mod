@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "orbitcore-devtools",
+  "version": "1.0.0",
+  "name": "OrbitCore Dev Tools",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.orbitcore.devtools.ScreenshotTour"
+    ]
+  },
+  "depends": {
+    "orbitcore": "*"
+  }
+}

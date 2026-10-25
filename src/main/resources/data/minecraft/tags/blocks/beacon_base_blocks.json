@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:steel_block",
+    "orbitcore:aluminum_block",
+    "orbitcore:titanium_block"
+  ]
+}

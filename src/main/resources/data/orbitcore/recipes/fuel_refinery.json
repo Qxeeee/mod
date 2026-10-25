@@ -1,0 +1,29 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "PBP",
+    "CMC",
+    "PFP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "item": "orbitcore:fuel_refinery"
+  }
+}

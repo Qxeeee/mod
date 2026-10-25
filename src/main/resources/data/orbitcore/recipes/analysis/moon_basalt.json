@@ -1,0 +1,7 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:moon_basalt"
+  },
+  "samples": 4
+}

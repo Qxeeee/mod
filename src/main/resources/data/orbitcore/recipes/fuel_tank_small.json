@@ -1,0 +1,17 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "AAA",
+    "A A",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:aluminum_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:fuel_tank_small"
+  }
+}

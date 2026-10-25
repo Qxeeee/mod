@@ -1,0 +1,8 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "orbitcore:raw_ilmenite"
+  },
+  "samples": 5,
+  "entry": "ilmenite"
+}

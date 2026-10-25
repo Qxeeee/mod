@@ -1,0 +1,23 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "SCS",
+    "STS",
+    " T "
+  ],
+  "key": {
+    "S": {
+      "tag": "c:steel_plates"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "T": {
+      "tag": "c:titanium_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:engine_iskra"
+  }
+}

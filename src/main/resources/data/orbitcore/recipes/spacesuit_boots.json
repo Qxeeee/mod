@@ -1,0 +1,24 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "A A",
+    "T T",
+    "W W"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:aluminum_plates"
+    },
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "T": {
+      "tag": "c:titanium_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:spacesuit_boots",
+    "count": 1
+  }
+}

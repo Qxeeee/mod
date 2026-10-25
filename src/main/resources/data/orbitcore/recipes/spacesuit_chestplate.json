@@ -1,0 +1,27 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "A A",
+    "WTW",
+    "TCT"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:aluminum_plates"
+    },
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "T": {
+      "tag": "c:titanium_plates"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    }
+  },
+  "result": {
+    "item": "orbitcore:spacesuit_chestplate",
+    "count": 1
+  }
+}
