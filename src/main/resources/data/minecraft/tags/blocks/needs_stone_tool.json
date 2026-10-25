@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:bauxite_ore",
+    "orbitcore:steel_block",
+    "orbitcore:aluminum_block",
+    "orbitcore:machine_casing",
+    "orbitcore:metallurgical_furnace",
+    "orbitcore:coal_generator",
+    "orbitcore:electrolyzer",
+    "orbitcore:engineering_table",
+    "orbitcore:mission_control",
+    "orbitcore:sample_analyzer"
+  ]
+}

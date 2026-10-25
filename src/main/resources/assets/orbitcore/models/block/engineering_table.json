@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "top": "orbitcore:block/engineering_table_top",
+    "bottom": "orbitcore:block/machine_side",
+    "side": "orbitcore:block/engineering_table_side",
+    "front": "orbitcore:block/engineering_table_front"
+  }
+}
