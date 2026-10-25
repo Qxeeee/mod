@@ -1,0 +1,19 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "PIP",
+    "I I",
+    "PIP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "orbitcore:machine_casing"
+  }
+}

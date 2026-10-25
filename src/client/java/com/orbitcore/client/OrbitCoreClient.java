@@ -1,0 +1,49 @@
+package com.orbitcore.client;
+
+import com.orbitcore.OrbitCore;
+import com.orbitcore.client.screen.CoalGeneratorScreen;
+import com.orbitcore.client.screen.ElectrolyzerScreen;
+import com.orbitcore.client.screen.EngineeringTableScreen;
+import com.orbitcore.client.screen.MetallurgicalFurnaceScreen;
+import com.orbitcore.registry.ModBlocks;
+import com.orbitcore.registry.ModScreenHandlers;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+
+/**
+ * Клиентская часть мода: рендер моделей и неба, экраны, катсцены, звук, постобработка.
+ * Этот код не загружается на выделенном сервере.
+ */
+public class OrbitCoreClient implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        HandledScreens.register(ModScreenHandlers.METALLURGICAL_FURNACE, MetallurgicalFurnaceScreen::new);
+        HandledScreens.register(ModScreenHandlers.COAL_GENERATOR, CoalGeneratorScreen::new);
+        HandledScreens.register(ModScreenHandlers.ELECTROLYZER, ElectrolyzerScreen::new);
+        HandledScreens.register(ModScreenHandlers.ENGINEERING_TABLE, EngineeringTableScreen::new);
+
+        // Руды нарисованы слоем поверх камня, им нужна прозрачность
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(),
+                ModBlocks.BAUXITE_ORE, ModBlocks.RUTILE_ORE, ModBlocks.DEEPSLATE_RUTILE_ORE);
+
+        // Подсказка к предмету, если в переводах есть ключ tooltip.orbitcore.<имя>
+        ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
+            Identifier id = Registries.ITEM.getId(stack.getItem());
+            if (!OrbitCore.MOD_ID.equals(id.getNamespace())) {
+                return;
+            }
+            String key = "tooltip.orbitcore." + id.getPath();
+            if (I18n.hasTranslation(key)) {
+                lines.add(Text.translatable(key).formatted(Formatting.GRAY));
+            }
+        });
+    }
+}
