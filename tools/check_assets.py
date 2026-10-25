@@ -66,6 +66,8 @@ def check_model(path, seen=None):
 
 blocks = registered("ModBlocks.java")
 items = registered("ModItems.java")
+# Части скафандра регистрируются через suit("...")
+items += re.findall(r'suit\("([a-z0-9_]+)"', (JAVA / "ModItems.java").read_text(encoding="utf-8"))
 # Модули ракеты, собранная ракета и вёдра регистрируются не через register("...")
 items += re.findall(r'^\s+[A-Z_]+\("([a-z0-9_]+)", Kind\.',
                     (ROOT / "src/main/java/com/orbitcore/rocket/RocketPart.java").read_text(encoding="utf-8"), re.M)

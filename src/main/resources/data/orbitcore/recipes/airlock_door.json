@@ -1,0 +1,21 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "SS",
+    "GS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:steel_plates"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "result": {
+    "item": "orbitcore:airlock_door",
+    "count": 2
+  }
+}

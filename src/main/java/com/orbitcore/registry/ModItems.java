@@ -1,9 +1,13 @@
 package com.orbitcore.registry;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.item.DosimeterItem;
+import com.orbitcore.item.OxygenTankItem;
 import com.orbitcore.item.RocketItem;
 import com.orbitcore.item.RocketPartItem;
+import com.orbitcore.item.SpacesuitItem;
 import com.orbitcore.rocket.RocketPart;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -36,11 +40,26 @@ public final class ModItems {
     public static final Item ASSEMBLED_ROCKET = Registry.register(Registries.ITEM, OrbitCore.id("assembled_rocket"),
             new RocketItem(new Item.Settings()));
 
+    // Жизнеобеспечение
+    public static final Item SPACESUIT_HELMET = suit("spacesuit_helmet", ArmorItem.Type.HELMET);
+    public static final Item SPACESUIT_CHESTPLATE = suit("spacesuit_chestplate", ArmorItem.Type.CHESTPLATE);
+    public static final Item SPACESUIT_LEGGINGS = suit("spacesuit_leggings", ArmorItem.Type.LEGGINGS);
+    public static final Item SPACESUIT_BOOTS = suit("spacesuit_boots", ArmorItem.Type.BOOTS);
+    public static final Item OXYGEN_TANK = Registry.register(Registries.ITEM, OrbitCore.id("oxygen_tank"),
+            new OxygenTankItem(new Item.Settings().maxCount(1)));
+    public static final Item DOSIMETER = Registry.register(Registries.ITEM, OrbitCore.id("dosimeter"),
+            new DosimeterItem(new Item.Settings().maxCount(1)));
+
     private ModItems() {
     }
 
     private static Item part(RocketPart part) {
         return Registry.register(Registries.ITEM, OrbitCore.id(part.id()), new RocketPartItem(part, new Item.Settings()));
+    }
+
+    private static Item suit(String name, ArmorItem.Type type) {
+        return Registry.register(Registries.ITEM, OrbitCore.id(name),
+                new SpacesuitItem(ModArmorMaterials.SPACESUIT, type, new Item.Settings()));
     }
 
     private static Item register(String name) {

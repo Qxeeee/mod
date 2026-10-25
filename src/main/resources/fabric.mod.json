@@ -21,6 +21,9 @@
     ],
     "client": [
       "com.orbitcore.client.OrbitCoreClient"
+    ],
+    "cardinal-components-entity": [
+      "com.orbitcore.registry.ModComponents"
     ]
   },
   "mixins": [
@@ -36,5 +39,10 @@
     "java": ">=17",
     "fabric-api": "*",
     "geckolib": ">=4.8"
+  },
+  "custom": {
+    "cardinal-components": [
+      "orbitcore:life_support"
+    ]
   }
 }

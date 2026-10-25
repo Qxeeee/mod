@@ -1256,6 +1256,268 @@ def parachute_line():
     return img
 
 
+# ---------------------------------------------------------------- жизнеобеспечение
+
+SUIT = [(150, 156, 166), (190, 195, 204), (220, 224, 230), (240, 242, 246), (252, 252, 253)]
+SUIT_ORANGE = [(170, 70, 20), (226, 110, 36), (250, 150, 70)]
+VISOR = [(60, 40, 8), (130, 92, 20), (200, 150, 40), (250, 214, 110)]
+HAZARD = (230, 180, 40)
+
+
+def suit_helmet_icon():
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            d = math.hypot(x - 7.5, y - 8.0)
+            if d < 6.6 and y < 14:
+                put(img, x, y, SUIT[3] if x + y < 14 else SUIT[2] if d < 5.5 else SUIT[1])
+    # Золотой светофильтр визора
+    for y in range(6, 11):
+        for x in range(3, 13):
+            if math.hypot(x - 7.5, (y - 8.2) * 1.6) < 4.8:
+                put(img, x, y, VISOR[3] if x < 6 and y < 8 else VISOR[2] if y < 9 else VISOR[1])
+    rect(img, 3, 13, 12, 14, SUIT_ORANGE[1])
+    line(img, 3, 13, 12, 13, SUIT_ORANGE[2])
+    outline(img, (40, 44, 52))
+    return img
+
+
+def suit_chest_icon():
+    img = new()
+    body = [(2, 3), (5, 2), (10, 2), (13, 3), (13, 8), (11, 8), (11, 14), (4, 14), (4, 8), (2, 8)]
+    fill_poly(img, body, lambda x, y: SUIT[3] if x < 8 else SUIT[2])
+    # Пульт на груди и шланг к баллону
+    rect(img, 6, 6, 9, 9, (40, 60, 90))
+    put(img, 7, 7, (90, 230, 120))
+    put(img, 8, 7, (240, 80, 60))
+    put(img, 7, 8, (90, 170, 240))
+    line(img, 4, 11, 11, 11, SUIT_ORANGE[1])
+    line(img, 2, 7, 4, 7, SUIT_ORANGE[1])
+    line(img, 11, 7, 13, 7, SUIT_ORANGE[1])
+    outline(img, (40, 44, 52))
+    return img
+
+
+def suit_legs_icon():
+    img = new()
+    legs = [(3, 2), (12, 2), (12, 14), (9, 14), (8, 6), (7, 6), (6, 14), (3, 14)]
+    fill_poly(img, legs, lambda x, y: SUIT[3] if x < 7 else SUIT[2])
+    line(img, 3, 3, 12, 3, SUIT_ORANGE[1])
+    for x0 in (3, 9):
+        rect(img, x0, 8, x0 + 2, 9, SUIT[0])
+    outline(img, (40, 44, 52))
+    return img
+
+
+def suit_boots_icon():
+    img = new()
+    for x0 in (1, 9):
+        rect(img, x0 + 1, 6, x0 + 4, 11, SUIT[3])
+        rect(img, x0, 11, x0 + 5, 13, (84, 88, 96))
+        line(img, x0, 13, x0 + 5, 13, (50, 52, 58))
+        line(img, x0 + 1, 7, x0 + 4, 7, SUIT_ORANGE[1])
+    outline(img, (40, 44, 52))
+    return img
+
+
+def oxygen_tank_icon():
+    img = new()
+    tank = [(70, 140, 200), (110, 180, 230), (170, 215, 245), (230, 245, 255)]
+    for y in range(4, 15):
+        for x in range(4, 12):
+            d = abs(x - 7.5)
+            if y == 4 and d > 2.5 or y == 14 and d > 2.8:
+                continue
+            put(img, x, y, tank[3] if x == 5 else tank[2] if x < 7 else tank[1] if x < 10 else tank[0])
+    line(img, 4, 12, 11, 12, (240, 240, 240))
+    rect(img, 7, 1, 8, 3, STEEL[2])
+    line(img, 6, 1, 9, 1, (200, 40, 40))
+    outline(img, (30, 50, 70))
+    return img
+
+
+def dosimeter_icon():
+    img = new()
+    rect(img, 3, 2, 12, 14, (226, 186, 40))
+    frame(img, 3, 2, 12, 14, (250, 220, 90), (150, 110, 20))
+    rect(img, 5, 4, 10, 8, (24, 40, 30))
+    for x in (6, 8):
+        line(img, x, 5, x, 7, (110, 240, 140))
+    put(img, 9, 7, (110, 240, 140))
+    # Знак радиации
+    for x, y in ((7, 10), (8, 10), (6, 12), (9, 12), (7, 11), (8, 11)):
+        put(img, x, y, (30, 30, 30))
+    rect(img, 6, 0, 7, 1, STEEL[1])
+    outline(img, (60, 44, 10))
+    return img
+
+
+def airlock_icon():
+    img = new()
+    rect(img, 4, 1, 11, 14, STEEL[3])
+    frame(img, 4, 1, 11, 14, STEEL[5], STEEL[0])
+    for y in range(3, 7):
+        for x in range(5, 11):
+            if math.hypot(x - 7.5, y - 4.5) < 2.3:
+                put(img, x, y, CYAN[2] if x + y < 11 else CYAN[1])
+    for x in range(5, 11):
+        put(img, x, 11, HAZARD if x % 2 else (30, 30, 34))
+    put(img, 10, 8, (200, 40, 40))
+    return img
+
+
+def airlock_door(top):
+    rng = random.Random(140 + top)
+    img = new()
+    noisy(img, 0, 0, 15, 15, STEEL, 3, rng)
+    frame(img, 0, 0, 15, 15, STEEL[5], STEEL[0])
+    line(img, 2, 0, 2, 15, STEEL[1])
+    line(img, 13, 0, 13, 15, STEEL[1])
+    if top:
+        # Иллюминатор с толстым уплотнителем
+        for y in range(S):
+            for x in range(S):
+                d = math.hypot(x - 7.5, y - 8.5)
+                if d < 4.2:
+                    put(img, x, y, CYAN[3] if x + y < 13 else CYAN[2] if d < 3 else CYAN[1])
+                elif d < 5.4:
+                    put(img, x, y, (40, 42, 48) if y > 8 else (70, 72, 80))
+    else:
+        for x in range(1, 15):
+            put(img, x, 12, HAZARD if (x // 2) % 2 else (30, 30, 34))
+            put(img, x, 13, (30, 30, 34) if (x // 2) % 2 else HAZARD)
+        # Рукоять и замок
+        rect(img, 11, 3, 12, 7, STEEL[1])
+        put(img, 11, 5, (200, 40, 40))
+        line(img, 4, 2, 4, 9, STEEL[1])
+    return img
+
+
+def oxygen_station_front(lit, phase=0):
+    img = machine_side(141, vents=False)
+    # Манометр и шланг с пистолетом
+    for y in range(2, 8):
+        for x in range(2, 8):
+            d = math.hypot(x - 4.5, y - 4.5)
+            if d < 2.9:
+                put(img, x, y, (236, 240, 244) if d < 2.2 else STEEL[0])
+    angle = math.pi * (0.9 - (0.2 + 0.15 * phase if lit else 0.0))
+    put(img, 4 + round(math.cos(angle) * 1.6), 4 - round(math.sin(angle) * 1.6), (200, 40, 40))
+    rect(img, 9, 2, 13, 13, (36, 52, 70))
+    frame(img, 9, 2, 13, 13, STEEL[4], STEEL[0])
+    level = 3 + (phase if lit else 0)
+    for y in range(12 - level * 2, 13):
+        line(img, 10, y, 12, y, LOX[1] if lit else (60, 80, 100))
+    for x in range(2, 8):
+        put(img, x, 12, (40, 120, 200))
+    line(img, 2, 10, 2, 12, (40, 120, 200))
+    rect(img, 3, 9, 6, 10, STEEL[4] if lit else STEEL[3])
+    return img
+
+
+def oxygen_station_top():
+    def detail(img):
+        for cx in (5, 10):
+            for y in range(3, 13):
+                for x in range(cx - 2, cx + 3):
+                    if abs(x - cx) < 2 or y in (3, 12):
+                        put(img, x, y, (110, 180, 230) if x < cx else (70, 140, 200))
+            rect(img, cx - 1, 2, cx, 2, STEEL[1])
+    return machine_top(142, detail)
+
+
+def sealer_front(lit, phase=0):
+    img = machine_side(143, vents=False)
+    rect(img, 2, 2, 13, 13, (22, 26, 32))
+    frame(img, 1, 1, 14, 14, STEEL[4], STEEL[0])
+    # Крыльчатка вентилятора: на анимации поворачивается
+    turn = phase * math.pi / 8
+    for y in range(2, 14):
+        for x in range(2, 14):
+            dx, dy = x - 7.5, y - 7.5
+            d = math.hypot(dx, dy)
+            if d < 1.6:
+                put(img, x, y, STEEL[4])
+            elif d < 5.2:
+                a = (math.atan2(dy, dx) - turn) % (math.pi / 2)
+                if a < 0.9:
+                    put(img, x, y, (130, 220, 160) if lit and a < 0.45 else (90, 170, 120) if lit else STEEL[3] if a < 0.45 else STEEL[2])
+            elif d < 6.3:
+                put(img, x, y, STEEL[1] if y > 7 else STEEL[3])
+    put(img, 13, 13, (90, 230, 120) if lit else (120, 40, 30))
+    return img
+
+
+def sealer_top():
+    def detail(img):
+        rect(img, 4, 4, 11, 11, (22, 26, 32))
+        for i in range(4, 12, 2):
+            line(img, 4, i, 11, i, STEEL[2])
+        frame(img, 3, 3, 12, 12, STEEL[1], STEEL[4])
+    return machine_top(144, detail)
+
+
+def spacesuit_layer(second):
+    """Текстура брони 64×32 в раскладке модели игрока."""
+    img = new(64, 32)
+    rng = random.Random(150 + second)
+
+    def cloth(x0, y0, x1, y1):
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                put(img, x, y, SUIT[3] if rng.random() < 0.8 else SUIT[2])
+
+    if not second:
+        # Шлем (голова 8×8×8, развёртка с (0, 0))
+        cloth(8, 0, 24, 8)
+        cloth(0, 8, 32, 16)
+        for x in range(9, 15):
+            for y in range(10, 14):
+                put(img, x, y, VISOR[3] if x < 11 and y < 12 else VISOR[2] if y < 13 else VISOR[1])
+        for x in range(0, 32):
+            put(img, x, 15, SUIT_ORANGE[1])
+        rect(img, 1, 10, 2, 12, SUIT[0])
+        rect(img, 29, 10, 30, 12, SUIT[0])
+        # Торс (8×12×4 с (16, 16)) и руки (4×12×4 с (40, 16))
+        cloth(20, 16, 36, 20)
+        cloth(16, 20, 40, 32)
+        cloth(44, 16, 52, 20)
+        cloth(40, 20, 56, 32)
+        rect(img, 22, 22, 25, 25, (40, 60, 90))
+        put(img, 23, 23, (90, 230, 120))
+        put(img, 24, 23, (240, 80, 60))
+        put(img, 23, 24, (90, 170, 240))
+        for x in range(16, 40):
+            put(img, x, 29, SUIT_ORANGE[1])
+        # Ранец жизнеобеспечения на спине
+        rect(img, 33, 21, 38, 30, SUIT[0])
+        frame(img, 33, 21, 38, 30, SUIT[1], (110, 114, 124))
+        rect(img, 35, 23, 36, 24, (90, 230, 120))
+        for x in range(40, 56):
+            put(img, x, 22, SUIT_ORANGE[1])
+            put(img, x, 30, (84, 88, 96))
+            put(img, x, 31, (84, 88, 96))
+        # Ботинки (ноги 4×12×4 с (0, 16)): только низ
+        for y in range(26, 32):
+            for x in range(0, 16):
+                put(img, x, y, (84, 88, 96) if y >= 30 else SUIT[2])
+        for x in range(0, 16):
+            put(img, x, 27, SUIT_ORANGE[1])
+        rect(img, 8, 16, 11, 19, (60, 62, 68))
+    else:
+        # Пояс брюк на торсе и штанины
+        cloth(16, 26, 40, 32)
+        for x in range(16, 40):
+            put(img, x, 26, SUIT[0])
+        cloth(4, 16, 8, 20)
+        cloth(0, 20, 16, 32)
+        for x in range(0, 16):
+            put(img, x, 21, SUIT_ORANGE[1])
+        for x0 in (0, 4, 8, 12):
+            rect(img, x0 + 1, 24, x0 + 2, 25, SUIT[0])
+    return img
+
+
 def main():
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")
@@ -1365,6 +1627,27 @@ def main():
     telescope_gui.mkdir(parents=True, exist_ok=True)
     moon_phases().save(telescope_gui / "moon.png")
     eyepiece().save(telescope_gui / "eyepiece.png")
+
+    save(suit_helmet_icon(), ITEM, "spacesuit_helmet")
+    save(suit_chest_icon(), ITEM, "spacesuit_chestplate")
+    save(suit_legs_icon(), ITEM, "spacesuit_leggings")
+    save(suit_boots_icon(), ITEM, "spacesuit_boots")
+    save(oxygen_tank_icon(), ITEM, "oxygen_tank")
+    save(dosimeter_icon(), ITEM, "dosimeter")
+    save(airlock_icon(), ITEM, "airlock_door")
+    save(airlock_door(True), BLOCK, "airlock_door_top")
+    save(airlock_door(False), BLOCK, "airlock_door_bottom")
+    save(oxygen_station_front(False), BLOCK, "oxygen_station_front")
+    save_animation([oxygen_station_front(True, p) for p in range(4)], BLOCK, "oxygen_station_front_on", 4)
+    save(oxygen_station_top(), BLOCK, "oxygen_station_top")
+    save(sealer_front(False), BLOCK, "sealer_front")
+    save_animation([sealer_front(True, p) for p in range(4)], BLOCK, "sealer_front_on", 2)
+    save(sealer_top(), BLOCK, "sealer_top")
+    # Броня ищется в пространстве имён minecraft по имени материала orbitcore_spacesuit
+    armor = ROOT / "src" / "main" / "resources" / "assets" / "minecraft" / "textures" / "models" / "armor"
+    armor.mkdir(parents=True, exist_ok=True)
+    spacesuit_layer(False).save(armor / "orbitcore_spacesuit_layer_1.png")
+    spacesuit_layer(True).save(armor / "orbitcore_spacesuit_layer_2.png")
 
 
 if __name__ == "__main__":

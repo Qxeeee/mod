@@ -11,7 +11,8 @@
       "com.orbitcore.gametest.ScienceGameTest",
       "com.orbitcore.gametest.RocketGameTest",
       "com.orbitcore.gametest.FlightGameTest",
-      "com.orbitcore.gametest.MoonGameTest"
+      "com.orbitcore.gametest.MoonGameTest",
+      "com.orbitcore.gametest.SurvivalGameTest"
     ]
   },
   "mixins": [

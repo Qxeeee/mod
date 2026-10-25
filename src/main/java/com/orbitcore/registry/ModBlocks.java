@@ -2,6 +2,7 @@ package com.orbitcore.registry;
 
 import com.orbitcore.OrbitCore;
 import com.orbitcore.block.AirSeparatorBlock;
+import com.orbitcore.block.AirlockDoorBlock;
 import com.orbitcore.block.CoalGeneratorBlock;
 import com.orbitcore.block.ElectrolyzerBlock;
 import com.orbitcore.block.EngineeringTableBlock;
@@ -10,15 +11,20 @@ import com.orbitcore.block.LaunchPadBlock;
 import com.orbitcore.block.MachineBlock;
 import com.orbitcore.block.MetallurgicalFurnaceBlock;
 import com.orbitcore.block.MissionControlBlock;
+import com.orbitcore.block.OxygenStationBlock;
 import com.orbitcore.block.RegolithBlock;
 import com.orbitcore.block.RocketAssemblerBlock;
 import com.orbitcore.block.SampleAnalyzerBlock;
+import com.orbitcore.block.SealerBlock;
 import com.orbitcore.block.TelescopeBlock;
+import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSetType;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ExperienceDroppingBlock;
 import net.minecraft.block.MapColor;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -88,6 +94,20 @@ public final class ModBlocks {
     public static final Block LAUNCH_PAD = register("launch_pad",
             new LaunchPadBlock(AbstractBlock.Settings.create().mapColor(MapColor.GRAY)
                     .requiresTool().strength(5.0f, 12.0f).sounds(BlockSoundGroup.METAL)));
+
+    // Жизнеобеспечение
+    public static final Block OXYGEN_STATION = register("oxygen_station", new OxygenStationBlock(machineSettings(5)));
+    public static final Block SEALER = register("sealer", new SealerBlock(machineSettings(4)));
+    /** Тяжёлую дверь открывают рукой, но звучит она как гермозатвор. */
+    public static final BlockSetType AIRLOCK = BlockSetTypeBuilder.copyOf(BlockSetType.IRON)
+            .openableByHand(true)
+            .doorOpenSound(ModSounds.AIRLOCK_OPEN)
+            .doorCloseSound(ModSounds.AIRLOCK_CLOSE)
+            .register(OrbitCore.id("airlock"));
+    public static final Block AIRLOCK_DOOR = register("airlock_door",
+            new AirlockDoorBlock(AbstractBlock.Settings.create().mapColor(MapColor.IRON_GRAY).requiresTool()
+                    .strength(5.0f, 12.0f).sounds(BlockSoundGroup.METAL).nonOpaque()
+                    .pistonBehavior(PistonBehavior.DESTROY), AIRLOCK));
 
     private ModBlocks() {
     }

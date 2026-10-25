@@ -10,7 +10,9 @@ import com.orbitcore.registry.ModItemGroups;
 import com.orbitcore.registry.ModItems;
 import com.orbitcore.registry.ModRecipes;
 import com.orbitcore.registry.ModScreenHandlers;
+import com.orbitcore.registry.ModSounds;
 import com.orbitcore.registry.ModWorldGen;
+import com.orbitcore.survival.LifeSupport;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ public class OrbitCore implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModSounds.register();
         ModFluids.register();
         ModBlocks.register();
         ModItems.register();
@@ -42,6 +45,7 @@ public class OrbitCore implements ModInitializer {
         ModItemGroups.register();
         ModWorldGen.register();
         OrbitNetworking.register();
+        LifeSupport.register();
         LOGGER.info("OrbitCore initialized");
     }
 }

@@ -1,0 +1,21 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    " C ",
+    "A A",
+    "AAA"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "A": {
+      "tag": "c:aluminum_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:oxygen_tank",
+    "count": 1
+  }
+}

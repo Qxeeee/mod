@@ -6,7 +6,8 @@
   "refmap": "orbitcore.client.refmap.json",
   "client": [
     "CameraMixin",
-    "EntityRenderDispatcherMixin"
+    "EntityRenderDispatcherMixin",
+    "SoundSystemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

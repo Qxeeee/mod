@@ -15,6 +15,9 @@
     "orbitcore:air_separator",
     "orbitcore:rocket_assembler",
     "orbitcore:launch_pad",
-    "orbitcore:ilmenite_ore"
+    "orbitcore:ilmenite_ore",
+    "orbitcore:oxygen_station",
+    "orbitcore:sealer",
+    "orbitcore:airlock_door"
   ]
 }

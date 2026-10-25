@@ -2,6 +2,7 @@ package com.orbitcore.client;
 
 import com.orbitcore.OrbitCore;
 import com.orbitcore.client.flight.FlightCinematics;
+import com.orbitcore.client.hud.SuitHud;
 import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.client.render.MoonSky;
 import com.orbitcore.client.render.RocketEntityRenderer;
@@ -12,8 +13,10 @@ import com.orbitcore.client.screen.ElectrolyzerScreen;
 import com.orbitcore.client.screen.EngineeringTableScreen;
 import com.orbitcore.client.screen.FuelRefineryScreen;
 import com.orbitcore.client.screen.MetallurgicalFurnaceScreen;
+import com.orbitcore.client.screen.OxygenStationScreen;
 import com.orbitcore.client.screen.RocketAssemblerScreen;
 import com.orbitcore.client.screen.SampleAnalyzerScreen;
+import com.orbitcore.client.screen.SealerScreen;
 import com.orbitcore.registry.ModBlocks;
 import com.orbitcore.registry.ModEntities;
 import com.orbitcore.registry.ModFluids;
@@ -48,6 +51,8 @@ public class OrbitCoreClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.FUEL_REFINERY, FuelRefineryScreen::new);
         HandledScreens.register(ModScreenHandlers.AIR_SEPARATOR, AirSeparatorScreen::new);
         HandledScreens.register(ModScreenHandlers.ROCKET_ASSEMBLER, RocketAssemblerScreen::new);
+        HandledScreens.register(ModScreenHandlers.OXYGEN_STATION, OxygenStationScreen::new);
+        HandledScreens.register(ModScreenHandlers.SEALER, SealerScreen::new);
         EntityRendererRegistry.register(ModEntities.ROCKET, RocketEntityRenderer::new);
 
         // Топливо: свои текстуры и полупрозрачность, как у воды
@@ -60,12 +65,15 @@ public class OrbitCoreClient implements ClientModInitializer {
         OrbitClientNetworking.register();
         FlightCinematics.register();
         MoonSky.register();
+        SuitHud.register();
         EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
         ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 
         // Руды нарисованы слоем поверх камня, им нужна прозрачность
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(),
                 ModBlocks.BAUXITE_ORE, ModBlocks.RUTILE_ORE, ModBlocks.DEEPSLATE_RUTILE_ORE);
+        // У шлюзовой двери прозрачный иллюминатор
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.AIRLOCK_DOOR, RenderLayer.getCutout());
 
         // Подсказка к предмету, если в переводах есть ключ tooltip.orbitcore.<имя>
         ItemTooltipCallback.EVENT.register((stack, context, lines) -> {

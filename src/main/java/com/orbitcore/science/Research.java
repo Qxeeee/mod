@@ -30,7 +30,10 @@ public record Research(Identifier id, Supplier<ItemConvertible> icon, Map<Scienc
     public static final Research HEAVY_ROCKETRY = new Research(OrbitCore.id("heavy_rocketry"), () -> ModItems.ENGINE_FAKEL,
             cost(15, 15, 0), List.of(ROCKETRY.id), null, 3, 0);
 
-    public static final List<Research> ALL = List.of(ASTRONOMY, SPECTROSCOPY, ROCKETRY, HEAVY_ROCKETRY);
+    public static final Research LIFE_SUPPORT = new Research(OrbitCore.id("life_support"), () -> ModItems.SPACESUIT_HELMET,
+            cost(10, 10, 4), List.of(ROCKETRY.id), null, 3, 1);
+
+    public static final List<Research> ALL = List.of(ASTRONOMY, SPECTROSCOPY, ROCKETRY, HEAVY_ROCKETRY, LIFE_SUPPORT);
 
     /** Исследования, открытые с самого начала. */
     public boolean isRoot() {

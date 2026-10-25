@@ -2,51 +2,59 @@ package com.orbitcore.devtools;
 
 import com.orbitcore.block.HorizontalFacingBlock;
 import com.orbitcore.block.MachineBlock;
+import com.orbitcore.block.RegolithBlock;
 import com.orbitcore.block.entity.CoalGeneratorBlockEntity;
 import com.orbitcore.block.entity.ElectrolyzerBlockEntity;
-import com.orbitcore.block.entity.MetallurgicalFurnaceBlockEntity;
 import com.orbitcore.block.entity.FuelRefineryBlockEntity;
+import com.orbitcore.block.entity.MetallurgicalFurnaceBlockEntity;
+import com.orbitcore.block.entity.OxygenStationBlockEntity;
 import com.orbitcore.block.entity.RocketAssemblerBlockEntity;
 import com.orbitcore.block.entity.SampleAnalyzerBlockEntity;
+import com.orbitcore.block.entity.SealerBlockEntity;
+import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.client.render.RocketModelRenderer;
 import com.orbitcore.client.screen.MissionControlScreen;
 import com.orbitcore.client.screen.RocketScreen;
 import com.orbitcore.client.screen.TelescopeScreen;
 import com.orbitcore.client.toast.OrbitToast;
-import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.entity.RocketEntity;
+import com.orbitcore.item.OxygenTankItem;
 import com.orbitcore.network.OrbitNetworking;
-import com.orbitcore.rocket.FlightController;
-import com.orbitcore.rocket.FlightPhase;
-import com.orbitcore.block.RegolithBlock;
 import com.orbitcore.registry.ModBlocks;
-import com.orbitcore.registry.ModGameRules;
 import com.orbitcore.registry.ModEntities;
 import com.orbitcore.registry.ModFluids;
+import com.orbitcore.registry.ModGameRules;
 import com.orbitcore.registry.ModItems;
+import com.orbitcore.rocket.FlightController;
+import com.orbitcore.rocket.FlightPhase;
 import com.orbitcore.rocket.RocketDesign;
 import com.orbitcore.rocket.RocketPart;
 import com.orbitcore.science.CelestialBody;
-import com.orbitcore.world.ModDimensions;
-import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.TeleportTarget;
-import net.minecraft.world.Heightmap;
 import com.orbitcore.science.ObservationTarget;
 import com.orbitcore.science.ScienceType;
 import com.orbitcore.science.SpaceProgram;
+import com.orbitcore.survival.LifeSupport;
+import com.orbitcore.survival.Oxygen;
+import com.orbitcore.world.ModDimensions;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.dimension.v1.FabricDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.Perspective;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.util.ScreenshotRecorder;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.resource.DataConfiguration;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.resource.DataConfiguration;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -54,9 +62,13 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.gen.WorldPresets;
 import net.minecraft.world.level.LevelInfo;
@@ -69,6 +81,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Фототур для разработки: создаёт плоский мир, расставляет блоки мода, по очереди
@@ -164,6 +177,13 @@ public class ScreenshotTour implements ClientModInitializer {
         // Быстрый режим для проверки неба Луны: файл run/tour-moon-only
         if (new File(client.runDirectory, "tour-moon-only").exists()) {
             planMoonSky(client);
+            step(20, c -> c.scheduleStop());
+            return;
+        }
+        // Быстрый режим для этапа 0.7: файл run/tour-survival-only
+        if (new File(client.runDirectory, "tour-survival-only").exists()) {
+            planMoonSky(client);
+            planSurvival(client);
             step(20, c -> c.scheduleStop());
             return;
         }
@@ -427,6 +447,139 @@ public class ScreenshotTour implements ClientModInitializer {
         }, 40);
         step(0, c -> shot(c, "37_moon_night"));
         server(client, (server, world, player) -> server.getGameRules().get(ModGameRules.ENGINEER_MODE).set(true, server), 5);
+        planSurvival(client);
+    }
+
+    /**
+     * Этап 0.7: скафандр и его HUD, база с герметизатором и шлюзом,
+     * утечка воздуха, кислородная станция и предупреждение о вакууме.
+     */
+    private void planSurvival(MinecraftClient client) {
+        BlockPos[] base = new BlockPos[1];
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            world.setTimeOfDay(4000);
+            BlockPos at = player.getBlockPos();
+            BlockPos corner = moon.getTopPosition(Heightmap.Type.MOTION_BLOCKING, at.add(6, 0, -3));
+            base[0] = corner;
+            buildBase(moon, corner);
+            player.getInventory().clear();
+            player.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.SPACESUIT_HELMET));
+            ItemStack chest = new ItemStack(ModItems.SPACESUIT_CHESTPLATE);
+            Oxygen.set(chest, 472);
+            player.equipStack(EquipmentSlot.CHEST, chest);
+            player.equipStack(EquipmentSlot.LEGS, new ItemStack(ModItems.SPACESUIT_LEGGINGS));
+            player.equipStack(EquipmentSlot.FEET, new ItemStack(ModItems.SPACESUIT_BOOTS));
+            ItemStack tank = new ItemStack(ModItems.OXYGEN_TANK);
+            Oxygen.set(tank, OxygenTankItem.CAPACITY);
+            player.getInventory().setStack(1, tank);
+            player.getInventory().setStack(0, new ItemStack(ModItems.DOSIMETER));
+            player.getInventory().selectedSlot = 0;
+            LifeSupport.get(player).dose = 37;
+            player.networkHandler.requestTeleport(corner.getX() - 6.5, corner.getY() + 1, corner.getZ() + 3.5, -70f, 8f);
+        }, 80);
+        step(0, c -> shot(c, "38_suit_hud"));
+        step(20, c -> c.options.setPerspective(Perspective.THIRD_PERSON_FRONT));
+        step(0, c -> shot(c, "39_spacesuit"));
+        step(5, c -> c.options.setPerspective(Perspective.FIRST_PERSON));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(base[0].getX() - 6.5, base[0].getY(), base[0].getZ() - 6.5, -45f, 6f), 40);
+        step(0, c -> shot(c, "40_moon_base"));
+        openMachineOn(client, ModDimensions.MOON, () -> base[0].add(3, 1, 0), () -> Vec3d.of(base[0]).add(3.5, 1, 2.5));
+        step(0, c -> shot(c, "41_sealer"));
+        openMachineOn(client, ModDimensions.MOON, () -> base[0].add(5, 1, 3), () -> Vec3d.of(base[0]).add(3.5, 1, 3.5));
+        step(0, c -> shot(c, "42_oxygen_station"));
+
+        // Утечка: выбитое окно, струя пара и окно герметизатора с координатами дыры
+        step(5, c -> c.setScreen(null));
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            BlockPos window = base[0].add(2, 2, 6);
+            moon.setBlockState(window, Blocks.AIR.getDefaultState());
+            ((SealerBlockEntity) moon.getBlockEntity(base[0].add(3, 1, 0))).rescan(moon, base[0].add(3, 1, 0));
+            player.networkHandler.requestTeleport(window.getX() + 0.5, window.getY() - 1, window.getZ() + 4.5, 180f, 10f);
+        }, 50);
+        step(0, c -> shot(c, "43_air_leak"));
+        openMachineOn(client, ModDimensions.MOON, () -> base[0].add(3, 1, 0), () -> Vec3d.of(base[0]).add(3.5, 1, 2.5));
+        step(0, c -> shot(c, "44_sealer_leak"));
+
+        // Заделали окно — внутри снова воздух и тепло
+        step(5, c -> c.setScreen(null));
+        server(client, (server, world, player) -> {
+            ServerWorld moon = server.getWorld(ModDimensions.MOON);
+            moon.setBlockState(base[0].add(2, 2, 6), Blocks.GLASS.getDefaultState());
+            ((SealerBlockEntity) moon.getBlockEntity(base[0].add(3, 1, 0))).rescan(moon, base[0].add(3, 1, 0));
+            player.networkHandler.requestTeleport(base[0].getX() + 1.5, base[0].getY() + 1, base[0].getZ() + 3.5, -90f, 15f);
+        }, 50);
+        step(0, c -> shot(c, "45_inside_base"));
+
+        // Без скафандра снаружи: предупреждение о вакууме и тающий запас воздуха
+        server(client, (server, world, player) -> {
+            for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+                player.equipStack(slot, ItemStack.EMPTY);
+            }
+            player.changeGameMode(GameMode.SURVIVAL);
+            player.networkHandler.requestTeleport(base[0].getX() - 6.5, base[0].getY() + 1, base[0].getZ() + 3.5, -70f, 8f);
+        }, 120);
+        step(0, c -> shot(c, "46_vacuum_warning"));
+        server(client, (server, world, player) -> {
+            player.changeGameMode(GameMode.CREATIVE);
+            player.setAir(player.getMaxAir());
+        }, 5);
+    }
+
+    /**
+     * Маленькая база 7×5×7: стальные стены с окнами, шлюзовая дверь на западе,
+     * герметизатор в северной стене решёткой внутрь, кислородная станция у восточной.
+     */
+    private static void buildBase(ServerWorld moon, BlockPos corner) {
+        for (BlockPos pos : BlockPos.iterate(corner.add(-8, 0, -8), corner.add(14, 12, 14))) {
+            moon.setBlockState(pos, Blocks.AIR.getDefaultState());
+        }
+        for (BlockPos pos : BlockPos.iterate(corner.add(-8, -1, -8), corner.add(14, -1, 14))) {
+            moon.setBlockState(pos, ModBlocks.REGOLITH.getDefaultState());
+        }
+        for (BlockPos pos : BlockPos.iterate(corner, corner.add(6, 4, 6))) {
+            int x = pos.getX() - corner.getX();
+            int y = pos.getY() - corner.getY();
+            int z = pos.getZ() - corner.getZ();
+            boolean wall = x == 0 || x == 6 || y == 0 || y == 4 || z == 0 || z == 6;
+            if (!wall) {
+                continue;
+            }
+            boolean window = y == 2 && (x == 2 || x == 4) && (z == 0 || z == 6);
+            moon.setBlockState(pos, window ? Blocks.GLASS.getDefaultState() : ModBlocks.STEEL_BLOCK.getDefaultState());
+        }
+        moon.setBlockState(corner.add(3, 4, 3), Blocks.SEA_LANTERN.getDefaultState());
+        BlockState door = ModBlocks.AIRLOCK_DOOR.getDefaultState().with(DoorBlock.FACING, Direction.EAST);
+        moon.setBlockState(corner.add(0, 1, 3), door.with(DoorBlock.HALF, DoubleBlockHalf.LOWER));
+        moon.setBlockState(corner.add(0, 2, 3), door.with(DoorBlock.HALF, DoubleBlockHalf.UPPER));
+
+        BlockPos sealerPos = corner.add(3, 1, 0);
+        moon.setBlockState(sealerPos, ModBlocks.SEALER.getDefaultState().with(MachineBlock.FACING, Direction.SOUTH));
+        SealerBlockEntity sealer = (SealerBlockEntity) moon.getBlockEntity(sealerPos);
+        sealer.energy.amount = sealer.energy.capacity;
+        sealer.oxygen.fillMb(3000);
+        sealer.rescan(moon, sealerPos);
+
+        BlockPos stationPos = corner.add(5, 1, 3);
+        moon.setBlockState(stationPos, ModBlocks.OXYGEN_STATION.getDefaultState().with(MachineBlock.FACING, Direction.WEST));
+        OxygenStationBlockEntity station = (OxygenStationBlockEntity) moon.getBlockEntity(stationPos);
+        station.energy.amount = station.energy.capacity / 2;
+        station.oxygen.fillMb(5200);
+        ItemStack tank = new ItemStack(ModItems.OXYGEN_TANK);
+        Oxygen.set(tank, 540);
+        station.setStack(OxygenStationBlockEntity.FILL, tank);
+        station.setStack(OxygenStationBlockEntity.BUCKET_IN, new ItemStack(ModFluids.LIQUID_OXYGEN_BUCKET));
+    }
+
+    /** Открыть машину в другом мире; окно закрывается, если игрок дальше 8 блоков, поэтому сначала подходим. */
+    private void openMachineOn(MinecraftClient client, RegistryKey<World> dimension, Supplier<BlockPos> pos, Supplier<Vec3d> stand) {
+        step(5, c -> c.setScreen(null));
+        server(client, (server, world, player) ->
+                player.networkHandler.requestTeleport(stand.get().x, stand.get().y, stand.get().z, player.getYaw(), player.getPitch()), 10);
+        server(client, (server, world, player) ->
+                player.openHandledScreen((NamedScreenHandlerFactory) server.getWorld(dimension).getBlockEntity(pos.get())), 25);
     }
 
     private static final List<RocketDesign.Entry> MOON_ROCKET = List.of(

@@ -22,6 +22,9 @@
     "orbitcore:anorthosite",
     "orbitcore:moon_basalt",
     "orbitcore:ilmenite_ore",
-    "orbitcore:ice_regolith"
+    "orbitcore:ice_regolith",
+    "orbitcore:oxygen_station",
+    "orbitcore:sealer",
+    "orbitcore:airlock_door"
   ]
 }

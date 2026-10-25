@@ -3,6 +3,7 @@ package com.orbitcore.rocket;
 import com.orbitcore.block.LaunchPadBlock;
 import com.orbitcore.entity.RocketEntity;
 import com.orbitcore.entity.RocketStageEntity;
+import com.orbitcore.item.SpacesuitItem;
 import com.orbitcore.registry.ModEntities;
 import com.orbitcore.registry.ModGameRules;
 import com.orbitcore.registry.ModItems;
@@ -158,6 +159,10 @@ public final class FlightController {
         rocket.setPhase(FlightPhase.COUNTDOWN);
         player.startRiding(rocket, true);
         rocket.getWorld().playSound(null, rocket.getBlockPos(), SoundEvents.BLOCK_PISTON_CONTRACT, SoundCategory.NEUTRAL, 1.0f, 0.6f);
+        // В капсуле есть воздух, а снаружи на Луне — нет
+        if (destination == Destination.MOON_LANDING && !SpacesuitItem.isWearingFullSuit(player) && !player.getAbilities().invulnerable) {
+            player.sendMessage(Text.translatable("message.orbitcore.flight.no_spacesuit").formatted(Formatting.GOLD));
+        }
     }
 
     /** Полёт, прерванный перезапуском сервера: капсула сразу садится там, где была. */

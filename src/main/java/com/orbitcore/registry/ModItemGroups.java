@@ -66,6 +66,16 @@ public final class ModItemGroups {
                         entries.add(ModBlocks.ILMENITE_ORE);
                         entries.add(ModItems.RAW_ILMENITE);
                         entries.add(ModBlocks.ICE_REGOLITH);
+
+                        entries.add(ModItems.SPACESUIT_HELMET);
+                        entries.add(ModItems.SPACESUIT_CHESTPLATE);
+                        entries.add(ModItems.SPACESUIT_LEGGINGS);
+                        entries.add(ModItems.SPACESUIT_BOOTS);
+                        entries.add(ModItems.OXYGEN_TANK);
+                        entries.add(ModItems.DOSIMETER);
+                        entries.add(ModBlocks.OXYGEN_STATION);
+                        entries.add(ModBlocks.SEALER);
+                        entries.add(ModBlocks.AIRLOCK_DOOR);
                     })
                     .build());
 
