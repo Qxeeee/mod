@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "orbitcore:steel_ingot"
+    }
+  },
+  "result": {
+    "item": "orbitcore:steel_block"
+  }
+}

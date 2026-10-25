@@ -1,0 +1,14 @@
+{
+  "type": "orbitcore:metallurgy",
+  "ingredient": {
+    "item": "orbitcore:raw_ilmenite"
+  },
+  "reductant": {
+    "tag": "minecraft:coals"
+  },
+  "result": {
+    "item": "orbitcore:titanium_ingot"
+  },
+  "heat": 1500,
+  "time": 260
+}

@@ -1,0 +1,29 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "SSS",
+    "PCP",
+    "WMW"
+  ],
+  "key": {
+    "S": {
+      "item": "orbitcore:silicon"
+    },
+    "P": {
+      "tag": "c:aluminum_plates"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "W": {
+      "item": "minecraft:iron_bars"
+    }
+  },
+  "result": {
+    "item": "orbitcore:rover"
+  }
+}

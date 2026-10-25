@@ -1,0 +1,25 @@
+{
+  "type": "orbitcore:engineering",
+  "pattern": [
+    "PPP",
+    "WMW",
+    "PFP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "item": "orbitcore:coal_generator"
+  }
+}

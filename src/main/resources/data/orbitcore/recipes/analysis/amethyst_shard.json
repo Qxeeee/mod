@@ -1,0 +1,7 @@
+{
+  "type": "orbitcore:analysis",
+  "ingredient": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "samples": 2
+}

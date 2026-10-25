@@ -1,0 +1,30 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:life_support",
+  "pattern": [
+    "SBS",
+    "CMC",
+    "SWS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:steel_plates"
+    },
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    }
+  },
+  "result": {
+    "item": "orbitcore:sealer",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "orbitcore:aluminum_ingot"
+    }
+  },
+  "result": {
+    "item": "orbitcore:aluminum_block"
+  }
+}
