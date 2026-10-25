@@ -71,6 +71,20 @@ public final class OrbitClientNetworking {
         ClientPlayNetworking.send(OrbitNetworking.OBSERVE, buf);
     }
 
+    public static void sendLaunch(int rocketId, int destination) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeVarInt(rocketId);
+        buf.writeVarInt(destination);
+        ClientPlayNetworking.send(OrbitNetworking.LAUNCH, buf);
+    }
+
+    public static void sendFlightCommand(int command, float value) {
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeVarInt(command);
+        buf.writeFloat(value);
+        ClientPlayNetworking.send(OrbitNetworking.FLIGHT_COMMAND, buf);
+    }
+
     public static void sendUnlockResearch(BlockPos missionControl, Identifier research) {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBlockPos(missionControl);

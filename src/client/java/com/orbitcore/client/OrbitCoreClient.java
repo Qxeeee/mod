@@ -1,8 +1,10 @@
 package com.orbitcore.client;
 
 import com.orbitcore.OrbitCore;
+import com.orbitcore.client.flight.FlightCinematics;
 import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.client.render.RocketEntityRenderer;
+import com.orbitcore.client.render.RocketStageEntityRenderer;
 import com.orbitcore.client.screen.AirSeparatorScreen;
 import com.orbitcore.client.screen.CoalGeneratorScreen;
 import com.orbitcore.client.screen.ElectrolyzerScreen;
@@ -18,6 +20,7 @@ import com.orbitcore.registry.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -54,6 +57,9 @@ public class OrbitCoreClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(),
                 ModFluids.KEROSENE, ModFluids.FLOWING_KEROSENE, ModFluids.LIQUID_OXYGEN, ModFluids.FLOWING_LIQUID_OXYGEN);
         OrbitClientNetworking.register();
+        FlightCinematics.register();
+        EntityRendererRegistry.register(ModEntities.ROCKET_STAGE, RocketStageEntityRenderer::new);
+        ModelLoadingPlugin.register(context -> context.addModels(RocketEntityRenderer.PARACHUTE));
 
         // Руды нарисованы слоем поверх камня, им нужна прозрачность
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(),

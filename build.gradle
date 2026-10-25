@@ -41,6 +41,11 @@ loom {
     // чтобы мод не падал на выделенном сервере
     splitEnvironmentSourceSets()
 
+    // Миксины клиента (кинокамера полёта) — со своей таблицей имён для готового .jar
+    mixin {
+        add sourceSets.client, 'orbitcore.client.refmap.json'
+    }
+
     mods {
         orbitcore {
             sourceSet sourceSets.main

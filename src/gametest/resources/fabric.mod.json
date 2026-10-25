@@ -9,7 +9,8 @@
       "com.orbitcore.gametest.OrbitCoreGameTest",
       "com.orbitcore.gametest.EarthMaterialsGameTest",
       "com.orbitcore.gametest.ScienceGameTest",
-      "com.orbitcore.gametest.RocketGameTest"
+      "com.orbitcore.gametest.RocketGameTest",
+      "com.orbitcore.gametest.FlightGameTest"
     ]
   },
   "depends": {

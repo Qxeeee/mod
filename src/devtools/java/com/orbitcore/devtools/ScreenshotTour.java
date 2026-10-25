@@ -13,7 +13,11 @@ import com.orbitcore.client.screen.MissionControlScreen;
 import com.orbitcore.client.screen.RocketScreen;
 import com.orbitcore.client.screen.TelescopeScreen;
 import com.orbitcore.client.toast.OrbitToast;
+import com.orbitcore.client.network.OrbitClientNetworking;
 import com.orbitcore.entity.RocketEntity;
+import com.orbitcore.network.OrbitNetworking;
+import com.orbitcore.rocket.FlightController;
+import com.orbitcore.rocket.FlightPhase;
 import com.orbitcore.registry.ModBlocks;
 import com.orbitcore.registry.ModEntities;
 import com.orbitcore.registry.ModFluids;
@@ -57,6 +61,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Фототур для разработки: создаёт плоский мир, расставляет блоки мода, по очереди
@@ -73,8 +78,13 @@ public class ScreenshotTour implements ClientModInitializer {
 
     private enum Phase { LANGUAGE, TITLE, LOADING, TOUR }
 
-    private record Step(int waitAfter, Consumer<MinecraftClient> action) {
+    private record Step(int waitAfter, Consumer<MinecraftClient> action, Predicate<MinecraftClient> until, int timeout) {
+        Step(int waitAfter, Consumer<MinecraftClient> action) {
+            this(waitAfter, action, c -> true, 0);
+        }
     }
+
+    private int waited;
 
     @Override
     public void onInitializeClient() {
@@ -113,11 +123,18 @@ public class ScreenshotTour implements ClientModInitializer {
                 }
             }
             case TOUR -> {
-                Step step = steps.poll();
-                if (step != null) {
-                    step.action.accept(client);
-                    wait = step.waitAfter;
+                Step step = steps.peek();
+                if (step == null) {
+                    return;
                 }
+                // Шаг-ожидание держит очередь, пока условие не выполнится (или не выйдет время)
+                if (!step.until.test(client) && waited++ < step.timeout) {
+                    return;
+                }
+                waited = 0;
+                steps.poll();
+                step.action.accept(client);
+                wait = step.waitAfter;
             }
         }
     }
@@ -273,6 +290,56 @@ public class ScreenshotTour implements ClientModInitializer {
         openMachine(client, separator);
         step(0, c -> shot(c, "19_air_separator"));
         step(5, c -> c.setScreen(null));
+        planFlight(client, rocketId);
+    }
+
+    /** Этап 0.5: полёт лунной ракеты на орбиту и обратно, кадры кинокамеры. */
+    private void planFlight(MinecraftClient client, int[] rocketId) {
+        server(client, (server, world, player) -> {
+            if (world.getEntityById(rocketId[0]) instanceof RocketEntity rocket) {
+                rocket.setFuel(rocket.design().propellantCapacity(), rocket.design().propellantCapacity());
+                player.teleport(world, rocket.getX() + 2, rocket.getY(), rocket.getZ() - 2, 0, 0);
+                FlightController.launch(rocket, player, RocketDesign.Destination.EARTH_ORBIT);
+            }
+        }, 60);
+        step(100, c -> shot(c, "20_countdown_wide"));
+        step(70, c -> shot(c, "21_ignition"));
+        step(80, c -> shot(c, "22_liftoff"));
+        step(0, c -> shot(c, "23_from_below"));
+        waitFor(c -> {
+            RocketEntity r = rocketById(c, rocketId[0]);
+            return r != null && r.separationTick() > 0;
+        }, 800);
+        step(20, c -> {
+        });
+        step(60, c -> shot(c, "24_separation"));
+        step(0, c -> shot(c, "25_chase"));
+        waitFor(c -> {
+            RocketEntity r = rocketById(c, rocketId[0]);
+            return r != null && r.phase() == FlightPhase.SPACE;
+        }, 900);
+        step(40, c -> {
+        });
+        step(5, c -> shot(c, "26_orbit"));
+        step(0, c -> OrbitClientNetworking.sendFlightCommand(OrbitNetworking.COMMAND_DEORBIT, 0));
+        waitFor(c -> {
+            RocketEntity r = rocketById(c, rocketId[0]);
+            return r != null && r.phase() == FlightPhase.REENTRY;
+        }, 200);
+        step(40, c -> {
+        });
+        step(0, c -> shot(c, "27_reentry"));
+        waitFor(c -> {
+            RocketEntity r = rocketById(c, rocketId[0]);
+            return r != null && r.parachute();
+        }, 600);
+        step(40, c -> {
+        });
+        step(0, c -> shot(c, "28_parachute"));
+        waitFor(c -> c.player.getVehicle() == null, 900);
+        step(30, c -> {
+        });
+        step(0, c -> shot(c, "29_landed"));
     }
 
     private static final List<RocketDesign.Entry> MOON_ROCKET = List.of(
@@ -294,6 +361,16 @@ public class ScreenshotTour implements ClientModInitializer {
 
     private void step(int waitAfter, Consumer<MinecraftClient> action) {
         steps.add(new Step(waitAfter, action));
+    }
+
+    /** Ждать (не дольше timeout тактов), пока условие не станет истинным. */
+    private void waitFor(Predicate<MinecraftClient> condition, int timeout) {
+        steps.add(new Step(0, c -> {
+        }, condition, timeout));
+    }
+
+    private static RocketEntity rocketById(MinecraftClient client, int id) {
+        return client.world != null && client.world.getEntityById(id) instanceof RocketEntity r ? r : null;
     }
 
     private void server(MinecraftClient client, ServerAction action, int waitAfter) {

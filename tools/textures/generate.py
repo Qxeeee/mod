@@ -1013,6 +1013,114 @@ def rocket_icon():
     return img
 
 
+def value_noise_3d(seed):
+    """Плавный 3D-шум на целочисленной решётке со сглаживанием — для карт планет."""
+    rng = random.Random(seed)
+    perm = list(range(256))
+    rng.shuffle(perm)
+    perm += perm
+    values = [rng.random() for _ in range(256)]
+
+    def lattice(ix, iy, iz):
+        return values[perm[(perm[(perm[ix & 255] + iy) & 255] + iz) & 255]]
+
+    def smooth(t):
+        return t * t * (3 - 2 * t)
+
+    def noise(x, y, z):
+        ix, iy, iz = math.floor(x), math.floor(y), math.floor(z)
+        fx, fy, fz = smooth(x - ix), smooth(y - iy), smooth(z - iz)
+        result = 0.0
+        for dx in (0, 1):
+            for dy in (0, 1):
+                for dz in (0, 1):
+                    w = (fx if dx else 1 - fx) * (fy if dy else 1 - fy) * (fz if dz else 1 - fz)
+                    result += w * lattice(ix + dx, iy + dy, iz + dz)
+        return result
+
+    def fbm(x, y, z, octaves=5):
+        total, amp, freq, norm = 0.0, 1.0, 1.0, 0.0
+        for _ in range(octaves):
+            total += noise(x * freq, y * freq, z * freq) * amp
+            norm += amp
+            amp *= 0.5
+            freq *= 2.0
+        return total / norm
+
+    return fbm
+
+
+def earth_from_orbit():
+    """Земля для вида с орбиты: океан, материки, льды, облака, ночная сторона с огнями, атмосфера."""
+    size, radius = 512, 236
+    land = value_noise_3d(201)
+    clouds = value_noise_3d(202)
+    img = Image.new("RGBA", (size, size), CLEAR)
+    sun = (-0.55, -0.35, 0.76)
+    for py in range(size):
+        for px in range(size):
+            x, y = (px + 0.5 - size / 2) / radius, (py + 0.5 - size / 2) / radius
+            r2 = x * x + y * y
+            if r2 > 1:
+                # Свечение атмосферы за краем диска
+                d = math.sqrt(r2)
+                if d < 1.08:
+                    a = int(200 * (1 - (d - 1) / 0.08) ** 2)
+                    img.putpixel((px, py), (110, 170, 255, a))
+                continue
+            z = math.sqrt(1 - r2)
+            # С орбиты видна только верхняя кромка диска, поэтому шар повёрнут
+            # полюсом к зрителю: у края оказываются экватор, океаны и материки
+            gx, gy, gz = x, -z, y
+            sx, sy, sz = gx * 1.6 + 3.1, gy * 1.6 + 1.3, gz * 1.6 + 7.0
+            h = land(sx, sy, sz)
+            lat = abs(gy)
+            ice_edge = 0.9 + (land(sx * 3, sy * 3, sz * 3) - 0.5) * 0.12
+            if lat > ice_edge:
+                c = (232, 240, 248)
+            elif h > 0.57:
+                dry = land(sx * 2 + 9, sy * 2, sz * 2)
+                c = (196, 168, 112) if dry > 0.62 and lat < 0.5 else (70, 118, 58) if h < 0.66 else (98, 104, 72)
+            else:
+                depth = max(0.0, 0.57 - h) * 4
+                c = (int(28 - 10 * depth), int(78 - 30 * depth), int(150 - 30 * depth))
+            cl = clouds(sx * 2.2 + 40, sy * 3.5, sz * 2.2)
+            if cl > 0.56:
+                k = min(1.0, (cl - 0.56) * 6)
+                c = tuple(int(v * (1 - k) + 245 * k) for v in c)
+            light = x * sun[0] + y * sun[1] + z * sun[2]
+            if light > 0:
+                k = 0.35 + 0.65 * min(1.0, light * 1.4)
+                c = tuple(int(v * k) for v in c)
+            else:
+                c = tuple(int(v * 0.08) for v in c)
+                # Огни городов на ночной стороне
+                if 0.57 < h < 0.64 and land(sx * 9, sy * 9, sz * 9) > 0.7:
+                    c = (255, 196, 110)
+            # Голубая дымка к краю диска
+            edge = (1 - z) ** 2
+            c = tuple(int(v * (1 - edge * 0.6) + b * edge * 0.6) for v, b in zip(c, (120, 180, 255)))
+            img.putpixel((px, py), c + (255,))
+    return img
+
+
+def parachute_canopy():
+    img = new()
+    for y in range(S):
+        for x in range(S):
+            put(img, x, y, (210, 40, 36) if ((x + 2) // 4) % 2 else (244, 244, 240))
+    line(img, 0, 15, 15, 15, (120, 20, 20))
+    return img
+
+
+def parachute_line():
+    img = new()
+    rect(img, 0, 0, 15, 15, (210, 205, 190))
+    for y in range(0, 16, 3):
+        line(img, 0, y, 15, y, (170, 165, 150))
+    return img
+
+
 def main():
     save(ingot(STEEL, 1), ITEM, "steel_ingot")
     save(ingot(ALUMINUM, 2), ITEM, "aluminum_ingot")
@@ -1094,6 +1202,12 @@ def main():
     save(bucket(KEROSENE), ITEM, "kerosene_bucket")
     save(bucket(LOX), ITEM, "liquid_oxygen_bucket")
     save(rocket_icon(), ITEM, "assembled_rocket")
+
+    save(parachute_canopy(), BLOCK, "parachute_canopy")
+    save(parachute_line(), BLOCK, "parachute_line")
+    flight_gui = GUI / "flight"
+    flight_gui.mkdir(parents=True, exist_ok=True)
+    earth_from_orbit().save(flight_gui / "earth.png")
 
     telescope_gui = GUI / "telescope"
     telescope_gui.mkdir(parents=True, exist_ok=True)
