@@ -1,0 +1,23 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "S S",
+    "P P",
+    "T T"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:steel_ingots"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "T": {
+      "tag": "c:titanium_plates"
+    }
+  },
+  "result": {
+    "item": "orbitcore:landing_legs"
+  }
+}

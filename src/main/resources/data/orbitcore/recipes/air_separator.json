@@ -1,0 +1,29 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "PIP",
+    "CMC",
+    "PWP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:aluminum_plates"
+    },
+    "I": {
+      "item": "minecraft:packed_ice"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    },
+    "W": {
+      "item": "orbitcore:copper_wire"
+    }
+  },
+  "result": {
+    "item": "orbitcore:air_separator"
+  }
+}

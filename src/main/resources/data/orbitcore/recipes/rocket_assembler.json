@@ -1,0 +1,26 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:rocketry",
+  "pattern": [
+    "PCP",
+    "GMG",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:steel_plates"
+    },
+    "C": {
+      "item": "orbitcore:circuit_board"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "orbitcore:machine_casing"
+    }
+  },
+  "result": {
+    "item": "orbitcore:rocket_assembler"
+  }
+}

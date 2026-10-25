@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "orbitcore:titanium_block"
+    }
+  ],
+  "result": {
+    "item": "orbitcore:titanium_ingot",
+    "count": 9
+  }
+}

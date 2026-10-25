@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "orbitcore:bauxite_ore",
+    "orbitcore:rutile_ore",
+    "orbitcore:deepslate_rutile_ore",
+    "orbitcore:steel_block",
+    "orbitcore:aluminum_block",
+    "orbitcore:titanium_block",
+    "orbitcore:machine_casing",
+    "orbitcore:metallurgical_furnace",
+    "orbitcore:coal_generator",
+    "orbitcore:electrolyzer",
+    "orbitcore:engineering_table",
+    "orbitcore:telescope",
+    "orbitcore:mission_control",
+    "orbitcore:sample_analyzer",
+    "orbitcore:fuel_refinery",
+    "orbitcore:air_separator",
+    "orbitcore:rocket_assembler",
+    "orbitcore:launch_pad"
+  ]
+}

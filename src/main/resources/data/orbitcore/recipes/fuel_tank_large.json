@@ -1,0 +1,20 @@
+{
+  "type": "orbitcore:engineering",
+  "research": "orbitcore:heavy_rocketry",
+  "pattern": [
+    "ATA",
+    "ATA",
+    "ATA"
+  ],
+  "key": {
+    "A": {
+      "tag": "c:aluminum_plates"
+    },
+    "T": {
+      "item": "orbitcore:fuel_tank_small"
+    }
+  },
+  "result": {
+    "item": "orbitcore:fuel_tank_large"
+  }
+}
